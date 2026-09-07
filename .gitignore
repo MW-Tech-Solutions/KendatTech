@@ -1,0 +1,12 @@
+# Environment Configuration
+.env*
+.env.local
+
+# Storage & Uploads
+storage/uploads/*
+!storage/uploads/.gitkeep
+
+# Logs & Temporary Files
+*.log
+scratch/
+.tempmediaStorage/

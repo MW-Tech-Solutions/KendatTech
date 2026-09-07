@@ -1,0 +1,46 @@
+name: CI Test & Syntax Validation
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: kendat_integrated_services
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo, pdo_mysql, fileinfo, ctype, json, mbstring
+
+      - name: Setup Environment File
+        run: |
+          cp .env.example .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=3306" >> .env
+          echo "DB_NAME=kendat_integrated_services" >> .env
+          echo "DB_USER=root" >> .env
+          echo "DB_PASS=root" >> .env
+
+      - name: Run Database Migrations
+        run: php database/migrator.php
+
+      - name: Run Automated Test Suite
+        run: php tests/run_tests.php

@@ -24,7 +24,7 @@ function send_security_headers(): void {
            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; " .
            "font-src 'self' https://fonts.gstatic.com data:; " .
            "img-src 'self' data: blob: https:; " .
-           "connect-src 'self'; " .
+           "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " .
            "frame-ancestors 'self';";
 
     header("Content-Security-Policy: " . $csp);

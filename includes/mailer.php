@@ -11,23 +11,29 @@ function send_smtp_email(string $toEmail, string $toName, string $subject, strin
     @ignore_user_abort(true);
     @set_time_limit(60);
 
-    $envHost = env('MAIL_HOST', 'mail.kisprojectslab.com');
-    $hosts = array_values(array_unique([$envHost, 'mail.kisprojectslab.com', 'www.kisprojectslab.com', 'kisprojectslab.com']));
+    $envHost = trim((string)env('MAIL_HOST', 'kisltd.com.ng'), " \t\n\r\0\x0B\"'");
+    $hosts = array_values(array_unique([
+        $envHost,
+        "mail.{$envHost}",
+        'mail.kisprojectslab.com',
+        'kisltd.com.ng',
+        'mail.kisltd.com.ng'
+    ]));
     $port = (int)env('MAIL_PORT', 465);
-    $username = (string)env('MAIL_USERNAME', 'hello@kisprojectslab.com');
+    $username = trim((string)env('MAIL_USERNAME', 'hello@kisprojectslab.com'), " \t\n\r\0\x0B\"'");
     $password = (string)env('MAIL_PASSWORD', '');
-    $fromEmail = (string)env('MAIL_FROM_ADDRESS', 'hello@kisprojectslab.com');
-    $fromName = (string)env('MAIL_FROM_NAME', 'Kendat Integrated Services');
+    $fromEmail = trim((string)env('MAIL_FROM_ADDRESS', 'hello@kisprojectslab.com'), " \t\n\r\0\x0B\"'");
+    $fromName = trim((string)env('MAIL_FROM_NAME', 'Kendat Integrated Services'), " \t\n\r\0\x0B\"'");
 
     $isDev = env('APP_ENV', 'production') === 'development';
-    $verifyPeer = $isDev ? (env('SMTP_VERIFY_PEER', 'true') === 'true') : true;
+    $verifyPeer = $isDev ? (env('SMTP_VERIFY_PEER', 'false') === 'true') : (env('SMTP_VERIFY_PEER', 'false') === 'true');
 
     $socket = null;
     $context = stream_context_create([
         'ssl' => [
             'verify_peer' => $verifyPeer,
-            'verify_peer_name' => $verifyPeer,
-            'allow_self_signed' => !$verifyPeer,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true,
         ]
     ]);
 

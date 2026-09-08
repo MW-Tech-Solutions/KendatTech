@@ -426,8 +426,121 @@ $aboutCompany = $settings['about_company'] ?? 'Kendat Integrated Services is a t
     flex-direction: column !important;
     align-items: stretch !important;
   }
-  .about-btn-glow {
-    justify-content: center !important;
+.team-card-neon {
+  cursor: pointer !important;
+}
+
+/* Person Summary Modal */
+.team-bio-modal-backdrop {
+  position: fixed !important;
+  top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+  background: rgba(4, 9, 21, 0.88) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  z-index: 100000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+}
+
+.team-bio-modal-card {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 660px !important;
+  background: linear-gradient(145deg, rgba(11, 22, 44, 0.98) 0%, rgba(6, 14, 32, 0.99) 100%) !important;
+  border: 1px solid rgba(0, 229, 255, 0.5) !important;
+  box-shadow: 0 20px 50px rgba(0, 195, 255, 0.35), inset 0 0 30px rgba(0, 195, 255, 0.15) !important;
+  border-radius: 24px !important;
+  padding: 32px !important;
+  color: #ffffff !important;
+  display: grid !important;
+  grid-template-columns: 180px 1fr !important;
+  gap: 24px !important;
+  align-items: start !important;
+}
+
+.team-bio-modal-close {
+  position: absolute !important;
+  top: 16px !important;
+  right: 18px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #00e5ff !important;
+  font-size: 22px !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.team-bio-modal-close:hover {
+  background: rgba(0, 229, 255, 0.25) !important;
+  transform: scale(1.08) !important;
+}
+
+.team-bio-modal-photo-wrap {
+  width: 100% !important;
+  height: 220px !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  background: rgba(0, 135, 255, 0.15) !important;
+  border: 1px solid rgba(0, 229, 255, 0.3) !important;
+}
+
+.team-bio-modal-info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.team-bio-modal-role {
+  font-family: 'Montserrat', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  color: #00e5ff !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+}
+
+.team-bio-modal-name {
+  font-family: 'Poppins', sans-serif !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  margin: 0 !important;
+}
+
+.team-bio-modal-specialties {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+  color: rgba(148, 163, 184, 0.85) !important;
+  text-transform: uppercase !important;
+}
+
+.team-bio-modal-bio {
+  font-size: 13.5px !important;
+  line-height: 1.6 !important;
+  color: #cbd5e1 !important;
+  margin-top: 8px !important;
+}
+
+@media (max-width: 640px) {
+  .team-features-duo { grid-template-columns: 1fr !important; }
+  .team-members-grid { grid-template-columns: 1fr !important; }
+  .about-headline { font-size: 1.8rem !important; }
+  .about-cta-group { flex-direction: column !important; align-items: stretch !important; }
+  .about-btn-glow { justify-content: center !important; }
+  .team-bio-modal-card {
+    grid-template-columns: 1fr !important;
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+    padding: 22px !important;
   }
 }
 </style>
@@ -492,11 +605,20 @@ $aboutCompany = $settings['about_company'] ?? 'Kendat Integrated Services is a t
             <div class="about-team-col">
                 <div class="team-members-grid">
                     <?php if (!empty($teamMembers)): ?>
-                        <?php foreach ($teamMembers as $member): ?>
-                            <div class="team-card-neon">
+                        <?php foreach ($teamMembers as $member): 
+                            $photoUrl = !empty($member['photo']) ? upload_asset_url($member['photo']) : '';
+                        ?>
+                            <div class="team-card-neon" 
+                                 data-name="<?php echo htmlspecialchars($member['name']); ?>"
+                                 data-role="<?php echo htmlspecialchars($member['role_title']); ?>"
+                                 data-specialties="<?php echo htmlspecialchars($member['specialties'] ?? ''); ?>"
+                                 data-bio="<?php echo htmlspecialchars($member['bio'] ?? ''); ?>"
+                                 data-photo="<?php echo htmlspecialchars($photoUrl); ?>"
+                                 data-linkedin="<?php echo htmlspecialchars($member['linkedin_url'] ?? ''); ?>"
+                                 data-github="<?php echo htmlspecialchars($member['github_url'] ?? ''); ?>">
                                 <div class="team-card-photo-box">
                                     <?php if (!empty($member['photo'])): ?>
-                                        <img src="<?php echo htmlspecialchars(upload_asset_url($member['photo'])); ?>" alt="<?php echo htmlspecialchars($member['name']); ?>" class="team-card-photo-img">
+                                        <img src="<?php echo htmlspecialchars($photoUrl); ?>" alt="<?php echo htmlspecialchars($member['name']); ?>" class="team-card-photo-img">
                                     <?php else: ?>
                                         <div class="team-card-photo-fallback">
                                             <?php echo render_icon('UserCheck', 64); ?>
@@ -551,6 +673,62 @@ $aboutCompany = $settings['about_company'] ?? 'Kendat Integrated Services is a t
 
     </div>
 </main>
+
+<!-- Interactive Person Brief Summary Modal -->
+<div class="team-bio-modal-backdrop" id="teamBioModal" style="display:none;">
+    <div class="team-bio-modal-card">
+        <button type="button" class="team-bio-modal-close" id="teamBioModalClose">&times;</button>
+        <div class="team-bio-modal-photo-wrap" id="modalPhotoWrap"></div>
+        <div class="team-bio-modal-info">
+            <span class="team-bio-modal-role" id="modalRole"></span>
+            <h2 class="team-bio-modal-name" id="modalName"></h2>
+            <div class="team-bio-modal-specialties" id="modalSpecialties"></div>
+            <div class="team-bio-modal-bio" id="modalBio"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('teamBioModal');
+    const closeBtn = document.getElementById('teamBioModalClose');
+    if (!modal) return;
+
+    document.querySelectorAll('.team-card-neon').forEach(card => {
+        card.addEventListener('click', (e) => {
+            if (e.target.closest('a')) return;
+            
+            const name = card.dataset.name || '';
+            const role = card.dataset.role || '';
+            const specialties = card.dataset.specialties || '';
+            const bio = card.dataset.bio || '';
+            const photo = card.dataset.photo || '';
+
+            document.getElementById('modalName').textContent = name;
+            document.getElementById('modalRole').textContent = role;
+            document.getElementById('modalSpecialties').textContent = specialties;
+            document.getElementById('modalBio').textContent = bio || 'Executive team member driving software engineering and digital transformation.';
+            
+            const photoWrap = document.getElementById('modalPhotoWrap');
+            if (photo) {
+                photoWrap.innerHTML = `<img src="${photo}" alt="${name}" style="width:100%; height:100%; object-fit:cover; border-radius:18px;">`;
+            } else {
+                photoWrap.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:rgba(0,135,255,0.15); border-radius:18px; color:#00e5ff; font-size:56px;">👤</div>`;
+            }
+
+            modal.style.display = 'flex';
+        });
+    });
+
+    closeBtn?.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.style.display = 'none';
+    });
+});
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
 

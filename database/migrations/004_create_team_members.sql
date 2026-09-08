@@ -18,14 +18,14 @@ CREATE TABLE IF NOT EXISTS `team_members` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Seed default team members if table is empty
-INSERT INTO `team_members` (`name`, `role_title`, `specialties`, `photo`, `sort_order`, `status`)
-SELECT 'Engr. Muhammad Mukhtar', 'Chief Executive Officer', 'LEADERSHIP • STRATEGY • IMPACT', NULL, 1, 'active'
+INSERT INTO `team_members` (`name`, `role_title`, `specialties`, `bio`, `photo`, `sort_order`, `status`)
+SELECT 'Engr. Muhammad Mukhtar', 'Chief Executive Officer', 'LEADERSHIP • STRATEGY • IMPACT', 'Executive leader & chief software engineer directing enterprise AI solutions, cloud architecture, and digital transformation for institutions and businesses across Africa and globally.', NULL, 1, 'active'
 FROM DUAL WHERE NOT EXISTS (SELECT * FROM `team_members` WHERE `role_title` = 'Chief Executive Officer' LIMIT 1);
 
-INSERT INTO `team_members` (`name`, `role_title`, `specialties`, `photo`, `sort_order`, `status`)
-SELECT 'Lead Software Architect', 'Lead Developer', 'SOFTWARE • AI SOLUTIONS • INNOVATION', NULL, 2, 'active'
+INSERT INTO `team_members` (`name`, `role_title`, `specialties`, `bio`, `photo`, `sort_order`, `status`)
+SELECT 'Lead Software Architect', 'Lead Developer', 'SOFTWARE • AI SOLUTIONS • INNOVATION', 'Principal software architect specializing in full-stack web portals, scalable PHP engines, microservices, and AI workflow automation.', NULL, 2, 'active'
 FROM DUAL WHERE NOT EXISTS (SELECT * FROM `team_members` WHERE `specialties` LIKE '%SOFTWARE • AI%' LIMIT 1);
 
-INSERT INTO `team_members` (`name`, `role_title`, `specialties`, `photo`, `sort_order`, `status`)
-SELECT 'Lead Systems Engineer', 'Lead Developer', 'SYSTEMS • CLOUD • DIGITAL SOLUTIONS', NULL, 3, 'active'
+INSERT INTO `team_members` (`name`, `role_title`, `specialties`, `bio`, `photo`, `sort_order`, `status`)
+SELECT 'Lead Systems Engineer', 'Lead Developer', 'SYSTEMS • CLOUD • DIGITAL SOLUTIONS', 'Lead systems engineer focusing on cloud infrastructure, database optimization, high-availability security systems, and enterprise portals.', NULL, 3, 'active'
 FROM DUAL WHERE NOT EXISTS (SELECT * FROM `team_members` WHERE `specialties` LIKE '%SYSTEMS • CLOUD%' LIMIT 1);

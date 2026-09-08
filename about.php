@@ -437,7 +437,7 @@ $aboutCompany = $settings['about_company'] ?? 'Kendat Integrated Services is a t
         
         <!-- Top Motto Bar -->
         <div class="about-top-bar">
-            <div class="about-top-motto">PEOPLE &times; TECHNOLOGY &times; A BRIGHTER TOMORROW</div>
+            <!-- <div class="about-top-motto">PEOPLE &times; TECHNOLOGY &times; A BRIGHTER TOMORROW</div> -->
             <div class="about-handwritten-overlay">Technology People Progress</div>
         </div>
 

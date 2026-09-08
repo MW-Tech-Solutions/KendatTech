@@ -14,13 +14,13 @@ function get_db(): PDO {
 
 function get_base_url(): string {
     $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
-    if (strpos($scriptName, '/KendatTech/admin/') !== false) {
-        return '/KendatTech/';
+    if (preg_match('#^(/[^/]+)#', $scriptName, $matches)) {
+        $firstDir = $matches[1];
+        if (strcasecmp($firstDir, '/KendatTech') === 0) {
+            return $firstDir . '/';
+        }
     }
-    if (strpos($scriptName, '/KendatTech/') === 0) {
-        return '/KendatTech/';
-    }
-    if (strpos($scriptName, '/admin/') !== false) {
+    if (stripos($scriptName, '/admin/') !== false) {
         return '../';
     }
     $dir = dirname($scriptName);

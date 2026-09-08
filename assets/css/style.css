@@ -5124,7 +5124,7 @@ body.cursor-active .custom-cursor-ring {
               radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.12) 0%, transparent 50%),
               radial-gradient(circle at 50% 50%, rgba(11, 19, 43, 1) 0%, rgba(4, 9, 21, 1) 100%);
   color: #ffffff;
-  padding: 40px 0 80px;
+  padding: 65px 0 80px;
   overflow: hidden;
   min-height: 85vh;
 }

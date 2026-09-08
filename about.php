@@ -22,7 +22,7 @@ $aboutCompany = $settings['about_company'] ?? 'Kendat Integrated Services is a t
               radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.15) 0%, transparent 50%),
               radial-gradient(circle at 50% 50%, #071026 0%, #030712 100%) !important;
   color: #ffffff !important;
-  padding: 40px 24px 70px !important;
+  padding: 65px 24px 75px !important;
   overflow: hidden !important;
   min-height: 85vh !important;
   box-sizing: border-box !important;
@@ -44,7 +44,7 @@ $aboutCompany = $settings['about_company'] ?? 'Kendat Integrated Services is a t
   display: flex !important;
   justify-content: flex-end !important;
   align-items: center !important;
-  margin-bottom: 28px !important;
+  margin-bottom: 32px !important;
   position: relative !important;
   z-index: 2 !important;
 }
@@ -60,8 +60,8 @@ $aboutCompany = $settings['about_company'] ?? 'Kendat Integrated Services is a t
 
 .about-handwritten-overlay {
   position: absolute !important;
-  top: 15px !important;
-  right: 15px !important;
+  top: -10px !important;
+  right: 25px !important;
   font-family: 'Caveat', 'Brush Script MT', cursive, sans-serif !important;
   font-size: 32px !important;
   color: rgba(148, 163, 184, 0.3) !important;

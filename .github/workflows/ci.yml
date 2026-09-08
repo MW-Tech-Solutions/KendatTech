@@ -61,7 +61,7 @@ jobs:
         run: php tests/run_tests.php
 
   deploy:
-    name: 🚀 FTP Deploy to Production
+    name: 🚀 SFTP/SSH Deploy to Production (Port 22 Only)
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
@@ -69,28 +69,28 @@ jobs:
     steps:
       - name: 🚚 Checkout latest code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2  # needed for changed-files detection
 
-      - name: 📂 Sync files to Bluehost via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: 🔒 SFTP/SSH Sync to Server (Port 22)
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
-          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          server: ${{ secrets.SFTP_HOST }}
+          username: ${{ secrets.SFTP_USERNAME }}
+          ssh_private_key: ${{ secrets.SFTP_PRIVATE_KEY }}
+          port: 22
+          local_path: './*'
+          remote_path: ${{ secrets.SFTP_TARGET_DIR }}
+          delete_remote: false
           exclude: |
-            **/.git/**
-            **/.git*
-            **/.github/**
-            **/node_modules/**
-            **/vendor/**
-            **/uploads/**
-            **/adminpictures/**
-            **/storage/**
-            **/*.sql
-            **/*.zip
-            **/error_log.txt
-            **/scratch/**
-            **/.env
+            .git/
+            .github/
+            node_modules/
+            vendor/
+            uploads/
+            adminpictures/
+            storage/
+            scratch/
+            .env
+            .env.example
+            *.sql
+            *.zip
+            error_log.txt

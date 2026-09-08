@@ -65,6 +65,8 @@ try {
     assert_test("audit_logs table exists", $stmtAudit->rowCount() > 0);
     $stmtRate = $pdo->query("SHOW TABLES LIKE 'rate_limits'");
     assert_test("rate_limits table exists", $stmtRate->rowCount() > 0);
+    $stmtTeam = $pdo->query("SHOW TABLES LIKE 'team_members'");
+    assert_test("team_members table exists", $stmtTeam->rowCount() > 0);
 } catch (\Throwable $e) {
     assert_test("Database connection successful", false, $e->getMessage());
 }
@@ -112,8 +114,16 @@ assert_test("migrate_firebase.php enforces CLI-only execution", strpos($migrateC
 $messagesContent = file_get_contents(__DIR__ . '/../admin/messages.php');
 assert_test("admin/messages.php enforces CSRF token validation", strpos($messagesContent, "require_csrf_token()") !== false);
 
+$teamAdminContent = file_get_contents(__DIR__ . '/../admin/team.php');
+assert_test("admin/team.php enforces CSRF token validation", strpos($teamAdminContent, "require_csrf_token()") !== false);
+assert_test("admin/team.php includes admin_header auth guard", strpos($teamAdminContent, "admin_header.php") !== false);
+
+$aboutContent = file_get_contents(__DIR__ . '/../about.php');
+assert_test("about.php queries team_members table", strpos($aboutContent, "FROM team_members") !== false);
+
 echo "\n====================================================\n";
 echo " TEST SUMMARY: Passed: {$passCount} | Failed: {$failCount}\n";
 echo "====================================================\n\n";
 
 exit($failCount === 0 ? 0 : 1);
+

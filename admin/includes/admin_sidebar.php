@@ -12,6 +12,7 @@ $adminLinks = [
     ['Appointments', $baseUrl . 'admin/appointments.php', 'CalendarCheck'],
     ['Project Requests', $baseUrl . 'admin/requests.php', 'ClipboardList'],
     ['Users', $baseUrl . 'admin/users.php', 'Users'],
+    ['Team Members', $baseUrl . 'admin/team.php', 'UserCheck'],
     ['Send Email', $baseUrl . 'admin/send-mail.php', 'Send'],
     ['Messages', $baseUrl . 'admin/messages.php', 'Mail'],
     ['Testimonials', $baseUrl . 'admin/testimonials.php', 'Star'],

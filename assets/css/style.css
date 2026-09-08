@@ -2946,15 +2946,15 @@ html, body {
 .table-card td strong { color: #020617 !important; font-weight: 600 !important; }
 .table-card td small, .muted { color: #8390a3 !important; font-size: 12px !important; font-weight: 400 !important; }
 /* Premium Unified Enterprise Button Design System */
-button,
-.btn,
+button:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle),
+.btn:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle),
 .btn.primary,
 .admin-head-actions a,
-.admin-main button,
-.admin-main .btn,
+.admin-main button:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle),
+.admin-main .btn:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle),
 a.btn.primary,
 .btn-primary,
-button[type="submit"] {
+button[type="submit"]:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle) {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -2977,13 +2977,13 @@ button[type="submit"] {
   white-space: nowrap !important;
 }
 
-button:hover,
-.btn:hover,
+button:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle):hover,
+.btn:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle):hover,
 .btn.primary:hover,
 .admin-head-actions a:hover,
-.admin-main button:hover,
+.admin-main button:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle):hover,
 a.btn.primary:hover,
-button[type="submit"]:hover {
+button[type="submit"]:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle):hover {
   transform: translateY(-2px) !important;
   background: linear-gradient(135deg, #0095ff 0%, #0066d6 100%) !important;
   box-shadow: 0 6px 16px rgba(0, 135, 255, 0.35) !important;
@@ -2995,7 +2995,7 @@ button[type="submit"]:hover {
 .advanced-toolbar button,
 .btn-secondary,
 .btn-filter,
-.toolbar button {
+.toolbar button:not(.icon-btn):not(.btn-icon):not(.action-btn) {
   padding: 5px 12px !important;
   min-height: 34px !important;
   font-size: 12px !important;
@@ -3010,14 +3010,114 @@ button[type="submit"]:hover {
 .advanced-toolbar button:hover,
 .btn-secondary:hover,
 .btn-filter:hover,
-.toolbar button:hover {
+.toolbar button:not(.icon-btn):not(.btn-icon):not(.action-btn):hover {
   background: var(--blue-light) !important;
   color: var(--blue) !important;
   border-color: rgba(0, 135, 255, 0.3) !important;
   box-shadow: 0 4px 14px rgba(0, 135, 255, 0.15) !important;
 }
 
-.icon-btn, .icon-btn.small { width: 34px !important; height: 34px !important; min-width: 34px !important; min-height: 34px !important; display: inline-grid !important; place-items: center !important; padding: 0 !important; border-radius: 10px !important; background: #ffffff !important; border: 1px solid #dbe4ef !important; color: #0f172a !important; }
+/* Universal Table Action Buttons System */
+.icon-btn,
+.icon-btn.small,
+.btn-icon,
+.action-btn,
+.row-actions .icon-btn,
+.row-actions button,
+.row-actions a,
+.table-card .icon-btn,
+.table-card button,
+td .icon-btn,
+td button {
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  max-width: 38px !important;
+  max-height: 38px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.04) !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  text-decoration: none !important;
+  margin: 0 !important;
+  outline: none !important;
+  flex: 0 0 auto !important;
+}
+
+.icon-btn svg,
+.btn-icon svg,
+.action-btn svg,
+.row-actions button svg,
+.row-actions a svg,
+.table-card .icon-btn svg,
+td .icon-btn svg,
+td button svg {
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  stroke-width: 2px !important;
+  pointer-events: none !important;
+  display: block !important;
+  margin: auto !important;
+}
+
+.icon-btn:hover,
+.btn-icon:hover,
+.action-btn:hover,
+.row-actions .icon-btn:hover,
+.row-actions button:hover,
+.row-actions a:hover,
+.table-card .icon-btn:hover,
+td .icon-btn:hover,
+td button:hover {
+  color: #0284c7 !important;
+  background: #e0f2fe !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.18) !important;
+  transform: translateY(-1px) !important;
+}
+
+.icon-btn.danger,
+.btn-icon.danger,
+.action-btn.danger,
+.row-actions .icon-btn.danger,
+.row-actions button.danger,
+td button.danger {
+  color: #dc2626 !important;
+  border-color: #fca5a5 !important;
+  background: #fff5f5 !important;
+}
+
+.icon-btn.danger:hover,
+.btn-icon.danger:hover,
+.action-btn.danger:hover,
+.row-actions .icon-btn.danger:hover,
+.row-actions button.danger:hover,
+td button.danger:hover {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border-color: #dc2626 !important;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25) !important;
+}
+
+.row-actions form,
+.table-card td form,
+td form {
+  display: inline-flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  vertical-align: middle !important;
+}
 .icon-btn:hover { color: var(--blue) !important; background: var(--blue-light) !important; border-color: rgba(0, 135, 255, 0.25) !important; transform: translateY(-1px) !important; }
 .icon-btn.danger { color: var(--danger) !important; }
 .icon-btn.danger:hover { background: #fee2e2 !important; border-color: #fecaca !important; color: #b91c1c !important; }

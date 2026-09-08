@@ -426,19 +426,47 @@ $aboutCompany = $settings['about_company'] ?? 'Kendat Integrated Services is a t
     flex-direction: column !important;
     align-items: stretch !important;
   }
+}
+
 .team-card-neon {
   cursor: pointer !important;
 }
 
-/* Person Summary Modal */
+.team-card-view-bio-pill {
+  margin-top: 10px !important;
+  padding: 8px 14px !important;
+  border-radius: 12px !important;
+  background: rgba(0, 229, 255, 0.08) !important;
+  border: 1px solid rgba(0, 229, 255, 0.3) !important;
+  color: #00e5ff !important;
+  font-family: 'Poppins', sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  transition: all 0.25s ease !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.team-card-neon:hover .team-card-view-bio-pill {
+  background: rgba(0, 229, 255, 0.2) !important;
+  border-color: rgba(0, 229, 255, 0.7) !important;
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.3) !important;
+}
+
+/* Futuristic Ultra-Responsive Person Brief Summary Modal */
 .team-bio-modal-backdrop {
   position: fixed !important;
   top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
-  background: rgba(4, 9, 21, 0.88) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
+  background: rgba(3, 7, 18, 0.92) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
   z-index: 100000 !important;
-  display: flex !important;
+  display: none;
   align-items: center !important;
   justify-content: center !important;
   padding: 20px !important;
@@ -447,49 +475,66 @@ $aboutCompany = $settings['about_company'] ?? 'Kendat Integrated Services is a t
 .team-bio-modal-card {
   position: relative !important;
   width: 100% !important;
-  max-width: 660px !important;
-  background: linear-gradient(145deg, rgba(11, 22, 44, 0.98) 0%, rgba(6, 14, 32, 0.99) 100%) !important;
+  max-width: 680px !important;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(6, 14, 32, 0.99) 100%) !important;
   border: 1px solid rgba(0, 229, 255, 0.5) !important;
-  box-shadow: 0 20px 50px rgba(0, 195, 255, 0.35), inset 0 0 30px rgba(0, 195, 255, 0.15) !important;
+  box-shadow: 0 25px 60px rgba(0, 195, 255, 0.4), inset 0 0 35px rgba(0, 229, 255, 0.15) !important;
   border-radius: 24px !important;
   padding: 32px !important;
   color: #ffffff !important;
   display: grid !important;
-  grid-template-columns: 180px 1fr !important;
-  gap: 24px !important;
+  grid-template-columns: 200px 1fr !important;
+  gap: 28px !important;
   align-items: start !important;
+  animation: teamModalScaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+@keyframes teamModalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .team-bio-modal-close {
   position: absolute !important;
-  top: 16px !important;
-  right: 18px !important;
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  top: 18px !important;
+  right: 20px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(0, 229, 255, 0.3) !important;
   color: #00e5ff !important;
-  font-size: 22px !important;
-  width: 38px !important;
-  height: 38px !important;
+  font-size: 24px !important;
+  width: 40px !important;
+  height: 40px !important;
   border-radius: 50% !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   cursor: pointer !important;
-  transition: all 0.2s ease !important;
+  transition: all 0.25s ease !important;
+  outline: none !important;
+  z-index: 10 !important;
 }
 
 .team-bio-modal-close:hover {
   background: rgba(0, 229, 255, 0.25) !important;
-  transform: scale(1.08) !important;
+  border-color: #00e5ff !important;
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.5) !important;
+  transform: scale(1.1) rotate(90deg) !important;
 }
 
 .team-bio-modal-photo-wrap {
   width: 100% !important;
-  height: 220px !important;
+  height: 250px !important;
   border-radius: 18px !important;
   overflow: hidden !important;
   background: rgba(0, 135, 255, 0.15) !important;
-  border: 1px solid rgba(0, 229, 255, 0.3) !important;
+  border: 2px solid rgba(0, 229, 255, 0.4) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
 }
 
 .team-bio-modal-info {
@@ -499,35 +544,77 @@ $aboutCompany = $settings['about_company'] ?? 'Kendat Integrated Services is a t
 }
 
 .team-bio-modal-role {
-  font-family: 'Montserrat', sans-serif !important;
-  font-size: 13px !important;
-  font-weight: 800 !important;
+  display: inline-block !important;
+  padding: 4px 12px !important;
+  border-radius: 999px !important;
+  background: rgba(0, 229, 255, 0.12) !important;
+  border: 1px solid rgba(0, 229, 255, 0.4) !important;
   color: #00e5ff !important;
+  font-family: 'Montserrat', sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.08em !important;
+  letter-spacing: 0.12em !important;
+  width: fit-content !important;
 }
 
 .team-bio-modal-name {
   font-family: 'Poppins', sans-serif !important;
-  font-size: 22px !important;
+  font-size: 24px !important;
   font-weight: 800 !important;
   color: #ffffff !important;
-  margin: 0 !important;
+  margin: 4px 0 2px 0 !important;
 }
 
 .team-bio-modal-specialties {
+  font-family: 'Poppins', sans-serif !important;
   font-size: 11px !important;
   font-weight: 700 !important;
-  letter-spacing: 0.06em !important;
-  color: rgba(148, 163, 184, 0.85) !important;
+  letter-spacing: 0.08em !important;
+  color: rgba(148, 163, 184, 0.9) !important;
   text-transform: uppercase !important;
+  padding-bottom: 10px !important;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.12) !important;
+  margin-bottom: 4px !important;
 }
 
 .team-bio-modal-bio {
-  font-size: 13.5px !important;
-  line-height: 1.6 !important;
+  font-family: 'Open Sans', sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.65 !important;
   color: #cbd5e1 !important;
-  margin-top: 8px !important;
+  margin-top: 4px !important;
+}
+
+.team-bio-modal-socials {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-top: 14px !important;
+  padding-top: 12px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.team-bio-modal-socials a {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 6px 14px !important;
+  border-radius: 10px !important;
+  background: rgba(15, 23, 42, 0.8) !important;
+  border: 1px solid rgba(0, 229, 255, 0.3) !important;
+  color: #00e5ff !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.team-bio-modal-socials a:hover {
+  background: rgba(0, 229, 255, 0.2) !important;
+  border-color: #00e5ff !important;
+  color: #ffffff !important;
+  transform: translateY(-2px) !important;
 }
 
 @media (max-width: 640px) {
@@ -538,9 +625,13 @@ $aboutCompany = $settings['about_company'] ?? 'Kendat Integrated Services is a t
   .about-btn-glow { justify-content: center !important; }
   .team-bio-modal-card {
     grid-template-columns: 1fr !important;
-    max-height: 85vh !important;
+    max-height: 88vh !important;
     overflow-y: auto !important;
-    padding: 22px !important;
+    padding: 24px !important;
+    gap: 18px !important;
+  }
+  .team-bio-modal-photo-wrap {
+    height: 200px !important;
   }
 }
 </style>
@@ -628,29 +719,15 @@ $aboutCompany = $settings['about_company'] ?? 'Kendat Integrated Services is a t
                                 <div class="team-card-content">
                                     <h3 class="team-card-role-title"><?php echo htmlspecialchars($member['role_title']); ?></h3>
                                     <div class="team-card-name-title"><?php echo htmlspecialchars($member['name']); ?></div>
-                                    
-                                    <?php if (!empty($member['bio'])): ?>
-                                        <p class="team-card-bio-text"><?php echo htmlspecialchars($member['bio']); ?></p>
-                                    <?php endif; ?>
 
                                     <?php if (!empty($member['specialties'])): ?>
                                         <div class="team-card-tags"><?php echo htmlspecialchars($member['specialties']); ?></div>
                                     <?php endif; ?>
 
-                                    <?php if (!empty($member['linkedin_url']) || !empty($member['github_url'])): ?>
-                                        <div class="team-card-social-links">
-                                            <?php if (!empty($member['linkedin_url'])): ?>
-                                                <a href="<?php echo htmlspecialchars($member['linkedin_url']); ?>" target="_blank" rel="noopener" title="LinkedIn">
-                                                    <?php echo render_icon('Linkedin', 16); ?>
-                                                </a>
-                                            <?php endif; ?>
-                                            <?php if (!empty($member['github_url'])): ?>
-                                                <a href="<?php echo htmlspecialchars($member['github_url']); ?>" target="_blank" rel="noopener" title="GitHub">
-                                                    <?php echo render_icon('Github', 16); ?>
-                                                </a>
-                                            <?php endif; ?>
-                                        </div>
-                                    <?php endif; ?>
+                                    <div class="team-card-view-bio-pill">
+                                        <span>Click for Full Bio</span>
+                                        <?php echo render_icon('ArrowRight', 14); ?>
+                                    </div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -675,15 +752,16 @@ $aboutCompany = $settings['about_company'] ?? 'Kendat Integrated Services is a t
 </main>
 
 <!-- Interactive Person Brief Summary Modal -->
-<div class="team-bio-modal-backdrop" id="teamBioModal" style="display:none;">
+<div class="team-bio-modal-backdrop" id="teamBioModal">
     <div class="team-bio-modal-card">
-        <button type="button" class="team-bio-modal-close" id="teamBioModalClose">&times;</button>
+        <button type="button" class="team-bio-modal-close" id="teamBioModalClose" aria-label="Close modal">&times;</button>
         <div class="team-bio-modal-photo-wrap" id="modalPhotoWrap"></div>
         <div class="team-bio-modal-info">
             <span class="team-bio-modal-role" id="modalRole"></span>
             <h2 class="team-bio-modal-name" id="modalName"></h2>
             <div class="team-bio-modal-specialties" id="modalSpecialties"></div>
             <div class="team-bio-modal-bio" id="modalBio"></div>
+            <div class="team-bio-modal-socials" id="modalSocials"></div>
         </div>
     </div>
 </div>
@@ -694,6 +772,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeBtn = document.getElementById('teamBioModalClose');
     if (!modal) return;
 
+    const openModal = () => {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    };
+
+    const closeModal = () => {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    };
+
     document.querySelectorAll('.team-card-neon').forEach(card => {
         card.addEventListener('click', (e) => {
             if (e.target.closest('a')) return;
@@ -703,29 +791,45 @@ document.addEventListener('DOMContentLoaded', () => {
             const specialties = card.dataset.specialties || '';
             const bio = card.dataset.bio || '';
             const photo = card.dataset.photo || '';
+            const linkedin = card.dataset.linkedin || '';
+            const github = card.dataset.github || '';
 
             document.getElementById('modalName').textContent = name;
             document.getElementById('modalRole').textContent = role;
             document.getElementById('modalSpecialties').textContent = specialties;
-            document.getElementById('modalBio').textContent = bio || 'Executive team member driving software engineering and digital transformation.';
+            document.getElementById('modalBio').textContent = bio || 'Executive team member driving software engineering, cloud solutions, and digital transformation.';
             
             const photoWrap = document.getElementById('modalPhotoWrap');
             if (photo) {
-                photoWrap.innerHTML = `<img src="${photo}" alt="${name}" style="width:100%; height:100%; object-fit:cover; border-radius:18px;">`;
+                photoWrap.innerHTML = `<img src="${photo}" alt="${name}" style="width:100%; height:100%; object-fit:cover; object-position:top center; border-radius:16px;">`;
             } else {
-                photoWrap.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:rgba(0,135,255,0.15); border-radius:18px; color:#00e5ff; font-size:56px;">👤</div>`;
+                photoWrap.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, rgba(0,135,255,0.2), rgba(0,229,255,0.1)); border-radius:16px; color:#00e5ff; font-size:64px;">👤</div>`;
             }
 
-            modal.style.display = 'flex';
+            const socialsWrap = document.getElementById('modalSocials');
+            let socialsHtml = '';
+            if (linkedin) {
+                socialsHtml += `<a href="${linkedin}" target="_blank" rel="noopener">LinkedIn &rarr;</a>`;
+            }
+            if (github) {
+                socialsHtml += `<a href="${github}" target="_blank" rel="noopener">GitHub &rarr;</a>`;
+            }
+            socialsWrap.innerHTML = socialsHtml;
+
+            openModal();
         });
     });
 
-    closeBtn?.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
+    closeBtn?.addEventListener('click', closeModal);
 
     modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.style.display = 'none';
+        if (e.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.style.display === 'flex') {
+            closeModal();
+        }
     });
 });
 </script>

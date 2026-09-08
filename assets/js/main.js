@@ -194,17 +194,27 @@ document.addEventListener('DOMContentLoaded', () => {
         startProjectTimer();
     }
 
-    // Password Input Visibility Toggle
-    document.querySelectorAll('.password-toggle').forEach((toggle) => {
-        toggle.addEventListener('click', (e) => {
-            e.preventDefault();
-            const input = toggle.parentElement.querySelector('input');
-            if (input) {
-                const isPassword = input.type === 'password';
-                input.type = isPassword ? 'text' : 'password';
-                toggle.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+    // Password Input Visibility Toggle (Global Event Delegation)
+    document.addEventListener('click', (e) => {
+        const toggle = e.target.closest('.password-toggle, [data-password-toggle]');
+        if (!toggle) return;
+
+        e.preventDefault();
+        const parent = toggle.closest('.password-field, .input-group, label') || toggle.parentElement;
+        const input = parent ? parent.querySelector('input') : null;
+        
+        if (input) {
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+            toggle.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+            
+            const eyeIcon = toggle.querySelector('.icon-eye');
+            const eyeOffIcon = toggle.querySelector('.icon-eye-off');
+            if (eyeIcon && eyeOffIcon) {
+                eyeIcon.style.display = isPassword ? 'none' : 'inline-flex';
+                eyeOffIcon.style.display = isPassword ? 'inline-flex' : 'none';
             }
-        });
+        }
     });
 
     // Project Detail Slider Carousel

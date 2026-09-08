@@ -84,8 +84,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label>Password
                     <span class="password-field">
                         <input name="password" type="password" required>
-                        <button type="button" class="password-toggle" aria-label="Show password">
-                            <?php echo render_icon('Eye', 18); ?>
+                        <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+                            <span class="icon-eye"><?php echo render_icon('Eye', 18); ?></span>
+                            <span class="icon-eye-off" style="display:none;"><?php echo render_icon('EyeOff', 18); ?></span>
                         </button>
                     </span>
                 </label>

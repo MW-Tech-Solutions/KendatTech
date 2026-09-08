@@ -14,6 +14,38 @@ $error = '';
 $usersStmt = $pdo->query("SELECT id, full_name, email FROM users ORDER BY full_name ASC");
 $allUsers = $usersStmt->fetchAll();
 
+// Handle Retry Email POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'retry_email') {
+    $retryId = (int)($_POST['retry_id'] ?? 0);
+    if ($retryId > 0) {
+        $logStmt = $pdo->prepare("SELECT * FROM sent_emails WHERE id = ? LIMIT 1");
+        $logStmt->execute([$retryId]);
+        $emailRecord = $logStmt->fetch();
+
+        if ($emailRecord) {
+            $ok = send_admin_custom_email(
+                $emailRecord['recipient_email'],
+                $emailRecord['recipient_name'] ?? 'Valued Client',
+                $emailRecord['subject'],
+                $emailRecord['badge'] ?? 'General Announcement',
+                $emailRecord['message']
+            );
+
+            if ($ok) {
+                $upStmt = $pdo->prepare("UPDATE sent_emails SET status = 'sent', sent_at = CURRENT_TIMESTAMP WHERE id = ?");
+                $upStmt->execute([$retryId]);
+                audit_log('ADMIN_EMAIL_RETRY_SUCCESS', 'sent_email', (string)$retryId, ['recipient' => $emailRecord['recipient_email']]);
+                $notice = "Retry successful! Re-dispatched email to " . htmlspecialchars($emailRecord['recipient_email']) . " via SSL SMTP.";
+            } else {
+                audit_log('ADMIN_EMAIL_RETRY_FAILED', 'sent_email', (string)$retryId, ['recipient' => $emailRecord['recipient_email']]);
+                $error = "Retry failed for " . htmlspecialchars($emailRecord['recipient_email']) . ". Please check SMTP configuration.";
+            }
+        } else {
+            $error = 'Email log record not found.';
+        }
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_email_submit'])) {
     $recipientMode = $_POST['recipient_mode'] ?? 'single_user';
     $selectedUserId = (int)($_POST['user_id'] ?? 0);
@@ -199,6 +231,7 @@ $sentHistory = $historyStmt->fetchAll();
                         <th>Category</th>
                         <th>Status</th>
                         <th>Sent At</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -220,11 +253,32 @@ $sentHistory = $historyStmt->fetchAll();
                                     <?php endif; ?>
                                 </td>
                                 <td><small><?php echo date('M d, Y h:i A', strtotime($log['sent_at'])); ?></small></td>
+                                <td>
+                                    <?php if ($log['status'] === 'failed'): ?>
+                                        <form method="post" action="" style="display:inline;" onsubmit="return confirm('Retry sending email to <?php echo htmlspecialchars($log['recipient_email']); ?>?');">
+                                            <?php echo csrf_input(); ?>
+                                            <input type="hidden" name="action" value="retry_email">
+                                            <input type="hidden" name="retry_id" value="<?php echo $log['id']; ?>">
+                                            <button type="submit" class="tc-pill-btn-blue" style="padding: 6px 14px; font-size: 11px; border-radius: 8px; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; border:0;" title="Retry sending failed email">
+                                                <?php echo render_icon('RotateCw', 13); ?> Retry Send
+                                            </button>
+                                        </form>
+                                    <?php else: ?>
+                                        <form method="post" action="" style="display:inline;" onsubmit="return confirm('Resend email to <?php echo htmlspecialchars($log['recipient_email']); ?>?');">
+                                            <?php echo csrf_input(); ?>
+                                            <input type="hidden" name="action" value="retry_email">
+                                            <input type="hidden" name="retry_id" value="<?php echo $log['id']; ?>">
+                                            <button type="submit" class="btn small ghost" style="padding: 5px 12px; font-size: 11px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" title="Resend email to recipient">
+                                                <?php echo render_icon('RotateCw', 13); ?> Resend
+                                            </button>
+                                        </form>
+                                    <?php endif; ?>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 24px; color: #64748b;">No sent email logs recorded yet.</td>
+                            <td colspan="7" style="text-align: center; padding: 24px; color: #64748b;">No sent email logs recorded yet.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

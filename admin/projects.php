@@ -174,50 +174,82 @@ if (isset($_GET['edit'])) {
     </form>
 </div>
 
-<div class="table-card glass-card">
-    <table>
+<div class="admin-projects-card">
+    <table class="admin-projects-table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Cover</th>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Demo</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th style="width: 60px;">ID</th>
+                <th style="width: 90px;">Cover</th>
+                <th style="min-width: 260px;">Title & Details</th>
+                <th style="width: 160px;">Category</th>
+                <th style="width: 120px;">Demo Link</th>
+                <th style="width: 120px;">Status</th>
+                <th style="width: 130px; text-align: right;">Actions</th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($rows as $row): ?>
                 <tr>
-                    <td><?php echo $row['id']; ?></td>
+                    <td><span class="admin-id-badge">#<?php echo $row['id']; ?></span></td>
                     <td>
-                        <?php if ($row['main_image']): ?>
-                            <img class="admin-thumb" src="<?php echo htmlspecialchars(upload_asset_url($row['main_image'])); ?>" alt="" style="width: 50px; height: 35px; object-fit: cover; border-radius: 6px;">
+                        <?php if (!empty($row['main_image'])): ?>
+                            <div class="admin-cover-thumb-wrap">
+                                <img class="admin-cover-thumb" src="<?php echo htmlspecialchars(upload_asset_url($row['main_image'])); ?>" alt="Cover">
+                            </div>
                         <?php else: ?>
-                            <span class="muted">No image</span>
+                            <div class="admin-cover-thumb-empty" title="No cover image">
+                                <?php echo render_icon('ImageOff', 18); ?>
+                            </div>
                         <?php endif; ?>
                     </td>
-                    <td><strong><?php echo htmlspecialchars($row['title']); ?></strong></td>
-                    <td><?php echo htmlspecialchars($row['category']); ?></td>
+                    <td>
+                        <div class="admin-project-title-box">
+                            <span class="admin-project-title-text"><?php echo htmlspecialchars($row['title']); ?></span>
+                            <?php if (!empty($row['technologies'])): ?>
+                                <span class="admin-project-tech-sub"><?php echo htmlspecialchars($row['technologies']); ?></span>
+                            <?php endif; ?>
+                        </div>
+                    </td>
+                    <td><span class="admin-cat-badge"><?php echo htmlspecialchars($row['category']); ?></span></td>
                     <td>
                         <?php if (!empty($row['demo_link']) && $row['demo_link'] !== '#'): ?>
-                            <a class="admin-demo-link" href="<?php echo htmlspecialchars($row['demo_link']); ?>" target="_blank" rel="noopener">
-                                <?php echo render_icon('ExternalLink', 14); ?>Open
+                            <a class="admin-demo-pill" href="<?php echo htmlspecialchars($row['demo_link']); ?>" target="_blank" rel="noopener">
+                                <?php echo render_icon('ExternalLink', 12); ?> Open
                             </a>
                         <?php else: ?>
-                            <span class="muted">Not set</span>
+                            <span class="admin-demo-muted">Not set</span>
                         <?php endif; ?>
                     </td>
-                    <td><span class="status"><?php echo htmlspecialchars($row['status']); ?></span></td>
                     <td>
-                        <div class="row-actions">
-                            <a class="icon-btn" href="projects.php?edit=<?php echo $row['id']; ?>" title="Edit Project & Manage Images"><?php echo render_icon('Pencil'); ?> Edit</a>
+                        <?php
+                            $st = strtolower($row['status']);
+                            $dotClass = 'status-dot-green';
+                            $statusClass = 'status-completed';
+                            if ($st === 'ongoing') {
+                                $dotClass = 'status-dot-blue';
+                                $statusClass = 'status-ongoing';
+                            } elseif ($st === 'upcoming') {
+                                $dotClass = 'status-dot-amber';
+                                $statusClass = 'status-upcoming';
+                            }
+                        ?>
+                        <span class="admin-status-pill <?php echo $statusClass; ?>">
+                            <span class="<?php echo $dotClass; ?>"></span>
+                            <?php echo htmlspecialchars(ucfirst($row['status'])); ?>
+                        </span>
+                    </td>
+                    <td style="text-align: right;">
+                        <div class="admin-actions-group">
+                            <a class="btn-action-edit" href="projects.php?edit=<?php echo $row['id']; ?>" title="Edit Project & Manage Images">
+                                <?php echo render_icon('Pencil', 13); ?> Edit
+                            </a>
                             <form method="post" action="projects.php" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete project &quot;<?php echo htmlspecialchars($row['title'], ENT_QUOTES); ?>&quot;? This action cannot be undone.');">
                                 <?php echo csrf_input(); ?>
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                <button type="submit" class="icon-btn danger" title="Delete Project"><?php echo render_icon('Trash2'); ?></button>
+                                <button type="submit" class="btn-action-delete" title="Delete Project">
+                                    <?php echo render_icon('Trash2', 14); ?>
+                                </button>
                             </form>
                         </div>
                     </td>

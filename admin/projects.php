@@ -1,113 +1,162 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/includes/admin_header.php';
+require_once __DIR__ . '/../includes/headers.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/audit_logger.php';
 
+require_admin('admin-login.php');
 require_csrf_token();
 
 $pdo = get_db();
-$notice = '';
+$notice = $_GET['notice'] ?? '';
 $error = '';
 
 // Handle Delete Project via POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete') {
-    $id = (int)($_POST['id'] ?? 0);
-    if ($id > 0) {
-        $stmt = $pdo->prepare("DELETE FROM projects WHERE id = ?");
-        $stmt->execute([$id]);
-        audit_log('ADMIN_PROJECT_DELETED', 'project', (string)$id);
-        $notice = 'Project deleted successfully.';
+    try {
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id > 0) {
+            $stmt = $pdo->prepare("DELETE FROM projects WHERE id = ?");
+            $stmt->execute([$id]);
+            audit_log('ADMIN_PROJECT_DELETED', 'project', (string)$id);
+            header("Location: projects.php?notice=" . urlencode('Project deleted successfully.'));
+            exit;
+        }
+    } catch (Throwable $e) {
+        $error = 'Error deleting project: ' . $e->getMessage();
     }
 }
 
 // Handle Delete Gallery Image via POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && strpos($_POST['action'], 'delete_gallery_image_') === 0) {
-    $imageId = (int)str_replace('delete_gallery_image_', '', $_POST['action']);
-    if ($imageId > 0) {
-        $stmt = $pdo->prepare("SELECT image_path FROM project_images WHERE id = ?");
-        $stmt->execute([$imageId]);
-        $imgPath = $stmt->fetchColumn();
-        if ($imgPath && file_exists(__DIR__ . '/../uploads/' . ltrim($imgPath, '/'))) {
-            @unlink(__DIR__ . '/../uploads/' . ltrim($imgPath, '/'));
+    try {
+        $imageId = (int)str_replace('delete_gallery_image_', '', $_POST['action']);
+        $projectId = !empty($_POST['id']) ? (int)$_POST['id'] : 0;
+        if ($imageId > 0) {
+            $stmt = $pdo->prepare("SELECT image_path, project_id FROM project_images WHERE id = ?");
+            $stmt->execute([$imageId]);
+            $rowImg = $stmt->fetch();
+            if ($rowImg) {
+                $projectId = (int)$rowImg['project_id'];
+                $imgPath = $rowImg['image_path'];
+                if ($imgPath && file_exists(__DIR__ . '/../uploads/' . ltrim($imgPath, '/'))) {
+                    @unlink(__DIR__ . '/../uploads/' . ltrim($imgPath, '/'));
+                }
+                $delStmt = $pdo->prepare("DELETE FROM project_images WHERE id = ?");
+                $delStmt->execute([$imageId]);
+                audit_log('ADMIN_PROJECT_IMAGE_DELETED', 'project', (string)$imageId);
+            }
         }
-        $delStmt = $pdo->prepare("DELETE FROM project_images WHERE id = ?");
-        $delStmt->execute([$imageId]);
-        audit_log('ADMIN_PROJECT_IMAGE_DELETED', 'project', (string)$imageId);
-        $notice = 'Gallery screenshot deleted successfully.';
+        $redir = $projectId > 0 ? "projects.php?edit={$projectId}&notice=" . urlencode('Gallery screenshot deleted successfully.') : "projects.php?notice=" . urlencode('Gallery screenshot deleted.');
+        header("Location: " . $redir);
+        exit;
+    } catch (Throwable $e) {
+        $error = 'Error deleting image: ' . $e->getMessage();
     }
 }
 
 // Handle Main Cover Image Clear via POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete_main_image') {
-    $projectId = !empty($_POST['id']) ? (int)$_POST['id'] : 0;
-    if ($projectId > 0) {
-        $stmt = $pdo->prepare("SELECT main_image FROM projects WHERE id = ?");
-        $stmt->execute([$projectId]);
-        $imgPath = $stmt->fetchColumn();
-        if ($imgPath && file_exists(__DIR__ . '/../uploads/' . ltrim($imgPath, '/'))) {
-            @unlink(__DIR__ . '/../uploads/' . ltrim($imgPath, '/'));
+    try {
+        $projectId = !empty($_POST['id']) ? (int)$_POST['id'] : 0;
+        if ($projectId > 0) {
+            $stmt = $pdo->prepare("SELECT main_image FROM projects WHERE id = ?");
+            $stmt->execute([$projectId]);
+            $imgPath = $stmt->fetchColumn();
+            if ($imgPath && file_exists(__DIR__ . '/../uploads/' . ltrim($imgPath, '/'))) {
+                @unlink(__DIR__ . '/../uploads/' . ltrim($imgPath, '/'));
+            }
+            $updStmt = $pdo->prepare("UPDATE projects SET main_image = '' WHERE id = ?");
+            $updStmt->execute([$projectId]);
+            audit_log('ADMIN_PROJECT_MAIN_IMAGE_CLEARED', 'project', (string)$projectId);
         }
-        $updStmt = $pdo->prepare("UPDATE projects SET main_image = '' WHERE id = ?");
-        $updStmt->execute([$projectId]);
-        audit_log('ADMIN_PROJECT_MAIN_IMAGE_CLEARED', 'project', (string)$projectId);
-        $notice = 'Main cover image removed successfully.';
+        $redir = $projectId > 0 ? "projects.php?edit={$projectId}&notice=" . urlencode('Main cover image removed successfully.') : "projects.php?notice=" . urlencode('Cover image removed.');
+        header("Location: " . $redir);
+        exit;
+    } catch (Throwable $e) {
+        $error = 'Error clearing main image: ' . $e->getMessage();
     }
 }
 
 // Handle Form Submission (Add/Edit Project - Save Changes)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'save') {
-    $id = !empty($_POST['id']) ? (int)$_POST['id'] : null;
-    $title = trim($_POST['title'] ?? '');
-    $slug = trim($_POST['slug'] ?? '');
-    if (empty($slug)) {
-        $slug = slugify($title);
-    }
-    $category = trim($_POST['category'] ?? 'General');
-    $shortDesc = trim($_POST['short_description'] ?? '');
-    $fullDesc = trim($_POST['full_description'] ?? '');
-    $features = trim($_POST['features'] ?? '');
-    $technologies = trim($_POST['technologies'] ?? '');
-    $demoLink = trim($_POST['demo_link'] ?? '');
-    $clientName = trim($_POST['client_name'] ?? '');
-    $completionDate = !empty($_POST['completion_date']) ? $_POST['completion_date'] : date('Y-m-d');
-    $status = $_POST['status'] ?? 'completed';
-    $featured = !empty($_POST['featured']) ? 1 : 0;
+    try {
+        $id = !empty($_POST['id']) ? (int)$_POST['id'] : null;
+        $title = trim($_POST['title'] ?? '');
+        $slug = trim($_POST['slug'] ?? '');
+        if (empty($slug)) {
+            $slug = slugify($title);
+        }
+        $category = trim($_POST['category'] ?? 'General');
+        $shortDesc = trim($_POST['short_description'] ?? '');
+        $fullDesc = trim($_POST['full_description'] ?? '');
+        $features = trim($_POST['features'] ?? '');
+        $technologies = trim($_POST['technologies'] ?? '');
+        $demoLink = trim($_POST['demo_link'] ?? '');
+        $clientName = trim($_POST['client_name'] ?? '');
+        $completionDate = !empty($_POST['completion_date']) ? $_POST['completion_date'] : date('Y-m-d');
+        $status = $_POST['status'] ?? 'completed';
+        $featured = !empty($_POST['featured']) ? 1 : 0;
 
-    if (empty($title) || empty($shortDesc)) {
-        $error = 'Title and Short Description are required.';
-    } else {
-        $mainImage = handle_file_upload('main_image', 'projects');
-
-        if ($id) {
-            if ($mainImage) {
-                $stmt = $pdo->prepare("UPDATE projects SET title=?, slug=?, category=?, short_description=?, full_description=?, features=?, technologies=?, main_image=?, demo_link=?, client_name=?, completion_date=?, status=?, featured=? WHERE id=?");
-                $stmt->execute([$title, $slug, $category, $shortDesc, $fullDesc, $features, $technologies, $mainImage, $demoLink, $clientName, $completionDate, $status, $featured, $id]);
-            } else {
-                $stmt = $pdo->prepare("UPDATE projects SET title=?, slug=?, category=?, short_description=?, full_description=?, features=?, technologies=?, demo_link=?, client_name=?, completion_date=?, status=?, featured=? WHERE id=?");
-                $stmt->execute([$title, $slug, $category, $shortDesc, $fullDesc, $features, $technologies, $demoLink, $clientName, $completionDate, $status, $featured, $id]);
-            }
-            $projectId = $id;
-            audit_log('ADMIN_PROJECT_UPDATED', 'project', (string)$projectId, ['title' => $title]);
-            $notice = 'Project updated successfully.';
+        if (empty($title) || empty($shortDesc)) {
+            $error = 'Title and Short Description are required.';
         } else {
-            $stmt = $pdo->prepare("INSERT INTO projects (title, slug, category, short_description, full_description, features, technologies, main_image, demo_link, client_name, completion_date, status, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$title, $slug, $category, $shortDesc, $fullDesc, $features, $technologies, $mainImage, $demoLink, $clientName, $completionDate, $status, $featured]);
-            $projectId = (int)$pdo->lastInsertId();
-            audit_log('ADMIN_PROJECT_CREATED', 'project', (string)$projectId, ['title' => $title]);
-            $notice = 'Project created successfully.';
-        }
-
-        // Handle Gallery Uploads
-        $galleryImages = handle_multiple_file_uploads('gallery_images', 'projects');
-        if (!empty($galleryImages)) {
-            $maxSort = (int)$pdo->query("SELECT COALESCE(MAX(sort_order), 0) FROM project_images WHERE project_id = {$projectId}")->fetchColumn();
-            $gStmt = $pdo->prepare("INSERT INTO project_images (project_id, image_path, caption, sort_order) VALUES (?, ?, ?, ?)");
-            foreach ($galleryImages as $idx => $gPath) {
-                $gStmt->execute([$projectId, $gPath, 'Screenshot', $maxSort + $idx + 1]);
+            // Slug uniqueness check
+            if ($id) {
+                $chkSlug = $pdo->prepare("SELECT id FROM projects WHERE slug = ? AND id != ? LIMIT 1");
+                $chkSlug->execute([$slug, $id]);
+            } else {
+                $chkSlug = $pdo->prepare("SELECT id FROM projects WHERE slug = ? LIMIT 1");
+                $chkSlug->execute([$slug]);
             }
+            if ($chkSlug->fetch()) {
+                $slug = $slug . '-' . time();
+            }
+
+            $mainImage = handle_file_upload('main_image', 'projects');
+
+            if ($id) {
+                if ($mainImage) {
+                    $stmt = $pdo->prepare("UPDATE projects SET title=?, slug=?, category=?, short_description=?, full_description=?, features=?, technologies=?, main_image=?, demo_link=?, client_name=?, completion_date=?, status=?, featured=? WHERE id=?");
+                    $stmt->execute([$title, $slug, $category, $shortDesc, $fullDesc, $features, $technologies, $mainImage, $demoLink, $clientName, $completionDate, $status, $featured, $id]);
+                } else {
+                    $stmt = $pdo->prepare("UPDATE projects SET title=?, slug=?, category=?, short_description=?, full_description=?, features=?, technologies=?, demo_link=?, client_name=?, completion_date=?, status=?, featured=? WHERE id=?");
+                    $stmt->execute([$title, $slug, $category, $shortDesc, $fullDesc, $features, $technologies, $demoLink, $clientName, $completionDate, $status, $featured, $id]);
+                }
+                $projectId = $id;
+                audit_log('ADMIN_PROJECT_UPDATED', 'project', (string)$projectId, ['title' => $title]);
+                $msg = 'Project updated successfully.';
+            } else {
+                $stmt = $pdo->prepare("INSERT INTO projects (title, slug, category, short_description, full_description, features, technologies, main_image, demo_link, client_name, completion_date, status, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$title, $slug, $category, $shortDesc, $fullDesc, $features, $technologies, $mainImage, $demoLink, $clientName, $completionDate, $status, $featured]);
+                $projectId = (int)$pdo->lastInsertId();
+                audit_log('ADMIN_PROJECT_CREATED', 'project', (string)$projectId, ['title' => $title]);
+                $msg = 'Project created successfully.';
+            }
+
+            // Handle Gallery Uploads
+            $galleryImages = handle_multiple_file_uploads('gallery_images', 'projects');
+            if (!empty($galleryImages)) {
+                $maxSort = (int)$pdo->query("SELECT COALESCE(MAX(sort_order), 0) FROM project_images WHERE project_id = {$projectId}")->fetchColumn();
+                $gStmt = $pdo->prepare("INSERT INTO project_images (project_id, image_path, caption, sort_order) VALUES (?, ?, ?, ?)");
+                foreach ($galleryImages as $idx => $gPath) {
+                    $gStmt->execute([$projectId, $gPath, 'Screenshot', $maxSort + $idx + 1]);
+                }
+            }
+
+            header("Location: projects.php?edit=" . $projectId . "&notice=" . urlencode($msg));
+            exit;
         }
+    } catch (Throwable $e) {
+        $error = 'Failed to save project: ' . $e->getMessage();
     }
 }
+
+// Output Admin Header AFTER POST Handling
+require_once __DIR__ . '/includes/admin_header.php';
 
 // Fetch Projects
 $query = trim($_GET['q'] ?? '');
@@ -277,6 +326,10 @@ if (isset($_GET['edit'])) {
             </div>
 
             <div class="modal-body-content">
+                <?php if ($error): ?>
+                    <div class="admin-notice error" style="margin-bottom: 16px;"><?php echo render_icon('TriangleAlert'); ?><?php echo htmlspecialchars($error); ?></div>
+                <?php endif; ?>
+
                 <!-- Section 1: Overview & Meta -->
                 <div class="modal-section-card">
                     <div class="modal-section-title">

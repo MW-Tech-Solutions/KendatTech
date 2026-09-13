@@ -4444,7 +4444,7 @@ body.cursor-active .custom-cursor-ring {
 .tc-hero-dark-stage {
   position: relative;
   overflow: hidden;
-  padding: 100px 24px 70px;
+  padding: clamp(130px, 14vh, 165px) 24px 70px;
   background: linear-gradient(180deg, #07111f 0%, #0b1730 100%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   min-height: 85vh;

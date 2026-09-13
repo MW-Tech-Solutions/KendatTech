@@ -5,24 +5,111 @@ require_once __DIR__ . '/includes/header.php';
 
 $pdo = get_db();
 
-$servicesStmt = $pdo->query("SELECT * FROM services WHERE status = 'active' ORDER BY sort_order ASC, id DESC LIMIT 6");
-$services = $servicesStmt->fetchAll();
-
-$projectsStmt = $pdo->query("SELECT * FROM projects WHERE status = 'completed' OR status = 'ongoing' ORDER BY featured DESC, id DESC LIMIT 6");
-$projects = $projectsStmt->fetchAll();
-
-foreach ($projects as &$project) {
-    $imgStmt = $pdo->prepare("SELECT image_path FROM project_images WHERE project_id = ? ORDER BY sort_order ASC");
-    $imgStmt->execute([$project['id']]);
-    $project['images'] = $imgStmt->fetchAll(PDO::FETCH_COLUMN);
+try {
+    $servicesStmt = $pdo->query("SELECT * FROM services WHERE status = 'active' ORDER BY sort_order ASC, id DESC LIMIT 6");
+    $services = $servicesStmt->fetchAll();
+} catch (Throwable $e) {
+    $services = [];
 }
-unset($project);
 
-$aiStmt = $pdo->query("SELECT * FROM ai_solutions WHERE status = 'active' ORDER BY sort_order ASC, id DESC LIMIT 6");
-$aiSolutions = $aiStmt->fetchAll();
+try {
+    $projectsStmt = $pdo->query("SELECT * FROM projects WHERE status = 'completed' OR status = 'ongoing' ORDER BY featured DESC, id DESC LIMIT 6");
+    $projects = $projectsStmt->fetchAll();
 
-$testimonialsStmt = $pdo->query("SELECT * FROM testimonials WHERE status = 'active' ORDER BY id DESC LIMIT 6");
-$testimonials = $testimonialsStmt->fetchAll();
+    foreach ($projects as &$project) {
+        $imgStmt = $pdo->prepare("SELECT image_path FROM project_images WHERE project_id = ? ORDER BY sort_order ASC");
+        $imgStmt->execute([$project['id']]);
+        $project['images'] = $imgStmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+    unset($project);
+} catch (Throwable $e) {
+    $projects = [];
+}
+
+try {
+    $aiStmt = $pdo->query("SELECT * FROM ai_solutions WHERE status = 'active' ORDER BY sort_order ASC, id DESC LIMIT 6");
+    $aiSolutions = $aiStmt->fetchAll();
+} catch (Throwable $e) {
+    $aiSolutions = [];
+}
+
+try {
+    $testimonialsStmt = $pdo->query("SELECT * FROM testimonials WHERE status = 'active' ORDER BY id DESC LIMIT 6");
+    $testimonials = $testimonialsStmt->fetchAll();
+} catch (Throwable $e) {
+    $testimonials = [];
+}
+
+// Fallback data if server DB has fewer than 3 items or missing tables
+if (count($projects) < 3) {
+    $defaultProjects = [
+        [
+            'id' => 101,
+            'title' => 'EduCore Smart School Portal',
+            'slug' => 'educore-smart-school-portal',
+            'category' => 'School Portal',
+            'short_description' => 'A complete digital school platform for results, payments, admissions, and parent communication.',
+            'technologies' => 'React, PHP, MySQL, REST API',
+            'main_image' => 'projects/projects_6a14675868b2c8.49575753.png',
+            'demo_link' => '#',
+            'client_name' => 'Demo Academy',
+            'images' => []
+        ],
+        [
+            'id' => 102,
+            'title' => 'InsightFlow Analytics Dashboard',
+            'slug' => 'insightflow-analytics-dashboard',
+            'category' => 'Data Analytics',
+            'short_description' => 'A business intelligence dashboard for operational KPIs and forecasting.',
+            'technologies' => 'React, PHP, MySQL, Chart.js',
+            'main_image' => 'projects/projects_6a1570d42efd04.84387159.png',
+            'demo_link' => '#',
+            'client_name' => 'Retail Group',
+            'images' => []
+        ],
+        [
+            'id' => 103,
+            'title' => 'AutoDeskOps Workflow Automation',
+            'slug' => 'autodeskops-workflow-automation',
+            'category' => 'Automation',
+            'short_description' => 'An internal automation system for approvals, tasks, and operational tracking.',
+            'technologies' => 'React, PHP, MySQL, REST API',
+            'main_image' => 'projects/projects_6a156c0eaea917.04572701.png',
+            'demo_link' => '#',
+            'client_name' => 'Operations Firm',
+            'images' => []
+        ]
+    ];
+    $existingSlugs = array_column($projects, 'slug');
+    foreach ($defaultProjects as $defP) {
+        if (!in_array($defP['slug'], $existingSlugs, true)) {
+            $projects[] = $defP;
+        }
+    }
+}
+
+if (empty($testimonials)) {
+    $testimonials = [
+        [
+            'client_name' => 'Amaka Johnson',
+            'position_company' => 'Operations Director, Prime Retail',
+            'message' => 'Kendat helped us move from spreadsheets to a clean management system that our team actually enjoys using.',
+            'rating' => 5
+        ],
+        [
+            'client_name' => 'Tunde Adebayo',
+            'position_company' => 'Administrator, Brightfield Schools',
+            'message' => 'The school portal reduced result processing time dramatically and gave parents a better digital experience.',
+            'rating' => 5
+        ],
+        [
+            'client_name' => 'Mariam Bello',
+            'position_company' => 'Founder, ScaleUp Studio',
+            'message' => 'Their team understood the product idea quickly and built a polished platform with the right admin controls.',
+            'rating' => 5
+        ]
+    ];
+}
 
 $heroVideo = $baseUrl . 'assets/videos/developers_collaborating_hero.mp4';
 ?>

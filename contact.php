@@ -154,13 +154,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="map-frame">
                     <iframe
                         title="Kendat office location map"
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.659073130574!2d8.53492647476523!3d7.719680092298334!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x105081c80f0bac79%3A0xb52537c1831b17d9!2sKatsina%20Ala%20Street%2C%20Wurukum%2C%20Markurdi%20970101%2C%20Benue!5e0!3m2!1sen!2sng!4v1780922412575!5m2!1sen!2sng"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2491.5835490507807!2d8.537668037344512!3d7.7197626635573195!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x105081c80f0bac79%3A0xb52537c1831b17d9!2sKatsina%20Ala%20Street%2C%20Wurukum%2C%20Markurdi%20970101%2C%20Benue!5e0!3m2!1sen!2sng!4v1789317019573!5m2!1sen!2sng"
                         width="100%"
                         height="260"
                         style="border:0;"
                         allowfullscreen=""
                         loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade">
+                        referrerpolicy="strict-origin-when-cross-origin">
                     </iframe>
                 </div>
             </div>

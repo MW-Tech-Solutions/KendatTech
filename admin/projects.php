@@ -21,9 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 }
 
 // Handle Delete Gallery Image via POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete_gallery_image') {
-    $imageId = (int)($_POST['image_id'] ?? 0);
-    $projectId = (int)($_POST['project_id'] ?? 0);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && strpos($_POST['action'], 'delete_gallery_image_') === 0) {
+    $imageId = (int)str_replace('delete_gallery_image_', '', $_POST['action']);
     if ($imageId > 0) {
         $stmt = $pdo->prepare("SELECT image_path FROM project_images WHERE id = ?");
         $stmt->execute([$imageId]);
@@ -40,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
 // Handle Main Cover Image Clear via POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete_main_image') {
-    $projectId = (int)($_POST['project_id'] ?? 0);
+    $projectId = !empty($_POST['id']) ? (int)$_POST['id'] : 0;
     if ($projectId > 0) {
         $stmt = $pdo->prepare("SELECT main_image FROM projects WHERE id = ?");
         $stmt->execute([$projectId]);
@@ -55,8 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// Handle Form Submission (Add/Edit Project)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && (!isset($_POST['action']) || $_POST['action'] === 'save')) {
+// Handle Form Submission (Add/Edit Project - Save Changes)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'save') {
     $id = !empty($_POST['id']) ? (int)$_POST['id'] : null;
     $title = trim($_POST['title'] ?? '');
     $slug = trim($_POST['slug'] ?? '');
@@ -261,9 +260,8 @@ if (isset($_GET['edit'])) {
 
 <?php if ($editRecord || (isset($_GET['action']) && $_GET['action'] === 'new')): ?>
     <div class="modal-backdrop" role="dialog">
-        <form class="admin-modal admin-modal-redesigned" method="post" action="projects.php" enctype="multipart/form-data">
+        <form class="admin-modal admin-modal-redesigned" method="post" action="projects.php<?php echo $editRecord ? '?edit=' . $editRecord['id'] : ''; ?>" enctype="multipart/form-data">
             <?php echo csrf_input(); ?>
-            <input type="hidden" name="action" value="save">
             <input type="hidden" name="id" value="<?php echo $editRecord['id'] ?? ''; ?>">
             
             <!-- Sticky Modern Modal Header -->
@@ -366,14 +364,9 @@ if (isset($_GET['edit'])) {
                                         <span style="font-size: 11px; color: #16a34a; font-weight: 700;">✓ Active File</span>
                                     <?php endif; ?>
                                 </div>
-                                <form method="post" action="projects.php?edit=<?php echo $editRecord['id']; ?>" style="margin:0;" onsubmit="return confirm('Remove this main cover image?');">
-                                    <?php echo csrf_input(); ?>
-                                    <input type="hidden" name="action" value="delete_main_image">
-                                    <input type="hidden" name="project_id" value="<?php echo $editRecord['id']; ?>">
-                                    <button type="submit" class="btn-action-delete" title="Delete Cover Image">
-                                        <?php echo render_icon('Trash2', 14); ?>
-                                    </button>
-                                </form>
+                                <button type="submit" name="action" value="delete_main_image" class="btn-action-delete" title="Delete Cover Image" onclick="return confirm('Remove this main cover image?');">
+                                    <?php echo render_icon('Trash2', 14); ?>
+                                </button>
                             </div>
                         <?php endif; ?>
                         <input type="file" name="main_image" accept="image/*">
@@ -395,15 +388,9 @@ if (isset($_GET['edit'])) {
                                     <div class="gallery-preview-item">
                                         <div class="gallery-img-wrapper">
                                             <img src="<?php echo htmlspecialchars($gImgUrl); ?>" alt="Screenshot" class="gallery-preview-img">
-                                            <form method="post" action="projects.php?edit=<?php echo $editRecord['id']; ?>" class="gallery-delete-form" onsubmit="return confirm('Delete this screenshot image?');">
-                                                <?php echo csrf_input(); ?>
-                                                <input type="hidden" name="action" value="delete_gallery_image">
-                                                <input type="hidden" name="image_id" value="<?php echo $gImg['id']; ?>">
-                                                <input type="hidden" name="project_id" value="<?php echo $editRecord['id']; ?>">
-                                                <button type="submit" class="gallery-delete-overlay-btn" title="Delete Screenshot">
-                                                    <?php echo render_icon('Trash2', 13); ?>
-                                                </button>
-                                            </form>
+                                            <button type="submit" name="action" value="delete_gallery_image_<?php echo $gImg['id']; ?>" class="gallery-delete-overlay-btn" title="Delete Screenshot" onclick="return confirm('Delete this screenshot image?');">
+                                                <?php echo render_icon('Trash2', 13); ?>
+                                            </button>
                                         </div>
                                         <div class="gallery-item-footer">
                                             <?php if ($gBroken): ?>
@@ -448,7 +435,7 @@ if (isset($_GET['edit'])) {
             <!-- Sticky Modern Modal Footer -->
             <div class="modal-footer-bar">
                 <a class="btn ghost" href="projects.php" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;">Cancel</a>
-                <button class="btn primary" type="submit">
+                <button class="btn primary" type="submit" name="action" value="save">
                     <?php echo render_icon('Save', 14); ?> Save Changes
                 </button>
             </div>

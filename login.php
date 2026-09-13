@@ -1,18 +1,26 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/includes/header.php';
+require_once __DIR__ . '/includes/headers.php';
+require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/functions.php';
 require_once __DIR__ . '/includes/mailer.php';
 require_once __DIR__ . '/includes/csrf.php';
 require_once __DIR__ . '/includes/rate_limiter.php';
 require_once __DIR__ . '/includes/audit_logger.php';
 
-require_csrf_token();
+$baseUrl = get_base_url();
 
 if (is_logged_in()) {
-    header("Location: " . (is_admin() ? $baseUrl . 'admin/index.php' : $baseUrl . 'dashboard.php'));
+    $targetUrl = is_admin() ? ($baseUrl . 'admin/index.php') : ($baseUrl . 'dashboard.php');
+    if (!headers_sent()) {
+        header("Location: " . $targetUrl);
+    }
+    echo '<script>window.location.href = "' . htmlspecialchars($targetUrl) . '";</script>';
     exit;
 }
+
+require_csrf_token();
 
 $error = '';
 $notice = '';
@@ -71,7 +79,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_submit'])) {
                 RateLimiter::clear($rateKey);
                 login_user($account, 'user');
                 audit_log('LOGIN_SUCCESS', 'user', (string)$account['id']);
-                header("Location: " . $baseUrl . "dashboard.php");
+                $targetUrl = $baseUrl . "dashboard.php";
+                if (!headers_sent()) {
+                    header("Location: " . $targetUrl);
+                }
+                echo '<script>window.location.href = "' . htmlspecialchars($targetUrl) . '";</script>';
                 exit;
             }
         } else {
@@ -81,6 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_submit'])) {
         }
     }
 }
+
+require_once __DIR__ . '/includes/header.php';
 ?>
 
 <main>

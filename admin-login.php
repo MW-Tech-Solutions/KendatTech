@@ -1,17 +1,24 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/includes/header.php';
+require_once __DIR__ . '/includes/headers.php';
+require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/functions.php';
 require_once __DIR__ . '/includes/csrf.php';
 require_once __DIR__ . '/includes/rate_limiter.php';
 require_once __DIR__ . '/includes/audit_logger.php';
 
-require_csrf_token();
+$baseUrl = get_base_url();
 
 if (is_admin()) {
-    header("Location: " . $baseUrl . "admin/index.php");
+    if (!headers_sent()) {
+        header("Location: " . $baseUrl . "admin/index.php");
+    }
+    echo '<script>window.location.href = "' . htmlspecialchars($baseUrl) . 'admin/index.php";</script>';
     exit;
 }
+
+require_csrf_token();
 
 $error = '';
 
@@ -35,7 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             RateLimiter::clear($rateKey);
             login_user($adminAccount, $adminAccount['role'] ?? 'admin');
             audit_log('ADMIN_LOGIN_SUCCESS', 'admin', (string)$adminAccount['id']);
-            header("Location: " . $baseUrl . "admin/index.php");
+            if (!headers_sent()) {
+                header("Location: " . $baseUrl . "admin/index.php");
+            }
+            echo '<script>window.location.href = "' . htmlspecialchars($baseUrl) . 'admin/index.php";</script>';
             exit;
         } else {
             RateLimiter::hit($rateKey, 900);
@@ -44,6 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+require_once __DIR__ . '/includes/header.php';
 ?>
 
 <main>

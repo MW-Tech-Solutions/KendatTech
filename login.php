@@ -178,7 +178,7 @@ require_once __DIR__ . '/includes/header.php';
                 </button>
                 
                 <div class="auth-switch" style="text-align: center; margin-top: 20px; font-size: 14px; color: var(--muted);">
-                    New to Kendat? <a href="<?php echo $baseUrl; ?>register.php" style="color: var(--blue); font-weight: 800; text-decoration: none;">Create account -></a>
+                    New to Kendat? <a href="<?php echo $baseUrl; ?>register.php" style="color: var(--blue); font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Create account <i class="bi bi-arrow-right"></i></a>
                 </div>
             </form>
         </div>

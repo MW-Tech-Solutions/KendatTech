@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </button>
 
                 <div class="auth-switch" style="text-align: center; margin-top: 20px; font-size: 14px; color: var(--muted);">
-                    Already registered? <a href="<?php echo $baseUrl; ?>login.php" style="color: var(--blue); font-weight: 800; text-decoration: none;">Login to Portal -></a>
+                    Already registered? <a href="<?php echo $baseUrl; ?>login.php" style="color: var(--blue); font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Login to Portal <i class="bi bi-arrow-right"></i></a>
                 </div>
             </form>
         </div>

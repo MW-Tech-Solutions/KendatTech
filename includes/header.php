@@ -129,3 +129,24 @@ $isLightHeaderPage = in_array($currentPageFile, ['login.php', 'register.php', 'a
             <?php endif; ?>
         </nav>
     </header>
+    <script>
+    (function() {
+        var header = document.querySelector('.site-header');
+        if (!header) return;
+        var checkScroll = function() {
+            var st = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+            if (st > 20) {
+                header.classList.add('is-scrolled');
+            } else {
+                header.classList.remove('is-scrolled');
+            }
+        };
+        window.addEventListener('scroll', checkScroll, { passive: true });
+        document.addEventListener('scroll', checkScroll, { passive: true });
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', checkScroll);
+        } else {
+            checkScroll();
+        }
+    })();
+    </script>

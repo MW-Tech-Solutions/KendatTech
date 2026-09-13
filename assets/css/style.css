@@ -953,7 +953,7 @@ a[class*="btn"] {
   font-family: var(--font-button);
 }
 
-/* Fully Transparent Header at Top -> Sleek Dark Glass on Scroll */
+/* Fully Transparent Header at Top -> Sleek Solid Dark Navy Glass on Scroll */
 .site-header {
   position: fixed;
   top: 0;
@@ -966,13 +966,16 @@ a[class*="btn"] {
   gap: 18px;
   min-height: 76px;
   padding: 14px clamp(18px, 5vw, 72px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
-  background: rgba(5, 11, 24, 0.92) !important;
-  backdrop-filter: blur(18px) !important;
-  -webkit-backdrop-filter: blur(18px) !important;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35) !important;
   color: #ffffff;
   transition: background 0.35s ease, backdrop-filter 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.site-header:not(.is-scrolled) {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: none !important;
 }
 
 .site-header .brand { display: inline-flex; align-items: center; text-decoration: none; }
@@ -1041,11 +1044,12 @@ a[class*="btn"] {
 
 /* Scrolled State (Sleek Translucent Dark Navy Glass - Preserves Logo & Link Visibility!) */
 .site-header.is-scrolled {
-  background: rgba(5, 11, 24, 0.95) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18) !important;
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4) !important;
+  background: #050b18 !important;
+  background: rgba(5, 11, 24, 0.96) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6) !important;
   color: #ffffff !important;
 }
 

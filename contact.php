@@ -160,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         style="border:0;"
                         allowfullscreen=""
                         loading="lazy"
-                        referrerpolicy="strict-origin-when-cross-origin">
+                        referrerpolicy="no-referrer-when-downgrade">
                     </iframe>
                 </div>
             </div>

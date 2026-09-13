@@ -25,6 +25,7 @@ function send_security_headers(): void {
            "font-src 'self' https://fonts.gstatic.com data:; " .
            "img-src 'self' data: blob: https:; " .
            "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " .
+           "frame-src 'self' https://www.google.com https://maps.google.com https://*.google.com; " .
            "frame-ancestors 'self';";
 
     header("Content-Security-Policy: " . $csp);

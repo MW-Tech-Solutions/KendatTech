@@ -261,58 +261,105 @@ if (isset($_GET['edit'])) {
 
 <?php if ($editRecord || (isset($_GET['action']) && $_GET['action'] === 'new')): ?>
     <div class="modal-backdrop" role="dialog">
-        <form class="admin-modal" method="post" action="projects.php" enctype="multipart/form-data" style="max-width: 850px;">
+        <form class="admin-modal admin-modal-redesigned" method="post" action="projects.php" enctype="multipart/form-data">
             <?php echo csrf_input(); ?>
             <input type="hidden" name="action" value="save">
             <input type="hidden" name="id" value="<?php echo $editRecord['id'] ?? ''; ?>">
-            <div class="modal-head">
-                <div>
-                    <span class="eyebrow"><?php echo $editRecord ? 'Edit Record' : 'New Record'; ?></span>
-                    <h2><?php echo $editRecord ? 'Edit Project & Manage Media' : 'New Project'; ?></h2>
+            
+            <!-- Sticky Modern Modal Header -->
+            <div class="modal-head-redesigned">
+                <div class="modal-head-title-wrap">
+                    <span class="modal-eyebrow-tag"><?php echo render_icon('FolderGit2', 13); ?> <?php echo $editRecord ? 'Edit Project' : 'New Project'; ?></span>
+                    <h2><?php echo htmlspecialchars($editRecord['title'] ?? 'Create Project Record'); ?></h2>
+                    <?php if (!empty($editRecord['id'])): ?>
+                        <span class="modal-id-badge">#<?php echo $editRecord['id']; ?></span>
+                    <?php endif; ?>
                 </div>
-                <a class="icon-btn" href="projects.php"><?php echo render_icon('X'); ?></a>
+                <a class="icon-btn" href="projects.php" title="Close Modal"><?php echo render_icon('X', 18); ?></a>
             </div>
 
-            <div class="admin-form modal-form">
-                <label>Title<input name="title" value="<?php echo htmlspecialchars($editRecord['title'] ?? ''); ?>" required></label>
-                <label>Slug<input name="slug" value="<?php echo htmlspecialchars($editRecord['slug'] ?? ''); ?>"></label>
-                <label>Category<input name="category" value="<?php echo htmlspecialchars($editRecord['category'] ?? 'School Portal'); ?>" required></label>
-                <label>Technologies<input name="technologies" value="<?php echo htmlspecialchars($editRecord['technologies'] ?? ''); ?>"></label>
-                <label>Demo Link<input name="demo_link" type="url" placeholder="https://example.com/demo" value="<?php echo htmlspecialchars(($editRecord['demo_link'] ?? '') === '#' ? '' : ($editRecord['demo_link'] ?? '')); ?>"></label>
-                <label>Client Name<input name="client_name" value="<?php echo htmlspecialchars($editRecord['client_name'] ?? ''); ?>"></label>
-                <label>Completion Date<input name="completion_date" type="date" value="<?php echo htmlspecialchars($editRecord['completion_date'] ?? date('Y-m-d')); ?>"></label>
-                <label>Status
-                    <select name="status">
-                        <option value="completed" <?php echo ($editRecord['status'] ?? '') === 'completed' ? 'selected' : ''; ?>>Completed</option>
-                        <option value="ongoing" <?php echo ($editRecord['status'] ?? '') === 'ongoing' ? 'selected' : ''; ?>>Ongoing</option>
-                        <option value="upcoming" <?php echo ($editRecord['status'] ?? '') === 'upcoming' ? 'selected' : ''; ?>>Upcoming</option>
-                    </select>
-                </label>
-                <label>Featured
-                    <select name="featured">
-                        <option value="1" <?php echo !empty($editRecord['featured']) ? 'selected' : ''; ?>>Yes (1)</option>
-                        <option value="0" <?php echo empty($editRecord['featured']) ? 'selected' : ''; ?>>No (0)</option>
-                    </select>
-                </label>
+            <div class="modal-body-content">
+                <!-- Section 1: Overview & Meta -->
+                <div class="modal-section-card">
+                    <div class="modal-section-title">
+                        <?php echo render_icon('Layers', 16); ?> 1. Overview & General Info
+                    </div>
+                    <div class="modal-fields-grid">
+                        <label class="modal-form-label">
+                            <span class="label-text">Project Title *</span>
+                            <input name="title" value="<?php echo htmlspecialchars($editRecord['title'] ?? ''); ?>" required placeholder="e.g. KendatPay VTU Portal">
+                        </label>
+                        <label class="modal-form-label">
+                            <span class="label-text">URL Slug</span>
+                            <input name="slug" value="<?php echo htmlspecialchars($editRecord['slug'] ?? ''); ?>" placeholder="e.g. kendatpay-vtu-portal">
+                        </label>
+                        <label class="modal-form-label">
+                            <span class="label-text">Category *</span>
+                            <input name="category" value="<?php echo htmlspecialchars($editRecord['category'] ?? 'School Portal'); ?>" required placeholder="e.g. FinTech & Telecom">
+                        </label>
+                        <label class="modal-form-label">
+                            <span class="label-text">Client Name</span>
+                            <input name="client_name" value="<?php echo htmlspecialchars($editRecord['client_name'] ?? ''); ?>" placeholder="e.g. DOOTOR Enterprises">
+                        </label>
+                        <label class="modal-form-label modal-field-full">
+                            <span class="label-text">Completion Date</span>
+                            <input name="completion_date" type="date" value="<?php echo htmlspecialchars($editRecord['completion_date'] ?? date('Y-m-d')); ?>">
+                        </label>
+                    </div>
+                </div>
 
-                <!-- Dedicated Visual Media & Gallery Manager Section -->
-                <div class="admin-media-manager-card" style="grid-column: 1 / -1; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 20px; margin-top: 10px;">
-                    <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 16px; color: #0f172a; display: flex; align-items: center; gap: 8px;">
-                        <?php echo render_icon('Image', 20); ?> Project Cover & Gallery Image Manager
-                    </h3>
+                <!-- Section 2: Visibility, Status & Demo -->
+                <div class="modal-section-card">
+                    <div class="modal-section-title">
+                        <?php echo render_icon('Globe', 16); ?> 2. Visibility & Links
+                    </div>
+                    <div class="modal-fields-grid">
+                        <label class="modal-form-label">
+                            <span class="label-text">Project Status</span>
+                            <select name="status">
+                                <option value="completed" <?php echo ($editRecord['status'] ?? '') === 'completed' ? 'selected' : ''; ?>>Completed</option>
+                                <option value="ongoing" <?php echo ($editRecord['status'] ?? '') === 'ongoing' ? 'selected' : ''; ?>>Ongoing</option>
+                                <option value="upcoming" <?php echo ($editRecord['status'] ?? '') === 'upcoming' ? 'selected' : ''; ?>>Upcoming</option>
+                            </select>
+                        </label>
+                        <label class="modal-form-label">
+                            <span class="label-text">Featured on Homepage</span>
+                            <select name="featured">
+                                <option value="1" <?php echo !empty($editRecord['featured']) ? 'selected' : ''; ?>>Yes (Show on Homepage)</option>
+                                <option value="0" <?php echo empty($editRecord['featured']) ? 'selected' : ''; ?>>No (Hide from Featured)</option>
+                            </select>
+                        </label>
+                        <label class="modal-form-label">
+                            <span class="label-text">Live Demo Link URL</span>
+                            <input name="demo_link" type="url" placeholder="https://example.com/demo" value="<?php echo htmlspecialchars(($editRecord['demo_link'] ?? '') === '#' ? '' : ($editRecord['demo_link'] ?? '')); ?>">
+                        </label>
+                        <label class="modal-form-label">
+                            <span class="label-text">Technologies Used</span>
+                            <input name="technologies" value="<?php echo htmlspecialchars($editRecord['technologies'] ?? ''); ?>" placeholder="e.g. PHP, MySQL, JavaScript, Tailwind">
+                        </label>
+                    </div>
+                </div>
 
-                    <!-- 1. Main Cover Image Preview & Controls -->
-                    <div class="main-image-control-box" style="margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">
-                        <label style="font-weight: 700; color: #334155; margin-bottom: 8px; display: block;">Main Cover Image</label>
+                <!-- Section 3: Dedicated Cover & Gallery Image Manager -->
+                <div class="modal-section-card">
+                    <div class="modal-section-title">
+                        <?php echo render_icon('Image', 16); ?> 3. Project Cover & Gallery Manager
+                    </div>
+
+                    <!-- Main Cover Image -->
+                    <div style="margin-bottom: 20px;">
+                        <label class="modal-form-label" style="margin-bottom: 8px;">
+                            <span class="label-text">Main Cover Image</span>
+                        </label>
                         <?php if (!empty($editRecord['main_image'])): 
                             $mainImgUrl = upload_asset_url($editRecord['main_image']);
                             $fileDisk = __DIR__ . '/../uploads/' . ltrim($editRecord['main_image'], '/');
                             $isBroken = !file_exists($fileDisk) || !is_file($fileDisk);
                         ?>
-                            <div class="current-media-preview-row" style="display: flex; align-items: center; gap: 16px; background: #ffffff; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 10px;">
-                                <img src="<?php echo htmlspecialchars($mainImgUrl); ?>" alt="Main Cover" style="width: 100px; height: 65px; object-fit: cover; border-radius: 8px; border: 1px solid #cbd5e1;">
+                            <div class="modal-media-cover-card">
+                                <img src="<?php echo htmlspecialchars($mainImgUrl); ?>" alt="Main Cover" class="modal-cover-preview-img">
                                 <div style="flex: 1; min-width: 0;">
-                                    <strong style="font-size: 13px; color: #0f172a; display: block; word-break: break-all;"><?php echo htmlspecialchars($editRecord['main_image']); ?></strong>
+                                    <strong style="font-size: 13px; color: #0f172a; display: block; word-break: break-all;"><?php echo htmlspecialchars(basename($editRecord['main_image'])); ?></strong>
                                     <?php if ($isBroken): ?>
                                         <span style="font-size: 11px; color: #ef4444; font-weight: 700;">⚠ Missing File on Disk (Fallback placeholder in use)</span>
                                     <?php else: ?>
@@ -323,30 +370,32 @@ if (isset($_GET['edit'])) {
                                     <?php echo csrf_input(); ?>
                                     <input type="hidden" name="action" value="delete_main_image">
                                     <input type="hidden" name="project_id" value="<?php echo $editRecord['id']; ?>">
-                                    <button type="submit" class="btn small danger" style="background: #ef4444; color: #fff; border: 0; padding: 6px 12px; border-radius: 8px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
-                                        <?php echo render_icon('Trash2', 14); ?> Delete Cover Image
+                                    <button type="submit" class="btn-action-delete" title="Delete Cover Image">
+                                        <?php echo render_icon('Trash2', 14); ?>
                                     </button>
                                 </form>
                             </div>
                         <?php endif; ?>
                         <input type="file" name="main_image" accept="image/*">
-                        <small style="color: #64748b; font-size: 12px; display: block; margin-top: 4px;">Upload a new image to set or replace the main project cover image.</small>
+                        <small style="color: #64748b; font-size: 11px; display: block; margin-top: 4px;">Upload a new image file to set or replace the project's primary cover photo.</small>
                     </div>
 
-                    <!-- 2. Additional Gallery Screenshots Preview & Delete Controls -->
-                    <div class="gallery-images-control-box">
-                        <label style="font-weight: 700; color: #334155; margin-bottom: 10px; display: block;">Gallery Screenshots (<?php echo count($galleryRecordImages); ?> uploaded)</label>
+                    <!-- Additional Gallery Screenshots -->
+                    <div>
+                        <label class="modal-form-label" style="margin-bottom: 8px;">
+                            <span class="label-text">Gallery Screenshots (<?php echo count($galleryRecordImages); ?> uploaded)</span>
+                        </label>
                         <?php if (!empty($galleryRecordImages)): ?>
-                            <div class="admin-gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 14px;">
+                            <div class="modal-gallery-preview-grid">
                                 <?php foreach ($galleryRecordImages as $gImg): 
                                     $gImgUrl = upload_asset_url($gImg['image_path']);
                                     $gDisk = __DIR__ . '/../uploads/' . ltrim($gImg['image_path'], '/');
                                     $gBroken = !file_exists($gDisk) || !is_file($gDisk);
                                 ?>
-                                    <div class="gallery-item-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 8px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative;">
-                                        <img src="<?php echo htmlspecialchars($gImgUrl); ?>" alt="Screenshot" style="width: 100%; height: 80px; object-fit: cover; border-radius: 8px; margin-bottom: 6px;">
+                                    <div class="gallery-preview-item">
+                                        <img src="<?php echo htmlspecialchars($gImgUrl); ?>" alt="Screenshot" class="gallery-preview-img">
                                         <?php if ($gBroken): ?>
-                                            <span style="font-size: 10px; color: #ef4444; font-weight: 700; margin-bottom: 4px;">⚠ Broken File</span>
+                                            <span style="font-size: 10px; color: #ef4444; font-weight: 700; margin-bottom: 4px;">⚠ Missing</span>
                                         <?php else: ?>
                                             <span style="font-size: 10px; color: #64748b; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;"><?php echo htmlspecialchars(basename($gImg['image_path'])); ?></span>
                                         <?php endif; ?>
@@ -355,7 +404,7 @@ if (isset($_GET['edit'])) {
                                             <input type="hidden" name="action" value="delete_gallery_image">
                                             <input type="hidden" name="image_id" value="<?php echo $gImg['id']; ?>">
                                             <input type="hidden" name="project_id" value="<?php echo $editRecord['id']; ?>">
-                                            <button type="submit" class="btn small danger" style="width: 100%; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
+                                            <button type="submit" class="btn-action-delete" style="width: 100%; height: 28px; border-radius: 6px;" title="Delete Screenshot">
                                                 <?php echo render_icon('Trash2', 12); ?> Delete
                                             </button>
                                         </form>
@@ -363,21 +412,41 @@ if (isset($_GET['edit'])) {
                                 <?php endforeach; ?>
                             </div>
                         <?php else: ?>
-                            <p style="font-size: 13px; color: #64748b; margin-top: 0; margin-bottom: 10px;">No gallery screenshots uploaded for this project yet.</p>
+                            <p style="font-size: 12px; color: #94a3b8; font-style: italic; margin-top: 0; margin-bottom: 10px;">No additional screenshot images uploaded yet.</p>
                         <?php endif; ?>
                         <input type="file" name="gallery_images[]" accept="image/*" multiple>
-                        <small style="color: #64748b; font-size: 12px; display: block; margin-top: 4px;">Select multiple images to add new screenshots to the project gallery slider.</small>
+                        <small style="color: #64748b; font-size: 11px; display: block; margin-top: 4px;">Hold Ctrl/Cmd to select multiple images for the interactive project slider.</small>
                     </div>
                 </div>
 
-                <label style="grid-column:1 / -1;">Short Description<textarea name="short_description" required><?php echo htmlspecialchars($editRecord['short_description'] ?? ''); ?></textarea></label>
-                <label style="grid-column:1 / -1;">Full Description<textarea name="full_description"><?php echo htmlspecialchars($editRecord['full_description'] ?? ''); ?></textarea></label>
-                <label style="grid-column:1 / -1;">Features (one per line)<textarea name="features"><?php echo htmlspecialchars($editRecord['features'] ?? ''); ?></textarea></label>
+                <!-- Section 4: Descriptions & Features -->
+                <div class="modal-section-card">
+                    <div class="modal-section-title">
+                        <?php echo render_icon('FileText', 16); ?> 4. Descriptions & Features
+                    </div>
+                    <div class="modal-fields-grid">
+                        <label class="modal-form-label modal-field-full">
+                            <span class="label-text">Short Description *</span>
+                            <textarea name="short_description" required placeholder="Brief summary shown on project cards..." style="min-height: 80px;"><?php echo htmlspecialchars($editRecord['short_description'] ?? ''); ?></textarea>
+                        </label>
+                        <label class="modal-form-label modal-field-full">
+                            <span class="label-text">Full Detailed Description</span>
+                            <textarea name="full_description" placeholder="Comprehensive project case study and scope of work..." style="min-height: 140px;"><?php echo htmlspecialchars($editRecord['full_description'] ?? ''); ?></textarea>
+                        </label>
+                        <label class="modal-form-label modal-field-full">
+                            <span class="label-text">Key Features (One feature per line)</span>
+                            <textarea name="features" placeholder="Automated Airtime & Data VTU&#10;Instant Wallet Funding System&#10;Real-time Transaction Reporting" style="min-height: 110px;"><?php echo htmlspecialchars($editRecord['features'] ?? ''); ?></textarea>
+                        </label>
+                    </div>
+                </div>
             </div>
 
-            <div class="modal-actions">
-                <a class="btn ghost" href="projects.php">Cancel</a>
-                <button class="btn primary" type="submit"><?php echo render_icon('Save'); ?>Save Changes</button>
+            <!-- Sticky Modern Modal Footer -->
+            <div class="modal-footer-bar">
+                <a class="btn ghost" href="projects.php" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;">Cancel</a>
+                <button class="btn primary" type="submit">
+                    <?php echo render_icon('Save', 14); ?> Save Changes
+                </button>
             </div>
         </form>
     </div>

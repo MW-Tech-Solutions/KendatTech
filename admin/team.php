@@ -132,16 +132,16 @@ if (isset($_GET['edit'])) {
     </form>
 </div>
 
-<div class="table-card glass-card">
-    <table>
+<div class="admin-projects-card">
+    <table class="admin-projects-table">
         <thead>
             <tr>
-                <th>Photo</th>
-                <th>Name & Title</th>
-                <th>Specialties / Sub-tags</th>
-                <th>Order</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th style="width: 70px;">Photo</th>
+                <th style="min-width: 200px;">Name & Title</th>
+                <th style="min-width: 180px;">Specialties / Sub-tags</th>
+                <th style="width: 80px;">Order</th>
+                <th style="width: 120px;">Status</th>
+                <th style="width: 140px; text-align: right;">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -155,42 +155,48 @@ if (isset($_GET['edit'])) {
                 ?>
                     <tr>
                         <td>
-                            <div style="width:48px; height:48px; border-radius:12px; overflow:hidden; background:rgba(0,135,255,0.15); display:grid; place-items:center; border:1px solid rgba(0,229,255,0.3);">
+                            <div style="width:44px; height:44px; border-radius:12px; overflow:hidden; background:#f1f5f9; display:grid; place-items:center; border:1px solid #cbd5e1;">
                                 <?php if ($photoUrl): ?>
                                     <img src="<?php echo htmlspecialchars($photoUrl); ?>" alt="<?php echo htmlspecialchars($m['name']); ?>" style="width:100%; height:100%; object-fit:cover;">
                                 <?php else: ?>
-                                    <?php echo render_icon('User', 22); ?>
+                                    <?php echo render_icon('User', 20); ?>
                                 <?php endif; ?>
                             </div>
                         </td>
                         <td>
-                            <strong style="font-size:15px; color:#ffffff;"><?php echo htmlspecialchars($m['name']); ?></strong><br>
-                            <small style="color:#00e5ff; font-weight:700;"><?php echo htmlspecialchars($m['role_title']); ?></small>
+                            <strong style="font-size:14px; color:#0f172a; display:block;"><?php echo htmlspecialchars($m['name']); ?></strong>
+                            <span style="color:#0087FF; font-size:12px; font-weight:700;"><?php echo htmlspecialchars($m['role_title']); ?></span>
                         </td>
                         <td>
-                            <span style="font-size:12px; color:#cbd5e1; font-weight:600; letter-spacing:0.04em;">
+                            <span style="font-size:12px; color:#475569; font-weight:600;">
                                 <?php echo htmlspecialchars($m['specialties'] ?? 'N/A'); ?>
                             </span>
                         </td>
-                        <td><code><?php echo $m['sort_order']; ?></code></td>
+                        <td><span style="font-size:12px; color:#64748b; font-weight:800;">#<?php echo $m['sort_order']; ?></span></td>
                         <td>
                             <?php if ($m['status'] === 'active'): ?>
-                                <span class="status" style="background:rgba(34,197,94,0.15); color:#4ade80;">ACTIVE</span>
+                                <span class="admin-status-pill status-completed">
+                                    <span class="status-dot-green"></span> Active
+                                </span>
                             <?php else: ?>
-                                <span class="status" style="background:rgba(239,68,68,0.15); color:#f87171;">HIDDEN</span>
+                                <span class="admin-status-pill" style="background:#fee2e2; color:#dc2626; border:1px solid #fca5a5;">
+                                    <span style="width:7px; height:7px; border-radius:50%; background:#dc2626; display:inline-block;"></span> Hidden
+                                </span>
                             <?php endif; ?>
                         </td>
-                        <td>
-                            <div class="row-actions" style="display:flex; gap:8px;">
-                                <a class="icon-btn" href="team.php?edit=<?php echo $m['id']; ?>" title="Edit Team Member"><?php echo render_icon('Pencil'); ?></a>
+                        <td style="text-align: right;">
+                            <div class="admin-actions-group">
+                                <a class="btn-action-edit" href="team.php?edit=<?php echo $m['id']; ?>" title="Edit Team Member">
+                                    <?php echo render_icon('Pencil', 14); ?>
+                                </a>
                                 
                                 <form method="post" action="team.php" style="display:inline;">
                                     <?php echo csrf_input(); ?>
                                     <input type="hidden" name="action" value="toggle_status">
                                     <input type="hidden" name="id" value="<?php echo $m['id']; ?>">
                                     <input type="hidden" name="new_status" value="<?php echo $m['status']==='active'?'hidden':'active'; ?>">
-                                    <button type="submit" class="icon-btn" title="<?php echo $m['status']==='active'?'Hide from public website':'Make active'; ?>">
-                                        <?php echo render_icon($m['status']==='active'?'EyeOff':'Eye'); ?>
+                                    <button type="submit" class="btn-action-edit" title="<?php echo $m['status']==='active'?'Hide from public website':'Make active'; ?>">
+                                        <?php echo render_icon($m['status']==='active'?'EyeOff':'Eye', 14); ?>
                                     </button>
                                 </form>
 
@@ -198,7 +204,9 @@ if (isset($_GET['edit'])) {
                                     <?php echo csrf_input(); ?>
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="id" value="<?php echo $m['id']; ?>">
-                                    <button type="submit" class="icon-btn danger" title="Delete"><?php echo render_icon('Trash2'); ?></button>
+                                    <button type="submit" class="btn-action-delete" title="Delete Team Member">
+                                        <?php echo render_icon('Trash2', 14); ?>
+                                    </button>
                                 </form>
                             </div>
                         </td>

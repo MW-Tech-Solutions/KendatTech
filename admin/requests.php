@@ -86,42 +86,67 @@ if (isset($_GET['edit'])) {
     </form>
 </div>
 
-<div class="table-card glass-card">
-    <table>
+<div class="admin-projects-card">
+    <table class="admin-projects-table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Client Name</th>
-                <th>Category</th>
-                <th>Budget Range</th>
-                <th>Attachment</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th style="width: 60px;">ID</th>
+                <th style="min-width: 180px;">Client Name & Company</th>
+                <th style="min-width: 160px;">Category</th>
+                <th style="width: 140px;">Budget Range</th>
+                <th style="width: 130px;">Attachment</th>
+                <th style="width: 120px;">Status</th>
+                <th style="width: 120px; text-align: right;">Actions</th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($rows as $row): ?>
                 <tr>
-                    <td><?php echo $row['id']; ?></td>
-                    <td><strong><?php echo htmlspecialchars($row['user_name']); ?></strong><br><small><?php echo htmlspecialchars($row['company_name'] ?? ''); ?></small></td>
-                    <td><?php echo htmlspecialchars($row['project_category']); ?></td>
-                    <td><?php echo htmlspecialchars($row['budget_range'] ?? '-'); ?></td>
+                    <td><span class="admin-id-badge">#<?php echo $row['id']; ?></span></td>
+                    <td>
+                        <strong style="font-size:14px; color:#0f172a; display:block;"><?php echo htmlspecialchars($row['user_name']); ?></strong>
+                        <span style="font-size:12px; color:#64748b; font-weight:600;"><?php echo htmlspecialchars($row['company_name'] ?? ''); ?></span>
+                    </td>
+                    <td><span class="admin-cat-badge"><?php echo htmlspecialchars($row['project_category']); ?></span></td>
+                    <td><span style="font-size:13px; color:#334155; font-weight:700;"><?php echo htmlspecialchars($row['budget_range'] ?? '-'); ?></span></td>
                     <td>
                         <?php if (!empty($row['file_path'])): ?>
-                            <a href="<?php echo htmlspecialchars(upload_asset_url($row['file_path'])); ?>" target="_blank" class="muted">View Attachment</a>
+                            <a class="admin-demo-pill" href="<?php echo htmlspecialchars(upload_asset_url($row['file_path'])); ?>" target="_blank" rel="noopener">
+                                <?php echo render_icon('FileText', 12); ?> Attachment
+                            </a>
                         <?php else: ?>
-                            <span class="muted">None</span>
+                            <span class="admin-demo-muted">None</span>
                         <?php endif; ?>
                     </td>
-                    <td><span class="status"><?php echo htmlspecialchars($row['status']); ?></span></td>
                     <td>
-                        <div class="row-actions">
-                            <a class="icon-btn" href="requests.php?edit=<?php echo $row['id']; ?>" title="Edit Status/Feedback"><?php echo render_icon('Pencil'); ?></a>
+                        <?php
+                            $st = strtolower($row['status']);
+                            $statusClass = 'status-completed';
+                            $dotClass = 'status-dot-green';
+                            if (in_array($st, ['pending', 'reviewing'])) {
+                                $statusClass = 'status-upcoming';
+                                $dotClass = 'status-dot-amber';
+                            } elseif ($st === 'in_progress') {
+                                $statusClass = 'status-ongoing';
+                                $dotClass = 'status-dot-blue';
+                            }
+                        ?>
+                        <span class="admin-status-pill <?php echo $statusClass; ?>">
+                            <span class="<?php echo $dotClass; ?>"></span> <?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $row['status']))); ?>
+                        </span>
+                    </td>
+                    <td style="text-align: right;">
+                        <div class="admin-actions-group">
+                            <a class="btn-action-edit" href="requests.php?edit=<?php echo $row['id']; ?>" title="Edit Request Status/Feedback">
+                                <?php echo render_icon('Pencil', 14); ?>
+                            </a>
                             <form method="post" action="requests.php" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete project request from &quot;<?php echo htmlspecialchars($row['user_name'], ENT_QUOTES); ?>&quot;? This action cannot be undone.');">
                                 <?php echo csrf_input(); ?>
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                <button type="submit" class="icon-btn danger" title="Delete"><?php echo render_icon('Trash2'); ?></button>
+                                <button type="submit" class="btn-action-delete" title="Delete Project Request">
+                                    <?php echo render_icon('Trash2', 14); ?>
+                                </button>
                             </form>
                         </div>
                     </td>

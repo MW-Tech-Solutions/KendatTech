@@ -84,36 +84,59 @@ if (isset($_GET['edit'])) {
     </form>
 </div>
 
-<div class="table-card glass-card">
-    <table>
+<div class="admin-projects-card">
+    <table class="admin-projects-table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Full Name</th>
-                <th>Contact</th>
-                <th>Preferred Date & Time</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th style="width: 60px;">ID</th>
+                <th style="min-width: 180px;">Full Name</th>
+                <th style="min-width: 200px;">Contact Info</th>
+                <th style="min-width: 180px;">Preferred Date & Time</th>
+                <th style="width: 140px;">Type</th>
+                <th style="width: 120px;">Status</th>
+                <th style="width: 120px; text-align: right;">Actions</th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($rows as $row): ?>
                 <tr>
-                    <td><?php echo $row['id']; ?></td>
+                    <td><span class="admin-id-badge">#<?php echo $row['id']; ?></span></td>
                     <td><strong><?php echo htmlspecialchars($row['full_name']); ?></strong></td>
-                    <td><?php echo htmlspecialchars($row['email']); ?><br><small><?php echo htmlspecialchars($row['phone'] ?? ''); ?></small></td>
-                    <td><?php echo htmlspecialchars($row['preferred_date']); ?> at <?php echo htmlspecialchars($row['preferred_time']); ?></td>
-                    <td><?php echo htmlspecialchars($row['appointment_type']); ?></td>
-                    <td><span class="status"><?php echo htmlspecialchars($row['status']); ?></span></td>
                     <td>
-                        <div class="row-actions">
-                            <a class="icon-btn" href="appointments.php?edit=<?php echo $row['id']; ?>" title="Edit Note/Status"><?php echo render_icon('Pencil'); ?></a>
+                        <span style="font-size:13px; color:#0f172a; display:block;"><?php echo htmlspecialchars($row['email']); ?></span>
+                        <span style="font-size:12px; color:#64748b; font-weight:600;"><?php echo htmlspecialchars($row['phone'] ?? ''); ?></span>
+                    </td>
+                    <td><span style="font-size:13px; color:#334155; font-weight:600;"><?php echo htmlspecialchars($row['preferred_date']); ?> at <?php echo htmlspecialchars($row['preferred_time']); ?></span></td>
+                    <td><span class="admin-cat-badge"><?php echo htmlspecialchars($row['appointment_type']); ?></span></td>
+                    <td>
+                        <?php
+                            $st = strtolower($row['status']);
+                            $statusClass = 'status-completed';
+                            $dotClass = 'status-dot-green';
+                            if ($st === 'pending') {
+                                $statusClass = 'status-upcoming';
+                                $dotClass = 'status-dot-amber';
+                            } elseif ($st === 'approved') {
+                                $statusClass = 'status-ongoing';
+                                $dotClass = 'status-dot-blue';
+                            }
+                        ?>
+                        <span class="admin-status-pill <?php echo $statusClass; ?>">
+                            <span class="<?php echo $dotClass; ?>"></span> <?php echo htmlspecialchars(ucfirst($row['status'])); ?>
+                        </span>
+                    </td>
+                    <td style="text-align: right;">
+                        <div class="admin-actions-group">
+                            <a class="btn-action-edit" href="appointments.php?edit=<?php echo $row['id']; ?>" title="Edit Appointment Note/Status">
+                                <?php echo render_icon('Pencil', 14); ?>
+                            </a>
                             <form method="post" action="appointments.php" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete appointment for &quot;<?php echo htmlspecialchars($row['full_name'], ENT_QUOTES); ?>&quot;? This action cannot be undone.');">
                                 <?php echo csrf_input(); ?>
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                <button type="submit" class="icon-btn danger" title="Delete"><?php echo render_icon('Trash2'); ?></button>
+                                <button type="submit" class="btn-action-delete" title="Delete Appointment">
+                                    <?php echo render_icon('Trash2', 14); ?>
+                                </button>
                             </form>
                         </div>
                     </td>

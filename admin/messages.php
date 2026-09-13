@@ -96,16 +96,16 @@ if (isset($_GET['view'])) {
     </form>
 </div>
 
-<div class="table-card glass-card">
-    <table>
+<div class="admin-projects-card">
+    <table class="admin-projects-table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Full Name</th>
-                <th>Subject</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th style="width: 60px;">ID</th>
+                <th style="min-width: 200px;">Full Name & Email</th>
+                <th style="min-width: 200px;">Subject</th>
+                <th style="width: 130px;">Date Received</th>
+                <th style="width: 120px;">Status</th>
+                <th style="width: 120px; text-align: right;">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -116,19 +116,36 @@ if (isset($_GET['view'])) {
             <?php else: ?>
                 <?php foreach ($rows as $row): ?>
                     <tr>
-                        <td><?php echo $row['id']; ?></td>
-                        <td><strong><?php echo htmlspecialchars($row['full_name']); ?></strong><br><small><?php echo htmlspecialchars($row['email']); ?></small></td>
-                        <td><?php echo htmlspecialchars($row['subject'] ?? 'No subject'); ?></td>
-                        <td><?php echo date('M d, Y', strtotime($row['created_at'])); ?></td>
-                        <td><span class="status"><?php echo htmlspecialchars($row['status']); ?></span></td>
+                        <td><span class="admin-id-badge">#<?php echo $row['id']; ?></span></td>
                         <td>
-                            <div class="row-actions" style="display:flex; gap:6px;">
-                                <a class="icon-btn" href="messages.php?view=<?php echo $row['id']; ?>&status=<?php echo urlencode($statusFilter); ?>" title="Read Message"><?php echo render_icon('Eye'); ?></a>
+                            <strong style="font-size:14px; color:#0f172a; display:block;"><?php echo htmlspecialchars($row['full_name']); ?></strong>
+                            <span style="font-size:12px; color:#64748b;"><?php echo htmlspecialchars($row['email']); ?></span>
+                        </td>
+                        <td><span style="font-size:13px; color:#334155; font-weight:600;"><?php echo htmlspecialchars($row['subject'] ?? 'No subject'); ?></span></td>
+                        <td><span style="font-size:12px; color:#64748b; font-weight:600;"><?php echo date('M d, Y', strtotime($row['created_at'])); ?></span></td>
+                        <td>
+                            <?php if ($row['status'] === 'new'): ?>
+                                <span class="admin-status-pill status-ongoing">
+                                    <span class="status-dot-blue"></span> New
+                                </span>
+                            <?php else: ?>
+                                <span class="admin-status-pill status-completed">
+                                    <span class="status-dot-green"></span> <?php echo htmlspecialchars(ucfirst($row['status'])); ?>
+                                </span>
+                            <?php endif; ?>
+                        </td>
+                        <td style="text-align: right;">
+                            <div class="admin-actions-group">
+                                <a class="btn-action-edit" href="messages.php?view=<?php echo $row['id']; ?>&status=<?php echo urlencode($statusFilter); ?>" title="Read Message">
+                                    <?php echo render_icon('Eye', 14); ?>
+                                </a>
                                 <form method="post" action="messages.php" style="display:inline;" onsubmit="return confirm('Delete message #<?php echo $row['id']; ?>? This action cannot be undone.');">
                                     <?php echo csrf_input(); ?>
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                    <button type="submit" class="icon-btn danger" title="Delete"><?php echo render_icon('Trash2'); ?></button>
+                                    <button type="submit" class="btn-action-delete" title="Delete Message">
+                                        <?php echo render_icon('Trash2', 14); ?>
+                                    </button>
                                 </form>
                             </div>
                         </td>

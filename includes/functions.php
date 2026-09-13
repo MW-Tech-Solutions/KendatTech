@@ -61,16 +61,22 @@ function safe_str_trim(string $str, int $length = 145, string $trimMarker = '...
 }
 
 function upload_asset_url(?string $path): string {
-    if (empty($path)) return '';
+    if (empty($path)) {
+        return get_base_url() . 'assets/images/placeholder.svg';
+    }
     if (strpos($path, 'http://') === 0 || strpos($path, 'https://') === 0) {
         return $path;
     }
     $cleanPath = ltrim($path, '/');
     $fileOnDisk = __DIR__ . '/../uploads/' . $cleanPath;
-    if (file_exists($fileOnDisk)) {
+    if (file_exists($fileOnDisk) && is_file($fileOnDisk)) {
         return get_base_url() . 'uploads/' . $cleanPath;
     }
-    return get_base_url() . 'uploads/' . $cleanPath;
+    $rootFileOnDisk = __DIR__ . '/../' . $cleanPath;
+    if (file_exists($rootFileOnDisk) && is_file($rootFileOnDisk)) {
+        return get_base_url() . $cleanPath;
+    }
+    return get_base_url() . 'assets/images/placeholder.svg';
 }
 
 require_once __DIR__ . '/upload_helper.php';

@@ -112,10 +112,10 @@ require_once __DIR__ . '/includes/header.php';
             </div>
 
             <div class="auth-console">
-                <div><span stop-dot></span> Custom enterprise web applications & portals</div>
-                <div><span stop-dot></span> AI copilots & data intelligence automation</div>
-                <div><span stop-dot></span> High-speed PDO encrypted database backend</div>
-                <div><span stop-dot></span> 24h direct engineering review & NDA protection</div>
+                <div><span stop-dot></span> Custom enterprise web applications &amp; corporate portals</div>
+                <div><span stop-dot></span> AI copilots &amp; data intelligence automation</div>
+                <div><span stop-dot></span> Secure 24/7 client workspace &amp; project dashboard</div>
+                <div><span stop-dot></span> Direct solution engineering review &amp; NDA compliance</div>
             </div>
 
             <div class="auth-footer-badge" style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #cbd5e1; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.15);">
@@ -169,7 +169,11 @@ require_once __DIR__ . '/includes/header.php';
                     </span>
                 </label>
 
-                <button class="tc-pill-btn-blue" type="submit" name="login_submit" style="width: 100%; justify-content: center; margin-top: 10px;">
+                <div style="display: flex; justify-content: flex-end; margin-top: -10px; margin-bottom: 16px;">
+                    <a href="<?php echo $baseUrl; ?>forgot-password.php" style="color: var(--blue); font-size: 13px; font-weight: 700; text-decoration: none;">Forgot password?</a>
+                </div>
+
+                <button class="tc-pill-btn-blue" type="submit" name="login_submit" style="width: 100%; justify-content: center;">
                     Login to Portal <?php echo render_icon('ArrowRight', 18); ?>
                 </button>
                 

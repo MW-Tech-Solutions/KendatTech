@@ -452,3 +452,30 @@ HTML;
     $html = build_branded_email_html($subject, $body);
     return send_smtp_email($toEmail, $toName, $subject, $html);
 }
+
+/**
+ * 9. Password Reset Verification Code Email
+ */
+function send_password_reset_email(string $userEmail, string $userName, string $resetCode): bool {
+    $subject = "Password Reset Verification Code - Kendat Tech";
+    $body = <<<HTML
+<h2>Password Reset Request</h2>
+<p>Dear <strong>{$userName}</strong>,</p>
+<p>We received a request to reset the password for your Kendat client profile. Use the 6-digit verification code below to authorize your password reset:</p>
+
+<div style="text-align: center; margin: 28px 0;">
+    <div style="display: inline-block; padding: 16px 36px; background: linear-gradient(135deg, #050b18 0%, #0b1736 100%); color: #00E5FF; border-radius: 16px; border: 1.5px solid #00E5FF; font-family: monospace; font-size: 32px; font-weight: 900; letter-spacing: 0.25em; box-shadow: 0 8px 24px rgba(0, 229, 255, 0.25);">
+        {$resetCode}
+    </div>
+</div>
+
+<div class="info-card">
+    <span class="label">Security Notice</span>
+    <p style="margin: 4px 0 0; font-size: 13px; color: #475569;">This verification code is valid for <strong>15 minutes</strong>. If you did not request a password reset, please disregard this email or contact support immediately if you suspect unauthorized activity.</p>
+</div>
+HTML;
+
+    $html = build_branded_email_html($subject, $body);
+    return send_smtp_email($userEmail, $userName, $subject, $html);
+}
+

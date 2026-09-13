@@ -103,6 +103,10 @@ require_once __DIR__ . '/includes/header.php';
                     </span>
                 </label>
 
+                <div style="display: flex; justify-content: flex-end; margin-top: -6px; margin-bottom: 16px;">
+                    <a href="<?php echo $baseUrl; ?>forgot-password.php" style="font-size: 13px; color: var(--blue); text-decoration: none; font-weight: 600;">Forgot password?</a>
+                </div>
+
                 <button class="btn primary" type="submit"><?php echo render_icon('ArrowRight'); ?>Login</button>
             </form>
         </div>

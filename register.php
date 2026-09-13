@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="auth-console">
                 <div><span stop-dot></span> Custom enterprise web applications & portals</div>
                 <div><span stop-dot></span> AI copilots & data intelligence automation</div>
-                <div><span stop-dot></span> High-speed PDO encrypted database backend</div>
+                <div><span stop-dot></span> Secure cloud infrastructure & data privacy</div>
                 <div><span stop-dot></span> 24h direct engineering review & NDA protection</div>
             </div>
 

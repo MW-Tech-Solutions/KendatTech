@@ -241,7 +241,7 @@ if (isset($_GET['edit'])) {
                     <td style="text-align: right;">
                         <div class="admin-actions-group">
                             <a class="btn-action-edit" href="projects.php?edit=<?php echo $row['id']; ?>" title="Edit Project & Manage Images">
-                                <?php echo render_icon('Pencil', 13); ?> Edit
+                                <?php echo render_icon('Pencil', 14); ?>
                             </a>
                             <form method="post" action="projects.php" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete project &quot;<?php echo htmlspecialchars($row['title'], ENT_QUOTES); ?>&quot;? This action cannot be undone.');">
                                 <?php echo csrf_input(); ?>

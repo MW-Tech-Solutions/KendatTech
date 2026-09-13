@@ -127,6 +127,6 @@ foreach ($socials as [$label, $href]) {
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<?php echo $baseUrl; ?>assets/js/main.js"></script>
+    <script src="<?php echo $baseUrl; ?>assets/js/main.js?v=<?php echo file_exists(__DIR__ . '/../assets/js/main.js') ? filemtime(__DIR__ . '/../assets/js/main.js') : time(); ?>"></script>
 </body>
 </html>

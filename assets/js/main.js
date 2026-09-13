@@ -19,17 +19,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Truecaller Header Scroll Behavior (Transparent -> White)
+    // Sleek Dark Glass Header Scroll Transition
     const siteHeader = document.querySelector('.site-header');
     if (siteHeader) {
         const handleScroll = () => {
-            if (window.scrollY > 30) {
+            const scrollTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+            if (scrollTop > 15) {
                 siteHeader.classList.add('is-scrolled');
             } else {
                 siteHeader.classList.remove('is-scrolled');
             }
         };
         window.addEventListener('scroll', handleScroll, { passive: true });
+        document.addEventListener('scroll', handleScroll, { passive: true });
         handleScroll();
     }
 

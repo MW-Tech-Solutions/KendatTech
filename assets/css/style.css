@@ -857,21 +857,6 @@ body:has(.admin-layout) {
 }
 
 @media (max-width: 980px) {
-  .admin-layout {
-    grid-template-columns: 1fr !important;
-  }
-  .admin-layout > aside {
-    position: relative !important;
-    width: 100%;
-    height: auto !important;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-  }
-  .admin-layout > aside h2,
-  .admin-identity {
-    grid-column: 1 / -1;
-  }
   .admin-main {
     padding: 24px 18px 44px !important;
   }
@@ -2173,9 +2158,10 @@ a[class*="btn"] {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
   padding-bottom: 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  flex-shrink: 0 !important;
 }
 .admin-brand-logo { font-size: 16px; font-weight: 950; color: #ffffff; letter-spacing: -0.01em; }
 .admin-brand-tag { font-size: 10px; font-weight: 800; color: var(--cyan); letter-spacing: .12em; }
@@ -2183,26 +2169,27 @@ a[class*="btn"] {
 .admin-identity {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  gap: 12px;
+  padding: 10px 14px;
   margin-bottom: 16px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.14);
   width: 100%;
+  min-height: 56px !important;
   box-sizing: border-box;
-  overflow: hidden;
+  flex-shrink: 0 !important;
 }
 .admin-avatar-box {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 10px;
   background: rgba(0, 135, 255, 0.25);
   border: 1px solid rgba(0, 229, 255, 0.4);
   color: var(--cyan);
   display: grid;
   place-items: center;
-  flex-shrink: 0;
+  flex-shrink: 0 !important;
 }
 .admin-identity-info {
   display: flex;
@@ -2210,7 +2197,6 @@ a[class*="btn"] {
   align-items: flex-start;
   flex: 1;
   min-width: 0;
-  overflow: hidden;
 }
 .admin-identity-info strong {
   display: block;
@@ -2221,7 +2207,7 @@ a[class*="btn"] {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 .role-badge {
   display: inline-flex;
@@ -2231,10 +2217,10 @@ a[class*="btn"] {
   color: var(--cyan);
   background: rgba(0, 229, 255, 0.15);
   border: 1px solid rgba(0, 229, 255, 0.3);
-  padding: 2px 6px;
+  padding: 3px 8px;
   border-radius: 999px;
   letter-spacing: .06em;
-  margin-top: 2px;
+  margin-top: 3px;
   white-space: nowrap;
 }
 
@@ -2656,18 +2642,6 @@ html, body {
   .footer-modern .footer-grid { gap: 36px; text-align: left; }
   .tc-project-cards-row { min-height: 650px; }
   .tc-project-device-frame { max-height: 320px; }
-  .admin-layout { grid-template-columns: 1fr; }
-  .admin-layout aside {
-    position: relative;
-    height: auto;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    padding: 18px;
-  }
-  .admin-layout aside h2,
-  .admin-identity { grid-column: 1 / -1; }
-  .admin-layout aside > a { margin-bottom: 0; }
   .admin-main { padding: 26px 18px 42px; }
   .admin-page-head { align-items: flex-start; flex-direction: column; }
   .admin-cards,

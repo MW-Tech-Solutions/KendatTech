@@ -12,11 +12,13 @@ $officeAddress = $settings['office_address'] ?? 'Lagos, Nigeria';
     <!-- Privacy Policy Page Hero -->
     <section class="subpage-hero">
         <div class="container text-center">
-            <span class="eyebrow-pill center-pill"><?php echo render_icon('ShieldCheck', 16); ?> Data Protection & Compliance</span>
+            <span class="subpage-badge"><?php echo render_icon('ShieldCheck', 16); ?> Data Protection & Compliance</span>
             <h1>Privacy Policy</h1>
             <p>Your privacy and data security are fundamental to our engineering operations. Learn how Kendat Integrated Services collects, uses, and safeguards your information.</p>
-            <div class="subpage-meta" style="margin-top: 14px; font-size: 13px; color: var(--muted);">
-                <span>Last Updated: September 13, 2026</span> • <span>Version 2.4</span>
+            <div class="subpage-meta-chips">
+                <span class="subpage-chip"><?php echo render_icon('Calendar', 14); ?> Last Updated: September 13, 2026</span>
+                <span class="subpage-chip"><?php echo render_icon('FileCheck', 14); ?> Version 2.4</span>
+                <span class="subpage-chip"><?php echo render_icon('Lock', 14); ?> NDPR Compliant</span>
             </div>
         </div>
     </section>

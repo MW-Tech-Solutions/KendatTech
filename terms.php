@@ -12,11 +12,13 @@ $officeAddress = $settings['office_address'] ?? 'Lagos, Nigeria';
     <!-- Terms of Service Page Hero -->
     <section class="subpage-hero">
         <div class="container text-center">
-            <span class="eyebrow-pill center-pill"><?php echo render_icon('FileText', 16); ?> Legal Framework & Agreements</span>
+            <span class="subpage-badge"><?php echo render_icon('FileText', 16); ?> Legal Framework & Agreements</span>
             <h1>Terms of Service</h1>
             <p>Please read these terms and conditions carefully before using our software applications, client portals, AI solutions, or engaging our engineering team.</p>
-            <div class="subpage-meta" style="margin-top: 14px; font-size: 13px; color: var(--muted);">
-                <span>Effective Date: September 13, 2026</span> • <span>Version 3.1</span>
+            <div class="subpage-meta-chips">
+                <span class="subpage-chip"><?php echo render_icon('Calendar', 14); ?> Effective Date: September 13, 2026</span>
+                <span class="subpage-chip"><?php echo render_icon('FileCheck', 14); ?> Version 3.1</span>
+                <span class="subpage-chip"><?php echo render_icon('Scale', 14); ?> Binding Contract</span>
             </div>
         </div>
     </section>

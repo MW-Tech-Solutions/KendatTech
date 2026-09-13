@@ -6232,32 +6232,160 @@ body.cursor-active .custom-cursor-ring {
   z-index: 10 !important;
 }
 
-/* Subpage Hero & Legal Layout System */
+/* Subpage Hero & Legal Layout System (Futuristic Enterprise Dark Glass) */
 .subpage-hero {
-  padding-top: 145px !important;
-  padding-bottom: 44px !important;
-  background: linear-gradient(180deg, #f8fafc 0%, #edf2f7 100%) !important;
-  border-bottom: 1px solid #e2e8f0 !important;
+  position: relative !important;
+  background: #040915 !important;
+  background: radial-gradient(circle at 10% 20%, rgba(0, 135, 255, 0.25) 0%, transparent 45%),
+              radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.20) 0%, transparent 50%),
+              radial-gradient(circle at 50% 50%, #08142c 0%, #030712 100%) !important;
+  color: #ffffff !important;
+  padding-top: 150px !important;
+  padding-bottom: 65px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  border-bottom: 1px solid rgba(0, 135, 255, 0.2) !important;
+}
+
+.subpage-hero::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+  background-image: 
+    linear-gradient(rgba(0, 195, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 195, 255, 0.06) 1px, transparent 1px) !important;
+  background-size: 40px 40px !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+.subpage-hero .container {
+  position: relative !important;
+  z-index: 2 !important;
+  max-width: 920px !important;
+  margin: 0 auto !important;
+}
+
+.subpage-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 20px !important;
+  background: rgba(0, 229, 255, 0.1) !important;
+  border: 1px solid rgba(0, 229, 255, 0.35) !important;
+  border-radius: 50px !important;
+  color: #00e5ff !important;
+  font-family: var(--font-heading) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  margin-bottom: 20px !important;
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.2) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.subpage-badge svg {
+  color: #00e5ff !important;
 }
 
 .subpage-hero h1 {
-  font-size: clamp(30px, 4.5vw, 48px) !important;
+  font-family: var(--font-heading) !important;
+  font-size: clamp(32px, 5vw, 52px) !important;
   font-weight: 900 !important;
-  color: #0f172a !important;
+  line-height: 1.15 !important;
+  margin: 10px 0 18px !important;
   letter-spacing: -0.03em !important;
-  margin: 14px 0 16px !important;
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 40%, #00e5ff 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.4)) !important;
 }
 
 .subpage-hero p {
-  max-width: 780px !important;
-  margin: 0 auto !important;
-  font-size: 16px !important;
-  color: #475569 !important;
-  line-height: 1.65 !important;
+  font-size: clamp(15px, 2vw, 17px) !important;
+  line-height: 1.7 !important;
+  color: #94a3b8 !important;
+  max-width: 740px !important;
+  margin: 0 auto 24px auto !important;
+  font-weight: 400 !important;
 }
 
+.subpage-meta-chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  margin-top: 22px !important;
+}
+
+.subpage-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 16px !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 50px !important;
+  font-size: 13px !important;
+  color: #e2e8f0 !important;
+  font-weight: 500 !important;
+  backdrop-filter: blur(10px) !important;
+  transition: all 0.25s ease !important;
+}
+
+.subpage-chip:hover {
+  background: rgba(0, 135, 255, 0.2) !important;
+  border-color: rgba(0, 229, 255, 0.5) !important;
+  color: #ffffff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 16px rgba(0, 229, 255, 0.2) !important;
+}
+
+.subpage-chip svg {
+  color: #00e5ff !important;
+}
+
+/* Legal Page Layout & Sidebar */
 .legal-section-wrap {
+  background: #f8fafc !important;
+  min-height: 60vh !important;
+}
+
+.legal-sidebar {
   background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04) !important;
+  border-radius: 20px !important;
+}
+
+.legal-nav-link {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 10px 14px !important;
+  border-radius: 10px !important;
+  color: #64748b !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  transition: all 0.2s ease !important;
+}
+
+.legal-nav-link:hover,
+.legal-nav-link.active {
+  background: #f0f7ff !important;
+  color: #0087ff !important;
+  font-weight: 700 !important;
+  transform: translateX(4px) !important;
+}
+
+.legal-body-content {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 15px 35px rgba(15, 23, 42, 0.05) !important;
 }
 
 @media (max-width: 900px) {

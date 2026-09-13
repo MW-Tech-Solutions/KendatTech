@@ -6231,3 +6231,41 @@ body.cursor-active .custom-cursor-ring {
   bottom: 0 !important;
   z-index: 10 !important;
 }
+
+/* Subpage Hero & Legal Layout System */
+.subpage-hero {
+  padding-top: 145px !important;
+  padding-bottom: 44px !important;
+  background: linear-gradient(180deg, #f8fafc 0%, #edf2f7 100%) !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.subpage-hero h1 {
+  font-size: clamp(30px, 4.5vw, 48px) !important;
+  font-weight: 900 !important;
+  color: #0f172a !important;
+  letter-spacing: -0.03em !important;
+  margin: 14px 0 16px !important;
+}
+
+.subpage-hero p {
+  max-width: 780px !important;
+  margin: 0 auto !important;
+  font-size: 16px !important;
+  color: #475569 !important;
+  line-height: 1.65 !important;
+}
+
+.legal-section-wrap {
+  background: #ffffff !important;
+}
+
+@media (max-width: 900px) {
+  .legal-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  .legal-sidebar {
+    position: static !important;
+  }
+}

@@ -432,7 +432,14 @@ $heroVideo = $baseUrl . 'assets/videos/developers_collaborating_hero.mp4';
         </div>
         <div class="tc-testimonials-grid">
             <?php foreach ($testimonials as $t): 
-                $initials = implode('', array_map(fn($w) => strtoupper($w[0] ?? ''), explode(' ', $t['client_name'])));
+                $nameParts = explode(' ', (string)($t['client_name'] ?? 'Client'));
+                $initialsStr = '';
+                foreach ($nameParts as $nP) {
+                    if (!empty($nP)) {
+                        $initialsStr .= strtoupper($nP[0]);
+                    }
+                }
+                $initials = !empty($initialsStr) ? substr($initialsStr, 0, 2) : 'KT';
             ?>
                 <article class="tc-testimonial-card">
                     <div class="tc-author-box">

@@ -219,7 +219,7 @@ require_once __DIR__ . '/includes/header.php';
                         </button>
 
                         <div class="auth-switch" style="text-align: center; margin-top: 20px; font-size: 14px; color: var(--muted);">
-                            Didn't get code? <a href="<?php echo $baseUrl; ?>forgot-password.php" style="color: var(--blue); font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Resend code <i class="bi bi-arrow-right"></i></a>
+                            Didn't get code? <a href="<?php echo $baseUrl; ?>forgot-password.php" style="color: var(--blue); font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Resend code <?php echo render_icon('ArrowRight', 14); ?></a>
                         </div>
                     </form>
 
@@ -245,7 +245,7 @@ require_once __DIR__ . '/includes/header.php';
                         </button>
 
                         <div class="auth-switch" style="text-align: center; margin-top: 20px; font-size: 14px; color: var(--muted);">
-                            Remembered password? <a href="<?php echo $baseUrl; ?>login.php" style="color: var(--blue); font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Return to login <i class="bi bi-arrow-right"></i></a>
+                            Remembered password? <a href="<?php echo $baseUrl; ?>login.php" style="color: var(--blue); font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Return to login <?php echo render_icon('ArrowRight', 14); ?></a>
                         </div>
                     </form>
                 <?php endif; ?>

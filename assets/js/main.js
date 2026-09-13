@@ -202,6 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!toggle) return;
 
         e.preventDefault();
+        e.stopPropagation();
         const parent = toggle.closest('.password-field, .input-group, label') || toggle.parentElement;
         const input = parent ? parent.querySelector('input') : null;
         
@@ -215,79 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (eyeIcon && eyeOffIcon) {
                 eyeIcon.style.display = isPassword ? 'none' : 'inline-flex';
                 eyeOffIcon.style.display = isPassword ? 'inline-flex' : 'none';
-            }
-        }
-    });
-
-    // Project Detail Slider Carousel
-    const sliderTrack = document.querySelector('.project-detail-track');
-    const dots = document.querySelectorAll('.slider-dots button');
-    if (sliderTrack && dots.length > 1) {
-        let activeIndex = 0;
-        const totalSlides = dots.length;
-
-        function updateSlider(index) {
-            activeIndex = (index + totalSlides) % totalSlides;
-            sliderTrack.style.transform = `translateX(-${activeIndex * 100}%)`;
-            dots.forEach((dot, i) => {
-                if (i === activeIndex) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
-            });
-        }
-
-        dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => updateSlider(index));
-        });
-
-        setInterval(() => {
-            updateSlider(activeIndex + 1);
-        }, 3200);
-    }
-
-    // Project Details Interactive Gallery Switcher
-    const mainProjectImg = document.getElementById('mainProjectImg');
-    const thumbBtns = document.querySelectorAll('.project-thumb-btn');
-    if (mainProjectImg && thumbBtns.length > 0) {
-        thumbBtns.forEach((btn) => {
-            btn.addEventListener('click', () => {
-                const newSrc = btn.getAttribute('data-img-src');
-                if (newSrc && mainProjectImg.src !== newSrc) {
-                    mainProjectImg.style.opacity = '0.4';
-                    setTimeout(() => {
-                        mainProjectImg.src = newSrc;
-                        mainProjectImg.style.opacity = '1';
-                    }, 150);
-                    thumbBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                }
-            });
-        });
-    }
-
-    // Password Input Visibility Toggle with Global Event Delegation
-    document.addEventListener('click', function (e) {
-        const toggleBtn = e.target.closest('.password-toggle');
-        if (toggleBtn) {
-            e.preventDefault();
-            e.stopPropagation();
-            const fieldWrapper = toggleBtn.closest('.password-field') || toggleBtn.parentElement;
-            if (fieldWrapper) {
-                const input = fieldWrapper.querySelector('input');
-                const eyeOpen = toggleBtn.querySelector('.icon-eye');
-                const eyeOff = toggleBtn.querySelector('.icon-eye-off');
-
-                if (input) {
-                    const isPassword = input.type === 'password';
-                    input.type = isPassword ? 'text' : 'password';
-                    toggleBtn.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
-                    if (eyeOpen && eyeOff) {
-                        eyeOpen.style.display = isPassword ? 'none' : 'inline-flex';
-                        eyeOff.style.display = isPassword ? 'inline-flex' : 'none';
-                    }
-                }
             }
         }
     });

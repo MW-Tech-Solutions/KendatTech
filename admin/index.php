@@ -65,7 +65,7 @@ $statCards = [
     <div class="glass-card table-card">
         <div class="table-card-head">
             <h3>Recent Appointments</h3>
-            <a class="table-view-all" href="<?php echo $baseUrl; ?>admin/appointments.php" style="display: inline-flex; align-items: center; gap: 4px;">View All <i class="bi bi-arrow-right"></i></a>
+            <a class="table-view-all" href="<?php echo $baseUrl; ?>admin/appointments.php" style="display: inline-flex; align-items: center; gap: 4px;">View All <?php echo render_icon('ArrowRight', 14); ?></a>
         </div>
         <table>
             <thead>
@@ -104,7 +104,7 @@ $statCards = [
     <div class="glass-card table-card">
         <div class="table-card-head">
             <h3>Recent Project Requests</h3>
-            <a class="table-view-all" href="<?php echo $baseUrl; ?>admin/requests.php" style="display: inline-flex; align-items: center; gap: 4px;">View All <i class="bi bi-arrow-right"></i></a>
+            <a class="table-view-all" href="<?php echo $baseUrl; ?>admin/requests.php" style="display: inline-flex; align-items: center; gap: 4px;">View All <?php echo render_icon('ArrowRight', 14); ?></a>
         </div>
         <table>
             <thead>
@@ -143,7 +143,7 @@ $statCards = [
     <div class="glass-card table-card" style="grid-column: 1 / -1; margin-top: 12px;">
         <div class="table-card-head">
             <h3>Recent Direct Messages</h3>
-            <a class="table-view-all" href="<?php echo $baseUrl; ?>admin/messages.php" style="display: inline-flex; align-items: center; gap: 4px;">View All <i class="bi bi-arrow-right"></i></a>
+            <a class="table-view-all" href="<?php echo $baseUrl; ?>admin/messages.php" style="display: inline-flex; align-items: center; gap: 4px;">View All <?php echo render_icon('ArrowRight', 14); ?></a>
         </div>
         <table>
             <thead>

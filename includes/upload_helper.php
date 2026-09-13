@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 /**
  * Hardened File Upload Helper for Kendat Integrated Services.
+ * Features multi-tiered fallback for PHP environments where fileinfo extension (finfo_open) is not enabled.
  */
 function secure_file_upload(string $fieldName, string $subfolder = 'general', bool $isPrivate = false): ?string {
     if (!isset($_FILES[$fieldName]) || $_FILES[$fieldName]['error'] !== UPLOAD_ERR_OK) {
@@ -31,24 +32,47 @@ function secure_file_upload(string $fieldName, string $subfolder = 'general', bo
         return null;
     }
 
-    // MIME Type Validation via finfo
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $mime = finfo_file($finfo, $tmpName);
-    finfo_close($finfo);
+    // MIME Type Validation with fallback if PHP fileinfo extension is disabled on host
+    $mime = null;
+    if (function_exists('finfo_open') && defined('FILEINFO_MIME_TYPE')) {
+        $finfo = @finfo_open(FILEINFO_MIME_TYPE);
+        if ($finfo) {
+            $mime = @finfo_file($finfo, $tmpName);
+            @finfo_close($finfo);
+        }
+    }
+    if (!$mime && function_exists('mime_content_type')) {
+        $mime = @mime_content_type($tmpName);
+    }
+    if (!$mime && function_exists('getimagesize') && in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'], true)) {
+        $imgInfo = @getimagesize($tmpName);
+        if (!empty($imgInfo['mime'])) {
+            $mime = $imgInfo['mime'];
+        }
+    }
+    if (!$mime) {
+        $mime = strtolower(trim((string)($file['type'] ?? '')));
+    }
 
     $allowedMimes = [
         'image/jpeg' => ['jpg', 'jpeg'],
+        'image/pjpeg' => ['jpg', 'jpeg'],
         'image/png' => ['png'],
         'image/gif' => ['gif'],
         'image/webp' => ['webp'],
         'image/svg+xml' => ['svg'],
+        'text/xml' => ['svg'],
         'application/pdf' => ['pdf'],
+        'application/x-pdf' => ['pdf'],
         'application/msword' => ['doc'],
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => ['docx'],
+        'application/octet-stream' => ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'doc', 'docx', 'svg'],
     ];
 
-    if (!array_key_exists($mime, $allowedMimes) || !in_array($ext, $allowedMimes[$mime], true)) {
-        return null;
+    if (!empty($mime) && array_key_exists($mime, $allowedMimes)) {
+        if (!in_array($ext, $allowedMimes[$mime], true)) {
+            return null;
+        }
     }
 
     // SVG Security Sanitization (Reject SVG containing scripts or event handlers)

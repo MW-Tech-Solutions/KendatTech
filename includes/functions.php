@@ -50,6 +50,16 @@ function get_setting(string $key, string $default = ''): string {
     return $settings[$key] ?? $default;
 }
 
+function safe_str_trim(string $str, int $length = 145, string $trimMarker = '...'): string {
+    if (function_exists('mb_strimwidth')) {
+        return mb_strimwidth($str, 0, $length, $trimMarker);
+    }
+    if (strlen($str) <= $length) {
+        return $str;
+    }
+    return substr($str, 0, max(0, $length - strlen($trimMarker))) . $trimMarker;
+}
+
 function upload_asset_url(?string $path): string {
     if (empty($path)) return '';
     if (strpos($path, 'http://') === 0 || strpos($path, 'https://') === 0) {

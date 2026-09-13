@@ -405,7 +405,7 @@ $heroVideo = $baseUrl . 'assets/videos/developers_collaborating_hero.mp4';
                             </a>
                         </h3>
                         <p class="astone-project-excerpt">
-                            <?php echo htmlspecialchars(mb_strimwidth($pObj['short_description'] ?? 'Custom enterprise software solution built by Kendat Tech.', 0, 145, '...')); ?>
+                            <?php echo htmlspecialchars(safe_str_trim((string)($pObj['short_description'] ?? 'Custom enterprise software solution built by Kendat Tech.'), 145, '...')); ?>
                         </p>
                         <div class="astone-project-actions">
                             <a class="astone-link-btn" href="<?php echo $baseUrl; ?>project-details.php?slug=<?php echo urlencode($pObj['slug']); ?>">

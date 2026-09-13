@@ -2,6 +2,10 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/header.php';
+$settings = get_settings();
+$contactEmail = $settings['contact_email'] ?? 'privacy@kendattech.com';
+$contactPhone = $settings['contact_phone'] ?? '+234 800 000 0000';
+$officeAddress = $settings['office_address'] ?? 'Lagos, Nigeria';
 ?>
 
 <main>
@@ -133,8 +137,11 @@ require_once __DIR__ . '/includes/header.php';
                         <p>If you have questions regarding this Privacy Policy or wish to exercise your data protection rights, please contact our Data Officer:</p>
                         <div style="background: #f1f5f9; padding: 20px; border-radius: 14px; border: 1px solid #cbd5e1; margin-top: 12px;">
                             <strong style="color: #0f172a; display: block; font-size: 16px;">Kendat Integrated Services - Data Protection Office</strong>
-                            <span style="font-size: 14px; color: #475569; display: block; margin-top: 4px;">Email: <a href="mailto:privacy@kendattech.com" style="color: var(--blue); font-weight: 700; text-decoration: none;">privacy@kendattech.com</a></span>
-                            <span style="font-size: 14px; color: #475569; display: block; margin-top: 2px;">Phone: +234 800 000 0000</span>
+                            <span style="font-size: 14px; color: #475569; display: block; margin-top: 4px;">Email: <a href="mailto:<?php echo htmlspecialchars($contactEmail); ?>" style="color: var(--blue); font-weight: 700; text-decoration: none;"><?php echo htmlspecialchars($contactEmail); ?></a></span>
+                            <span style="font-size: 14px; color: #475569; display: block; margin-top: 2px;">Phone: <a href="tel:<?php echo htmlspecialchars($contactPhone); ?>" style="color: #475569; text-decoration: none; font-weight: 600;"><?php echo htmlspecialchars($contactPhone); ?></a></span>
+                            <?php if ($officeAddress): ?>
+                                <span style="font-size: 14px; color: #475569; display: block; margin-top: 2px;">Office: <?php echo htmlspecialchars($officeAddress); ?></span>
+                            <?php endif; ?>
                         </div>
                     </section>
 

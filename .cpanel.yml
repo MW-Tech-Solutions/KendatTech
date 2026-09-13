@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/kisproje/public_html/kendattech
+    - /bin/cp -R * $DEPLOYPATH

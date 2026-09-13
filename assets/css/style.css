@@ -3167,15 +3167,15 @@ html, body {
 .table-card td strong { color: #020617 !important; font-weight: 600 !important; }
 .table-card td small, .muted { color: #8390a3 !important; font-size: 12px !important; font-weight: 400 !important; }
 /* Premium Unified Enterprise Button Design System */
-button:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle),
-.btn:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle),
+button:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.btn-action-delete):not(.gallery-delete-overlay-btn):not(.password-toggle),
+.btn:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.btn-action-delete):not(.gallery-delete-overlay-btn):not(.password-toggle),
 .btn.primary,
 .admin-head-actions a,
-.admin-main button:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle),
-.admin-main .btn:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle),
+.admin-main button:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.btn-action-delete):not(.gallery-delete-overlay-btn):not(.password-toggle),
+.admin-main .btn:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.btn-action-delete):not(.gallery-delete-overlay-btn):not(.password-toggle),
 a.btn.primary,
 .btn-primary,
-button[type="submit"]:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle) {
+button[type="submit"]:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.btn-action-delete):not(.gallery-delete-overlay-btn):not(.password-toggle) {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -3198,13 +3198,13 @@ button[type="submit"]:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.passwo
   white-space: nowrap !important;
 }
 
-button:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle):hover,
-.btn:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle):hover,
+button:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.btn-action-delete):not(.gallery-delete-overlay-btn):not(.password-toggle):hover,
+.btn:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.btn-action-delete):not(.gallery-delete-overlay-btn):not(.password-toggle):hover,
 .btn.primary:hover,
 .admin-head-actions a:hover,
-.admin-main button:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle):hover,
+.admin-main button:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.btn-action-delete):not(.gallery-delete-overlay-btn):not(.password-toggle):hover,
 a.btn.primary:hover,
-button[type="submit"]:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.password-toggle):hover {
+button[type="submit"]:not(.icon-btn):not(.btn-icon):not(.action-btn):not(.btn-action-delete):not(.gallery-delete-overlay-btn):not(.password-toggle):hover {
   transform: translateY(-2px) !important;
   background: linear-gradient(135deg, #0095ff 0%, #0066d6 100%) !important;
   box-shadow: 0 6px 16px rgba(0, 135, 255, 0.35) !important;
@@ -6113,35 +6113,110 @@ body.cursor-active .custom-cursor-ring {
 .modal-gallery-preview-grid {
   display: grid !important;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
-  gap: 12px !important;
+  gap: 14px !important;
   margin-top: 10px !important;
-  margin-bottom: 14px !important;
+  margin-bottom: 16px !important;
 }
 
 .gallery-preview-item {
   background: #ffffff !important;
   border: 1.5px solid #e2e8f0 !important;
-  border-radius: 14px !important;
-  padding: 8px !important;
+  border-radius: 12px !important;
+  padding: 6px !important;
   display: flex !important;
   flex-direction: column !important;
-  align-items: center !important;
-  text-align: center !important;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.02) !important;
+  gap: 6px !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
   transition: all 0.2s ease !important;
+  position: relative !important;
 }
 
 .gallery-preview-item:hover {
-  border-color: rgba(0, 135, 255, 0.3) !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08) !important;
   transform: translateY(-2px) !important;
+}
+
+.gallery-img-wrapper {
+  position: relative !important;
+  width: 100% !important;
+  height: 80px !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  background: #f8fafc !important;
 }
 
 .gallery-preview-img {
   width: 100% !important;
-  height: 75px !important;
+  height: 100% !important;
   object-fit: cover !important;
+  display: block !important;
   border-radius: 8px !important;
-  margin-bottom: 6px !important;
+}
+
+.gallery-delete-form {
+  position: absolute !important;
+  top: 5px !important;
+  right: 5px !important;
+  margin: 0 !important;
+  z-index: 2 !important;
+}
+
+.gallery-delete-overlay-btn {
+  width: 26px !important;
+  height: 26px !important;
+  min-width: 26px !important;
+  min-height: 26px !important;
+  max-width: 26px !important;
+  max-height: 26px !important;
+  border-radius: 50% !important;
+  background: rgba(220, 38, 38, 0.92) !important;
+  border: 1.5px solid #ffffff !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+  transition: all 0.2s ease !important;
+}
+
+.gallery-delete-overlay-btn:hover {
+  background: #b91c1c !important;
+  transform: scale(1.1) !important;
+  box-shadow: 0 4px 10px rgba(185, 28, 28, 0.4) !important;
+}
+
+.gallery-delete-overlay-btn svg {
+  width: 13px !important;
+  height: 13px !important;
+  stroke: #ffffff !important;
+  stroke-width: 2px !important;
+}
+
+.gallery-item-footer {
+  text-align: center !important;
+  padding: 2px 4px !important;
+  width: 100% !important;
+  overflow: hidden !important;
+}
+
+.gallery-item-filename {
+  font-size: 10px !important;
+  color: #64748b !important;
+  font-weight: 500 !important;
+  display: block !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.gallery-status-broken {
+  font-size: 10px !important;
+  color: #ef4444 !important;
+  font-weight: 700 !important;
+  display: block !important;
 }
 
 .modal-footer-bar {

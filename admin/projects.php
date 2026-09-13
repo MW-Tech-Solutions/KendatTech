@@ -393,21 +393,25 @@ if (isset($_GET['edit'])) {
                                     $gBroken = !file_exists($gDisk) || !is_file($gDisk);
                                 ?>
                                     <div class="gallery-preview-item">
-                                        <img src="<?php echo htmlspecialchars($gImgUrl); ?>" alt="Screenshot" class="gallery-preview-img">
-                                        <?php if ($gBroken): ?>
-                                            <span style="font-size: 10px; color: #ef4444; font-weight: 700; margin-bottom: 4px;">⚠ Missing</span>
-                                        <?php else: ?>
-                                            <span style="font-size: 10px; color: #64748b; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;"><?php echo htmlspecialchars(basename($gImg['image_path'])); ?></span>
-                                        <?php endif; ?>
-                                        <form method="post" action="projects.php?edit=<?php echo $editRecord['id']; ?>" style="margin:0; width: 100%;" onsubmit="return confirm('Delete this screenshot image?');">
-                                            <?php echo csrf_input(); ?>
-                                            <input type="hidden" name="action" value="delete_gallery_image">
-                                            <input type="hidden" name="image_id" value="<?php echo $gImg['id']; ?>">
-                                            <input type="hidden" name="project_id" value="<?php echo $editRecord['id']; ?>">
-                                            <button type="submit" class="btn-action-delete" style="width: 100%; height: 28px; border-radius: 6px;" title="Delete Screenshot">
-                                                <?php echo render_icon('Trash2', 12); ?> Delete
-                                            </button>
-                                        </form>
+                                        <div class="gallery-img-wrapper">
+                                            <img src="<?php echo htmlspecialchars($gImgUrl); ?>" alt="Screenshot" class="gallery-preview-img">
+                                            <form method="post" action="projects.php?edit=<?php echo $editRecord['id']; ?>" class="gallery-delete-form" onsubmit="return confirm('Delete this screenshot image?');">
+                                                <?php echo csrf_input(); ?>
+                                                <input type="hidden" name="action" value="delete_gallery_image">
+                                                <input type="hidden" name="image_id" value="<?php echo $gImg['id']; ?>">
+                                                <input type="hidden" name="project_id" value="<?php echo $editRecord['id']; ?>">
+                                                <button type="submit" class="gallery-delete-overlay-btn" title="Delete Screenshot">
+                                                    <?php echo render_icon('Trash2', 13); ?>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <div class="gallery-item-footer">
+                                            <?php if ($gBroken): ?>
+                                                <span class="gallery-status-broken">⚠ Missing</span>
+                                            <?php else: ?>
+                                                <span class="gallery-item-filename" title="<?php echo htmlspecialchars(basename($gImg['image_path'])); ?>"><?php echo htmlspecialchars(basename($gImg['image_path'])); ?></span>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
                                 <?php endforeach; ?>
                             </div>

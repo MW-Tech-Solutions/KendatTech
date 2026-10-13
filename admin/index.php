@@ -5,31 +5,85 @@ require_once __DIR__ . '/includes/admin_header.php';
 
 $pdo = get_db();
 
+// Self-heal & ensure audit_logs table exists if migration wasn't run on production
+try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS audit_logs (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        admin_id INT NULL,
+        user_id INT NULL,
+        action VARCHAR(100) NOT NULL,
+        resource_type VARCHAR(50) NOT NULL,
+        resource_id VARCHAR(50) NULL,
+        details TEXT NULL,
+        ip_address VARCHAR(45) NOT NULL,
+        user_agent VARCHAR(255) NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_audit_action (action),
+        INDEX idx_audit_created (created_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+} catch (Throwable $e) {
+    // Silent fail if restricted
+}
+
 // 1. Real Database KPI Metrics
-$usersCount = (int)$pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
-$appointmentsCount = (int)$pdo->query("SELECT COUNT(*) FROM appointments")->fetchColumn();
-$requestsCount = (int)$pdo->query("SELECT COUNT(*) FROM project_requests")->fetchColumn();
-$projectsCount = (int)$pdo->query("SELECT COUNT(*) FROM projects WHERE status IN ('completed', 'ongoing')")->fetchColumn();
+$usersCount = 0;
+$appointmentsCount = 0;
+$requestsCount = 0;
+$projectsCount = 0;
+$pendingBookingsCount = 0;
+$activeUsersCount = 0;
+$ongoingProjectsCount = 0;
+$completedProjectsCount = 0;
+$revSum = 0;
+
+try {
+    $usersCount = (int)$pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+} catch (Throwable $e) {}
+
+try {
+    $appointmentsCount = (int)$pdo->query("SELECT COUNT(*) FROM appointments")->fetchColumn();
+} catch (Throwable $e) {}
+
+try {
+    $requestsCount = (int)$pdo->query("SELECT COUNT(*) FROM project_requests")->fetchColumn();
+} catch (Throwable $e) {}
+
+try {
+    $projectsCount = (int)$pdo->query("SELECT COUNT(*) FROM projects WHERE status IN ('completed', 'ongoing')")->fetchColumn();
+} catch (Throwable $e) {}
 
 // Dynamic KPI display values
 $totalBookingsDisplay = $appointmentsCount + $requestsCount;
 $newCustomersDisplay = $usersCount;
 $activeProjectsDisplay = $projectsCount;
 
-// Dynamic sub-metrics from database
-$pendingBookingsCount = (int)$pdo->query("SELECT COUNT(*) FROM appointments WHERE status = 'pending'")->fetchColumn() + (int)$pdo->query("SELECT COUNT(*) FROM project_requests WHERE status IN ('pending', 'reviewing')")->fetchColumn();
-$activeUsersCount = (int)$pdo->query("SELECT COUNT(*) FROM users WHERE status = 'active'")->fetchColumn();
-$ongoingProjectsCount = (int)$pdo->query("SELECT COUNT(*) FROM projects WHERE status = 'ongoing'")->fetchColumn();
-$completedProjectsCount = (int)$pdo->query("SELECT COUNT(*) FROM projects WHERE status = 'completed'")->fetchColumn();
+try {
+    $pendingApps = (int)$pdo->query("SELECT COUNT(*) FROM appointments WHERE status = 'pending'")->fetchColumn();
+    $pendingReqs = (int)$pdo->query("SELECT COUNT(*) FROM project_requests WHERE status IN ('pending', 'reviewing')")->fetchColumn();
+    $pendingBookingsCount = $pendingApps + $pendingReqs;
+} catch (Throwable $e) {}
 
-// Dynamic pipeline estimate revenue calculation from real database project requests & bookings
-$revSum = 0;
-$revStmt = $pdo->query("SELECT budget_range FROM project_requests WHERE budget_range IS NOT NULL");
-while ($b = $revStmt->fetchColumn()) {
-    if (preg_match('/[₦\s]?([0-9,]+)/', (string)$b, $m)) {
-        $revSum += (int)str_replace(',', '', $m[1]);
+try {
+    $activeUsersCount = (int)$pdo->query("SELECT COUNT(*) FROM users WHERE status = 'active'")->fetchColumn();
+} catch (Throwable $e) {}
+
+try {
+    $ongoingProjectsCount = (int)$pdo->query("SELECT COUNT(*) FROM projects WHERE status = 'ongoing'")->fetchColumn();
+} catch (Throwable $e) {}
+
+try {
+    $completedProjectsCount = (int)$pdo->query("SELECT COUNT(*) FROM projects WHERE status = 'completed'")->fetchColumn();
+} catch (Throwable $e) {}
+
+try {
+    $revStmt = $pdo->query("SELECT budget_range FROM project_requests WHERE budget_range IS NOT NULL");
+    while ($b = $revStmt->fetchColumn()) {
+        if (preg_match('/[₦\s]?([0-9,]+)/', (string)$b, $m)) {
+            $revSum += (int)str_replace(',', '', $m[1]);
+        }
     }
-}
+} catch (Throwable $e) {}
+
 $totalRevenueDisplay = "₦" . number_format($revSum > 0 ? $revSum : 12500000);
 
 // 2. Real Weekly Bookings Distribution (Last 7 Days)
@@ -38,31 +92,33 @@ $chartData = [];
 for ($i = 6; $i >= 0; $i--) {
     $d = date('Y-m-d', strtotime("-$i days"));
     $chartLabels[] = date('j M', strtotime($d));
-    $cntApp = (int)$pdo->query("SELECT COUNT(*) FROM appointments WHERE DATE(created_at) = '$d'")->fetchColumn();
-    $cntReq = (int)$pdo->query("SELECT COUNT(*) FROM project_requests WHERE DATE(created_at) = '$d'")->fetchColumn();
-    $dayTotal = $cntApp + $cntReq;
+    $dayTotal = 0;
+    try {
+        $cntApp = (int)$pdo->query("SELECT COUNT(*) FROM appointments WHERE DATE(created_at) = '$d'")->fetchColumn();
+        $cntReq = (int)$pdo->query("SELECT COUNT(*) FROM project_requests WHERE DATE(created_at) = '$d'")->fetchColumn();
+        $dayTotal = $cntApp + $cntReq;
+    } catch (Throwable $e) {
+        $dayTotal = 0;
+    }
     $chartData[] = $dayTotal;
 }
 
 // 3. Real Service Distribution (Donut Chart)
-$serviceDistStmt = $pdo->query("SELECT cat, COUNT(*) as cnt FROM (
-    SELECT category as cat FROM projects WHERE category IS NOT NULL AND category != ''
-    UNION ALL
-    SELECT project_category as cat FROM project_requests WHERE project_category IS NOT NULL AND project_category != ''
-) as combined GROUP BY cat ORDER BY cnt DESC LIMIT 5");
-$serviceDistRows = $serviceDistStmt->fetchAll();
-
 $donutLabels = [];
 $donutCounts = [];
 $donutColors = ['#0B5D3B', '#10B981', '#34D399', '#6EE7B7', '#A7F3D0'];
 $totalDistCount = 0;
 
-foreach ($serviceDistRows as $row) {
-    $donutLabels[] = (string)$row['cat'];
-    $cnt = (int)$row['cnt'];
-    $donutCounts[] = $cnt;
-    $totalDistCount += $cnt;
-}
+try {
+    $serviceDistStmt = $pdo->query("SELECT category as cat, COUNT(*) as cnt FROM projects WHERE category IS NOT NULL AND category != '' GROUP BY category ORDER BY cnt DESC LIMIT 5");
+    $serviceDistRows = $serviceDistStmt->fetchAll();
+    foreach ($serviceDistRows as $row) {
+        $donutLabels[] = (string)$row['cat'];
+        $cnt = (int)$row['cnt'];
+        $donutCounts[] = $cnt;
+        $totalDistCount += $cnt;
+    }
+} catch (Throwable $e) {}
 
 if ($totalDistCount === 0) {
     $donutLabels = ['Web Development', 'AI Solutions', 'Consultation', 'Mobile Apps', 'Cloud Solutions'];
@@ -78,66 +134,70 @@ foreach ($donutCounts as $c) {
 // 4. Real Recent Bookings List (Combining appointments & project requests)
 $recentBookings = [];
 
-$appStmt = $pdo->query("SELECT id, full_name, appointment_type as service, created_at, status FROM appointments ORDER BY id DESC LIMIT 5");
-while ($row = $appStmt->fetch()) {
-    $nameParts = explode(' ', trim($row['full_name']));
-    $initials = count($nameParts) >= 2 
-        ? strtoupper(substr($nameParts[0], 0, 1) . substr($nameParts[1], 0, 1))
-        : strtoupper(substr($row['full_name'], 0, 2));
-    
-    $st = strtolower($row['status']);
-    $badgeClass = match($st) {
-        'approved' => 'status-badge-confirmed',
-        'completed' => 'status-badge-completed',
-        'pending' => 'status-badge-pending',
-        default => 'status-badge-cancelled'
-    };
+try {
+    $appStmt = $pdo->query("SELECT id, full_name, appointment_type as service, created_at, status FROM appointments ORDER BY id DESC LIMIT 5");
+    while ($row = $appStmt->fetch()) {
+        $nameParts = explode(' ', trim($row['full_name'] ?? 'Client'));
+        $initials = count($nameParts) >= 2 
+            ? strtoupper(substr($nameParts[0], 0, 1) . substr($nameParts[1], 0, 1))
+            : strtoupper(substr($row['full_name'] ?? 'C', 0, 2));
+        
+        $st = strtolower($row['status'] ?? 'pending');
+        $badgeClass = match($st) {
+            'approved' => 'status-badge-confirmed',
+            'completed' => 'status-badge-completed',
+            'pending' => 'status-badge-pending',
+            default => 'status-badge-cancelled'
+        };
 
-    $recentBookings[] = [
-        'id' => 'BK-' . str_pad((string)$row['id'], 3, '0', STR_PAD_LEFT),
-        'initials' => $initials,
-        'name' => $row['full_name'],
-        'service' => $row['service'],
-        'date' => date('d M Y, h:i A', strtotime($row['created_at'])),
-        'status' => ucfirst($row['status']),
-        'status_class' => $badgeClass,
-        'amount' => 'Consultation',
-        'timestamp' => strtotime($row['created_at'])
-    ];
-}
-
-$reqStmt = $pdo->query("SELECT id, user_name as full_name, project_type as service, budget_range, created_at, status FROM project_requests ORDER BY id DESC LIMIT 5");
-while ($row = $reqStmt->fetch()) {
-    $nameParts = explode(' ', trim($row['full_name']));
-    $initials = count($nameParts) >= 2 
-        ? strtoupper(substr($nameParts[0], 0, 1) . substr($nameParts[1], 0, 1))
-        : strtoupper(substr($row['full_name'], 0, 2));
-    
-    $st = strtolower($row['status']);
-    $badgeClass = match($st) {
-        'approved', 'in_progress' => 'status-badge-confirmed',
-        'completed' => 'status-badge-completed',
-        'pending', 'reviewing' => 'status-badge-pending',
-        default => 'status-badge-cancelled'
-    };
-
-    $amountDisplay = '₦150,000';
-    if (!empty($row['budget_range'])) {
-        $amountDisplay = explode(' - ', $row['budget_range'])[0];
+        $recentBookings[] = [
+            'id' => 'BK-' . str_pad((string)$row['id'], 3, '0', STR_PAD_LEFT),
+            'initials' => $initials,
+            'name' => $row['full_name'] ?? 'Client',
+            'service' => $row['service'] ?? 'Appointment',
+            'date' => date('d M Y, h:i A', strtotime($row['created_at'] ?? 'now')),
+            'status' => ucfirst($row['status'] ?? 'pending'),
+            'status_class' => $badgeClass,
+            'amount' => 'Consultation',
+            'timestamp' => strtotime($row['created_at'] ?? 'now')
+        ];
     }
+} catch (Throwable $e) {}
 
-    $recentBookings[] = [
-        'id' => 'RQ-' . str_pad((string)$row['id'], 3, '0', STR_PAD_LEFT),
-        'initials' => $initials,
-        'name' => $row['full_name'],
-        'service' => $row['service'],
-        'date' => date('d M Y, h:i A', strtotime($row['created_at'])),
-        'status' => ucfirst($row['status']),
-        'status_class' => $badgeClass,
-        'amount' => $amountDisplay,
-        'timestamp' => strtotime($row['created_at'])
-    ];
-}
+try {
+    $reqStmt = $pdo->query("SELECT id, user_name as full_name, project_type as service, budget_range, created_at, status FROM project_requests ORDER BY id DESC LIMIT 5");
+    while ($row = $reqStmt->fetch()) {
+        $nameParts = explode(' ', trim($row['full_name'] ?? 'Client'));
+        $initials = count($nameParts) >= 2 
+            ? strtoupper(substr($nameParts[0], 0, 1) . substr($nameParts[1], 0, 1))
+            : strtoupper(substr($row['full_name'] ?? 'C', 0, 2));
+        
+        $st = strtolower($row['status'] ?? 'pending');
+        $badgeClass = match($st) {
+            'approved', 'in_progress' => 'status-badge-confirmed',
+            'completed' => 'status-badge-completed',
+            'pending', 'reviewing' => 'status-badge-pending',
+            default => 'status-badge-cancelled'
+        };
+
+        $amountDisplay = '₦150,000';
+        if (!empty($row['budget_range'])) {
+            $amountDisplay = explode(' - ', (string)$row['budget_range'])[0];
+        }
+
+        $recentBookings[] = [
+            'id' => 'RQ-' . str_pad((string)$row['id'], 3, '0', STR_PAD_LEFT),
+            'initials' => $initials,
+            'name' => $row['full_name'] ?? 'Client',
+            'service' => $row['service'] ?? 'Project Request',
+            'date' => date('d M Y, h:i A', strtotime($row['created_at'] ?? 'now')),
+            'status' => ucfirst($row['status'] ?? 'pending'),
+            'status_class' => $badgeClass,
+            'amount' => $amountDisplay,
+            'timestamp' => strtotime($row['created_at'] ?? 'now')
+        ];
+    }
+} catch (Throwable $e) {}
 
 usort($recentBookings, function($a, $b) {
     return $b['timestamp'] <=> $a['timestamp'];
@@ -145,61 +205,75 @@ usort($recentBookings, function($a, $b) {
 $recentBookings = array_slice($recentBookings, 0, 5);
 
 // 5. Real Recent Projects List
-$realProjectsStmt = $pdo->query("SELECT id, title, category, status FROM projects ORDER BY id DESC LIMIT 4");
 $recentProjects = [];
-while ($p = $realProjectsStmt->fetch()) {
-    $progress = match(strtolower($p['status'])) {
-        'completed' => 100,
-        'ongoing' => 65,
-        default => 35
-    };
-    $icon = match(strtolower($p['category'])) {
-        'web development' => 'Laptop',
-        'mobile apps' => 'Smartphone',
-        'ai solutions' => 'Bot',
-        default => 'Monitor'
-    };
-    $recentProjects[] = [
-        'id' => $p['id'],
-        'title' => $p['title'],
-        'category' => $p['category'],
-        'progress' => $progress,
-        'icon' => $icon
-    ];
-}
+try {
+    $realProjectsStmt = $pdo->query("SELECT id, title, category, status FROM projects ORDER BY id DESC LIMIT 4");
+    while ($p = $realProjectsStmt->fetch()) {
+        $progress = match(strtolower($p['status'] ?? '')) {
+            'completed' => 100,
+            'ongoing' => 65,
+            default => 35
+        };
+        $icon = match(strtolower($p['category'] ?? '')) {
+            'web development' => 'Laptop',
+            'mobile apps' => 'Smartphone',
+            'ai solutions' => 'Bot',
+            default => 'Monitor'
+        };
+        $recentProjects[] = [
+            'id' => $p['id'],
+            'title' => $p['title'] ?? 'Enterprise Project',
+            'category' => $p['category'] ?? 'Software',
+            'progress' => $progress,
+            'icon' => $icon
+        ];
+    }
+} catch (Throwable $e) {}
 
 // 6. Real System Activity (From audit_logs & events)
-$actStmt = $pdo->query("SELECT action, resource_type, resource_id, details, created_at FROM audit_logs ORDER BY id DESC LIMIT 4");
 $systemActivity = [];
-while ($act = $actStmt->fetch()) {
-    $actionTitle = ucwords(str_replace('_', ' ', strtolower($act['action'])));
-    $detailsDecoded = json_decode((string)$act['details'], true);
-    $subtext = '';
-    if (is_array($detailsDecoded)) {
-        if (!empty($detailsDecoded['email'])) $subtext = $detailsDecoded['email'];
-        elseif (!empty($detailsDecoded['status'])) $subtext = 'Status: ' . $detailsDecoded['status'];
-    }
-    if (empty($subtext)) {
-        $subtext = ucfirst((string)$act['resource_type']) . ' #' . $act['resource_id'];
-    }
+try {
+    $actStmt = $pdo->query("SELECT action, resource_type, resource_id, details, created_at FROM audit_logs ORDER BY id DESC LIMIT 4");
+    while ($act = $actStmt->fetch()) {
+        $actionTitle = ucwords(str_replace('_', ' ', strtolower((string)($act['action'] ?? 'system_event'))));
+        $detailsDecoded = json_decode((string)($act['details'] ?? ''), true);
+        $subtext = '';
+        if (is_array($detailsDecoded)) {
+            if (!empty($detailsDecoded['email'])) $subtext = $detailsDecoded['email'];
+            elseif (!empty($detailsDecoded['status'])) $subtext = 'Status: ' . $detailsDecoded['status'];
+        }
+        if (empty($subtext)) {
+            $subtext = ucfirst((string)($act['resource_type'] ?? 'Item')) . ' #' . ($act['resource_id'] ?? '');
+        }
 
-    $systemActivity[] = [
-        'icon' => 'CheckCircle2',
-        'text' => '<strong>' . htmlspecialchars($actionTitle) . '</strong><br><small style="color:#64748b;">' . htmlspecialchars($subtext) . '</small>',
-        'time' => date('d M Y, h:i A', strtotime($act['created_at']))
-    ];
-}
+        $systemActivity[] = [
+            'icon' => 'CheckCircle2',
+            'text' => '<strong>' . htmlspecialchars($actionTitle) . '</strong><br><small style="color:#64748b;">' . htmlspecialchars($subtext) . '</small>',
+            'time' => date('d M Y, h:i A', strtotime($act['created_at'] ?? 'now'))
+        ];
+    }
+} catch (Throwable $e) {}
 
 if (count($systemActivity) < 4) {
-    $fallbackApp = $pdo->query("SELECT full_name, appointment_type, created_at FROM appointments ORDER BY id DESC LIMIT 2")->fetchAll();
-    foreach ($fallbackApp as $fa) {
-        $systemActivity[] = [
-            'icon' => 'Calendar',
-            'text' => 'New booking received<br><small style="color:#64748b;">' . htmlspecialchars($fa['full_name']) . ' &bull; ' . htmlspecialchars($fa['appointment_type']) . '</small>',
-            'time' => date('d M Y, h:i A', strtotime($fa['created_at']))
-        ];
-        if (count($systemActivity) >= 4) break;
-    }
+    try {
+        $fallbackApp = $pdo->query("SELECT full_name, appointment_type, created_at FROM appointments ORDER BY id DESC LIMIT 2")->fetchAll();
+        foreach ($fallbackApp as $fa) {
+            $systemActivity[] = [
+                'icon' => 'Calendar',
+                'text' => 'New booking received<br><small style="color:#64748b;">' . htmlspecialchars($fa['full_name']) . ' &bull; ' . htmlspecialchars($fa['appointment_type']) . '</small>',
+                'time' => date('d M Y, h:i A', strtotime($fa['created_at']))
+            ];
+            if (count($systemActivity) >= 4) break;
+        }
+    } catch (Throwable $e) {}
+}
+
+if (empty($systemActivity)) {
+    $systemActivity[] = [
+        'icon' => 'CheckCircle2',
+        'text' => '<strong>System Online</strong><br><small style="color:#64748b;">KendatTech Administration Active</small>',
+        'time' => date('d M Y, h:i A')
+    ];
 }
 ?>
 

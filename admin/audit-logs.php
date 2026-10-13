@@ -39,23 +39,51 @@ if (!empty($dateTo)) {
 
 $sqlWhere = " WHERE " . implode(" AND ", $whereClauses);
 
-// Count Total
-$countStmt = $pdo->prepare("SELECT COUNT(*) FROM audit_logs {$sqlWhere}");
-$countStmt->execute($params);
-$totalRecords = (int)$countStmt->fetchColumn();
-$totalPages = max(1, (int)ceil($totalRecords / $perPage));
+// Self-heal & ensure audit_logs table exists if migration wasn't run on production
+try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS audit_logs (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        admin_id INT NULL,
+        user_id INT NULL,
+        action VARCHAR(100) NOT NULL,
+        resource_type VARCHAR(50) NOT NULL,
+        resource_id VARCHAR(50) NULL,
+        details TEXT NULL,
+        ip_address VARCHAR(45) NOT NULL,
+        user_agent VARCHAR(255) NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_audit_action (action),
+        INDEX idx_audit_created (created_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+} catch (Throwable $e) {}
 
-// Fetch Records
-$sql = "SELECT a.*, u.full_name as user_name, u.email as user_email 
-        FROM audit_logs a 
-        LEFT JOIN users u ON a.user_id = u.id 
-        {$sqlWhere} 
-        ORDER BY a.id DESC 
-        LIMIT {$perPage} OFFSET {$offset}";
+$totalRecords = 0;
+$totalPages = 1;
+$logs = [];
 
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$logs = $stmt->fetchAll();
+try {
+    // Count Total
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM audit_logs {$sqlWhere}");
+    $countStmt->execute($params);
+    $totalRecords = (int)$countStmt->fetchColumn();
+    $totalPages = max(1, (int)ceil($totalRecords / $perPage));
+
+    // Fetch Records
+    $sql = "SELECT a.*, u.full_name as user_name, u.email as user_email 
+            FROM audit_logs a 
+            LEFT JOIN users u ON a.user_id = u.id 
+            {$sqlWhere} 
+            ORDER BY a.id DESC 
+            LIMIT {$perPage} OFFSET {$offset}";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    $logs = $stmt->fetchAll();
+} catch (Throwable $e) {
+    $totalRecords = 0;
+    $totalPages = 1;
+    $logs = [];
+}
 ?>
 
 <div class="admin-page-head">

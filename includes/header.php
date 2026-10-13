@@ -40,12 +40,25 @@ $currentPageFile = basename($_SERVER['PHP_SELF'] ?? '');
     <?php endif; ?>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Open+Sans:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap-grid.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="<?php echo $baseUrl; ?>assets/css/style.css?v=<?php echo file_exists(__DIR__ . '/../assets/css/style.css') ? filemtime(__DIR__ . '/../assets/css/style.css') : time(); ?>">
 <?php
-$isLightHeaderPage = in_array($currentPageFile, ['login.php', 'register.php', 'admin-login.php', 'forgot-password.php']);
+$isLightHeaderPage = in_array($currentPageFile, [
+    'services.php',
+    'ai-solutions.php',
+    'book-appointment.php',
+    'contact.php',
+    'request-project.php',
+    'about.php',
+    'projects.php',
+    'project-details.php',
+    'login.php',
+    'register.php',
+    'admin-login.php',
+    'forgot-password.php'
+]);
 ?>
 </head>
 <body class="<?php echo $isLightHeaderPage ? 'light-surface-page' : ''; ?>">
@@ -91,13 +104,18 @@ $isLightHeaderPage = in_array($currentPageFile, ['login.php', 'register.php', 'a
 
     <header class="site-header <?php echo $isLightHeaderPage ? 'light-header' : ''; ?>">
         <a class="brand" href="<?php echo $baseUrl; ?>index.php" aria-label="<?php echo htmlspecialchars($companyName); ?>">
-            <!-- <span class="brand-mark-wrapper"> -->
-                <?php if ($logoPath): ?>
-                    <img src="<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($companyName); ?>" class="brand-logo-img">
-                <?php else: ?>
-                    <span class="brand-logo-text">kendat tech</span>
-                <?php endif; ?>
-            <!-- </span> -->
+            <?php if ($logoPath): ?>
+                <img src="<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($companyName); ?>" class="brand-logo-img">
+            <?php else: ?>
+                <span class="brand-logo-flex">
+                    <svg width="44" height="44" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="brand-k-icon">
+                        <rect width="32" height="32" rx="9" fill="#ECFDF5"/>
+                        <path d="M9 7V25M9 16L18 7M9 16L18 25" stroke="#0B5D3B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19 16L24 7M19 16L24 25" stroke="#10B981" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="brand-logo-text">Kendat<span class="brand-logo-accent">Tech</span></span>
+                </span>
+            <?php endif; ?>
         </a>
 
         <button class="icon-btn menu-toggle" type="button" aria-label="Open menu">
@@ -119,13 +137,13 @@ $isLightHeaderPage = in_array($currentPageFile, ['login.php', 'register.php', 'a
             <?php endforeach; ?>
 
             <?php if ($currentUser): ?>
-                <a class="nav-link dashboard-link" href="<?php echo ($currentUser['role'] === 'user') ? ($baseUrl . 'dashboard.php') : ($baseUrl . 'admin/index.php'); ?>">
-                    <span>Dashboard</span>
+                <a class="kt-btn-green" href="<?php echo ($currentUser['role'] === 'user') ? ($baseUrl . 'dashboard.php') : ($baseUrl . 'admin/index.php'); ?>">
+                    Dashboard
                 </a>
-                <a class="link-button" href="<?php echo $baseUrl; ?>logout.php">Logout</a>
+                <a class="kt-nav-logout-btn" href="<?php echo $baseUrl; ?>logout.php">Logout</a>
             <?php else: ?>
-                <a class="pill" href="<?php echo $baseUrl; ?>login.php">
-                    <?php echo render_icon('UserRound', 16); ?>Login/Register
+                <a class="kt-btn-green" href="<?php echo $baseUrl; ?>login.php">
+                    Login
                 </a>
             <?php endif; ?>
         </nav>

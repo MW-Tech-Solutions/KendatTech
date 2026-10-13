@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (!isset($_POST['action']) || $_POST
     }
 }
 
+$query = trim($_GET['q'] ?? '');
 $statusFilter = $_GET['status'] ?? 'all';
 $sql = "SELECT * FROM project_requests WHERE 1=1";
 $params = [];
@@ -47,6 +48,13 @@ $params = [];
 if ($statusFilter !== 'all') {
     $sql .= " AND status = ?";
     $params[] = $statusFilter;
+}
+if (!empty($query)) {
+    $sql .= " AND (user_name LIKE ? OR project_type LIKE ? OR company_name LIKE ? OR email LIKE ?)";
+    $params[] = "%{$query}%";
+    $params[] = "%{$query}%";
+    $params[] = "%{$query}%";
+    $params[] = "%{$query}%";
 }
 
 $sql .= " ORDER BY id DESC";
@@ -73,7 +81,8 @@ if (isset($_GET['edit'])) {
 <?php if ($notice): ?><div class="admin-notice success"><?php echo render_icon('CheckCircle2'); ?><?php echo htmlspecialchars($notice); ?></div><?php endif; ?>
 
 <div class="toolbar advanced-toolbar">
-    <form method="get" action="" style="display:flex; gap:10px;">
+    <form method="get" action="" style="display:flex; gap:10px; width:100%;">
+        <input name="q" placeholder="Search requests by client, project type, or company..." value="<?php echo htmlspecialchars($query); ?>" style="flex:1;">
         <select name="status" onchange="this.form.submit()">
             <option value="all" <?php echo $statusFilter==='all'?'selected':''; ?>>All statuses</option>
             <option value="pending" <?php echo $statusFilter==='pending'?'selected':''; ?>>Pending</option>
@@ -83,6 +92,7 @@ if (isset($_GET['edit'])) {
             <option value="completed" <?php echo $statusFilter==='completed'?'selected':''; ?>>Completed</option>
             <option value="rejected" <?php echo $statusFilter==='rejected'?'selected':''; ?>>Rejected</option>
         </select>
+        <button class="btn small" type="submit"><?php echo render_icon('Search'); ?>Search</button>
     </form>
 </div>
 
@@ -91,10 +101,11 @@ if (isset($_GET['edit'])) {
         <thead>
             <tr>
                 <th style="width: 60px;">ID</th>
-                <th style="min-width: 180px;">Client Name & Company</th>
-                <th style="min-width: 160px;">Category</th>
-                <th style="width: 140px;">Budget Range</th>
-                <th style="width: 130px;">Attachment</th>
+                <th style="min-width: 180px;">Client &amp; Contact</th>
+                <th style="min-width: 200px;">Project Requested</th>
+                <th style="min-width: 140px;">Category</th>
+                <th style="width: 150px;">Budget Estimate</th>
+                <th style="width: 120px;">Attachment</th>
                 <th style="width: 120px;">Status</th>
                 <th style="width: 120px; text-align: right;">Actions</th>
             </tr>
@@ -105,10 +116,17 @@ if (isset($_GET['edit'])) {
                     <td><span class="admin-id-badge">#<?php echo $row['id']; ?></span></td>
                     <td>
                         <strong style="font-size:14px; color:#0f172a; display:block;"><?php echo htmlspecialchars($row['user_name']); ?></strong>
-                        <span style="font-size:12px; color:#64748b; font-weight:600;"><?php echo htmlspecialchars($row['company_name'] ?? ''); ?></span>
+                        <span style="font-size:12px; color:#64748b;"><?php echo htmlspecialchars($row['email']); ?></span>
+                        <?php if (!empty($row['company_name'])): ?>
+                            <small style="font-size:11.5px; color:#0B5D3B; font-weight:700; display:block;"><?php echo htmlspecialchars($row['company_name']); ?></small>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <strong style="font-size:13.5px; color:#0f172a; display:block;"><?php echo htmlspecialchars($row['project_type'] ?: 'Custom Project'); ?></strong>
+                        <span style="font-size:11.5px; color:#64748b;"><?php echo date('d M Y, h:i A', strtotime($row['created_at'])); ?></span>
                     </td>
                     <td><span class="admin-cat-badge"><?php echo htmlspecialchars($row['project_category']); ?></span></td>
-                    <td><span style="font-size:13px; color:#334155; font-weight:700;"><?php echo htmlspecialchars($row['budget_range'] ?? '-'); ?></span></td>
+                    <td><span style="font-size:13px; color:#0B5D3B; font-weight:700;"><?php echo htmlspecialchars($row['budget_range'] ?? '-'); ?></span></td>
                     <td>
                         <?php if (!empty($row['file_path'])): ?>
                             <a class="admin-demo-pill" href="<?php echo htmlspecialchars(upload_asset_url($row['file_path'])); ?>" target="_blank" rel="noopener">

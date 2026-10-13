@@ -124,9 +124,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Kendat Firebase to MySQL Migration</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Open+Sans:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
   <style>
-    body { margin:0; background:#050816; color:#eef7ff; font-family:'Open Sans',Segoe UI,Arial,sans-serif; }
+    body { margin:0; background:#F8FAFC; color:#0F172A; font-family:'Plus Jakarta Sans','Inter',Segoe UI,Arial,sans-serif; }
     .wrap { min-height:100vh; display:grid; place-items:center; padding:28px; background:radial-gradient(circle at 15% 10%,rgba(34,211,238,.16),transparent 28%),radial-gradient(circle at 85% 15%,rgba(139,92,246,.18),transparent 30%); }
     .card { width:min(720px,100%); border:1px solid rgba(148,163,184,.18); border-radius:12px; background:linear-gradient(180deg,rgba(16,25,46,.88),rgba(5,8,22,.9)); box-shadow:0 28px 90px rgba(0,0,0,.42); padding:28px; }
     h1 { margin:0 0 8px; font-size:clamp(24px,4vw,36px); font-family:'Montserrat',Segoe UI,Arial,sans-serif; font-weight:700; }

@@ -70,34 +70,48 @@ if (isset($_GET['edit'])) {
 <?php if ($notice): ?><div class="admin-notice success"><?php echo render_icon('CheckCircle2'); ?><?php echo htmlspecialchars($notice); ?></div><?php endif; ?>
 <?php if ($error): ?><div class="admin-notice error"><?php echo render_icon('TriangleAlert'); ?><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
 
-<div class="table-card glass-card">
-    <table>
+<div class="admin-projects-card">
+    <table class="admin-projects-table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Author</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th style="width: 60px;">ID</th>
+                <th style="min-width: 240px;">Post Title</th>
+                <th style="width: 150px;">Category</th>
+                <th style="width: 180px;">Author</th>
+                <th style="width: 120px;">Status</th>
+                <th style="width: 120px; text-align: right;">Actions</th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($rows as $row): ?>
                 <tr>
-                    <td><?php echo $row['id']; ?></td>
-                    <td><strong><?php echo htmlspecialchars($row['title']); ?></strong></td>
-                    <td><?php echo htmlspecialchars($row['category'] ?? '-'); ?></td>
-                    <td><?php echo htmlspecialchars($row['author']); ?></td>
-                    <td><span class="status"><?php echo htmlspecialchars($row['status']); ?></span></td>
+                    <td><span class="admin-id-badge">#<?php echo $row['id']; ?></span></td>
+                    <td><strong style="color: #0f172a; font-size: 14px;"><?php echo htmlspecialchars($row['title']); ?></strong></td>
+                    <td><span class="admin-cat-badge"><?php echo htmlspecialchars($row['category'] ?? 'General'); ?></span></td>
+                    <td><span style="font-size: 13px; color: #475569; font-weight: 600;"><?php echo htmlspecialchars($row['author']); ?></span></td>
                     <td>
-                        <div class="row-actions">
-                            <a class="icon-btn" href="blog.php?edit=<?php echo $row['id']; ?>" title="Edit"><?php echo render_icon('Pencil'); ?></a>
+                        <?php if ($row['status'] === 'published'): ?>
+                            <span class="admin-status-pill status-completed">
+                                <span class="status-dot-green"></span> Published
+                            </span>
+                        <?php else: ?>
+                            <span class="admin-status-pill status-upcoming">
+                                <span class="status-dot-amber"></span> Draft
+                            </span>
+                        <?php endif; ?>
+                    </td>
+                    <td style="text-align: right;">
+                        <div class="admin-actions-group">
+                            <a class="btn-action-edit" href="blog.php?edit=<?php echo $row['id']; ?>" title="Edit Post">
+                                <?php echo render_icon('Pencil', 14); ?>
+                            </a>
                             <form method="post" action="blog.php" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete blog post &quot;<?php echo htmlspecialchars($row['title'], ENT_QUOTES); ?>&quot;? This action cannot be undone.');">
                                 <?php echo csrf_input(); ?>
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                <button type="submit" class="icon-btn danger" title="Delete"><?php echo render_icon('Trash2'); ?></button>
+                                <button type="submit" class="btn-action-delete" title="Delete Post">
+                                    <?php echo render_icon('Trash2', 14); ?>
+                                </button>
                             </form>
                         </div>
                     </td>

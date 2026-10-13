@@ -67,30 +67,29 @@ $logs = $stmt->fetchAll();
 </div>
 
 <div class="toolbar advanced-toolbar" style="margin-bottom:20px;">
-    <form method="get" action="" style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
-        <input type="text" name="action_filter" placeholder="Filter by action (e.g. DELETE)..." value="<?php echo htmlspecialchars($actionFilter); ?>" style="padding:8px 12px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:13px;">
-        
-        <input type="date" name="date_from" value="<?php echo htmlspecialchars($dateFrom); ?>" title="From Date" style="padding:8px 12px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:13px;">
-        <input type="date" name="date_to" value="<?php echo htmlspecialchars($dateTo); ?>" title="To Date" style="padding:8px 12px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:13px;">
+    <form method="get" action="" style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; width:100%;">
+        <input type="text" name="action_filter" placeholder="Filter by action (e.g. DELETE)..." value="<?php echo htmlspecialchars($actionFilter); ?>" style="flex:1; min-width:200px;">
+        <input type="date" name="date_from" value="<?php echo htmlspecialchars($dateFrom); ?>" title="From Date">
+        <input type="date" name="date_to" value="<?php echo htmlspecialchars($dateTo); ?>" title="To Date">
 
-        <button type="submit" class="btn small primary">Filter Logs</button>
+        <button type="submit" class="btn small primary"><?php echo render_icon('Search', 14); ?> Filter Logs</button>
         <?php if ($actionFilter || $dateFrom || $dateTo || $adminFilter): ?>
             <a href="audit-logs.php" class="btn small ghost">Reset</a>
         <?php endif; ?>
     </form>
 </div>
 
-<div class="table-card glass-card">
-    <table>
+<div class="admin-projects-card">
+    <table class="admin-projects-table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Timestamp</th>
-                <th>User / Actor</th>
-                <th>Action</th>
-                <th>Resource</th>
-                <th>IP Address</th>
-                <th>Metadata</th>
+                <th style="width: 60px;">ID</th>
+                <th style="width: 170px;">Timestamp</th>
+                <th style="min-width: 180px;">User / Actor</th>
+                <th style="width: 160px;">Action</th>
+                <th style="width: 140px;">Resource</th>
+                <th style="width: 130px;">IP Address</th>
+                <th style="min-width: 200px;">Metadata</th>
             </tr>
         </thead>
         <tbody>
@@ -101,33 +100,35 @@ $logs = $stmt->fetchAll();
             <?php else: ?>
                 <?php foreach ($logs as $log): ?>
                     <tr>
-                        <td><code>#<?php echo $log['id']; ?></code></td>
-                        <td style="white-space:nowrap; font-size:13px; color:#cbd5e1;"><?php echo date('Y-m-d H:i:s', strtotime($log['created_at'])); ?></td>
+                        <td><span class="admin-id-badge">#<?php echo $log['id']; ?></span></td>
+                        <td><span style="font-size:12.5px; color:#475569; font-weight:600;"><?php echo date('d M Y, H:i', strtotime($log['created_at'])); ?></span></td>
                         <td>
                             <?php if ($log['user_name']): ?>
-                                <strong><?php echo htmlspecialchars($log['user_name']); ?></strong><br>
-                                <small style="color:#94a3b8;"><?php echo htmlspecialchars($log['user_email']); ?></small>
+                                <strong style="font-size:13.5px; color:#0f172a; display:block;"><?php echo htmlspecialchars($log['user_name']); ?></strong>
+                                <small style="color:#64748b;"><?php echo htmlspecialchars($log['user_email']); ?></small>
                             <?php else: ?>
-                                <span style="color:#64748b;">User #<?php echo htmlspecialchars((string)($log['user_id'] ?? 'System')); ?></span>
+                                <span style="font-size:13px; color:#64748b; font-weight:600;">System Admin #<?php echo htmlspecialchars((string)($log['user_id'] ?? '1')); ?></span>
                             <?php endif; ?>
                         </td>
                         <td>
-                            <span class="badge-pill" style="font-size:11px; padding:3px 8px; border-radius:6px; background:rgba(0,135,255,0.15); color:#38bdf8; font-weight:700;">
+                            <span class="admin-status-pill status-ongoing">
                                 <?php echo htmlspecialchars($log['action']); ?>
                             </span>
                         </td>
                         <td>
-                            <?php echo htmlspecialchars($log['target_type'] ?? 'system'); ?>
-                            <?php if (!empty($log['target_id'])): ?>
-                                <code>(<?php echo htmlspecialchars((string)$log['target_id']); ?>)</code>
-                            <?php endif; ?>
+                            <span class="admin-cat-badge">
+                                <?php echo htmlspecialchars($log['resource_type'] ?? 'system'); ?>
+                                <?php if (!empty($log['resource_id'])): ?>
+                                    #<?php echo htmlspecialchars((string)$log['resource_id']); ?>
+                                <?php endif; ?>
+                            </span>
                         </td>
-                        <td><code style="font-size:12px; color:#a7f3d0;"><?php echo htmlspecialchars($log['ip_address'] ?? '127.0.0.1'); ?></code></td>
-                        <td style="max-width:260px; overflow-x:auto;">
+                        <td><code style="font-size:12px; color:#0B5D3B; background:#ECFDF5; padding:2px 6px; border-radius:4px; font-weight:700;"><?php echo htmlspecialchars($log['ip_address'] ?? '127.0.0.1'); ?></code></td>
+                        <td>
                             <?php if (!empty($log['details'])): ?>
-                                <pre style="margin:0; font-size:11px; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; color:#e2e8f0; white-space:pre-wrap; word-break:break-all;"><?php echo htmlspecialchars($log['details']); ?></pre>
+                                <span style="font-size:11.5px; color:#475569; word-break:break-all;"><?php echo htmlspecialchars($log['details']); ?></span>
                             <?php else: ?>
-                                <span style="color:#64748b;">-</span>
+                                <span style="color:#94a3b8;">-</span>
                             <?php endif; ?>
                         </td>
                     </tr>

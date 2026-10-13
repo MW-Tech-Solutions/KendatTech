@@ -4,836 +4,255 @@ declare(strict_types=1);
 require_once __DIR__ . '/includes/header.php';
 
 $db = get_db();
-$stmt = $db->query("SELECT * FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, id ASC");
-$teamMembers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+try {
+    $stmt = $db->query("SELECT * FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, id ASC");
+    $teamMembers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) {
+    $teamMembers = [];
+}
 
-$aboutCompany = $settings['about_company'] ?? 'Kendat Integrated Services is a technology-driven company focused on software engineering, AI solutions, digital transformation, and enterprise systems for businesses, institutions, and individuals.';
+$aboutCompany = $settings['about_company'] ?? 'KendatTech is a forward-thinking technology company focused on building high-quality, scalable and secure software solutions for businesses of all sizes. We combine innovation, expertise and passion to deliver digital products that make a real impact.';
 ?>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
-
-<style>
-.about-futuristic-wrapper {
-  position: relative !important;
-  background: #040915 !important;
-  background: radial-gradient(circle at 10% 20%, rgba(0, 135, 255, 0.2) 0%, transparent 45%),
-              radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.15) 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, #071026 0%, #030712 100%) !important;
-  color: #ffffff !important;
-  padding: 65px 24px 75px !important;
-  overflow: hidden !important;
-  min-height: 85vh !important;
-  box-sizing: border-box !important;
-}
-
-.about-futuristic-wrapper::before {
-  content: '' !important;
-  position: absolute !important;
-  top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
-  background-image: 
-    linear-gradient(rgba(0, 195, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 195, 255, 0.04) 1px, transparent 1px) !important;
-  background-size: 40px 40px !important;
-  pointer-events: none !important;
-  z-index: 1 !important;
-}
-
-.about-top-bar {
-  display: flex !important;
-  justify-content: flex-end !important;
-  align-items: center !important;
-  margin-bottom: 32px !important;
-  position: relative !important;
-  z-index: 2 !important;
-}
-
-.about-top-motto {
-  font-family: 'Poppins', sans-serif !important;
-  font-size: 11px !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.25em !important;
-  color: #94a3b8 !important;
-  text-transform: uppercase !important;
-}
-
-.about-handwritten-overlay {
-  position: absolute !important;
-  top: -10px !important;
-  right: 25px !important;
-  font-family: 'Caveat', 'Brush Script MT', cursive, sans-serif !important;
-  font-size: 32px !important;
-  color: rgba(148, 163, 184, 0.3) !important;
-  transform: rotate(-8deg) !important;
-  pointer-events: none !important;
-  z-index: 1 !important;
-  line-height: 1.1 !important;
-  text-align: right !important;
-}
-
-.about-main-layout {
-  display: grid !important;
-  grid-template-columns: 1fr 1.35fr !important;
-  gap: 36px !important;
-  align-items: start !important;
-  position: relative !important;
-  z-index: 2 !important;
-}
-
-/* Left Hero Column */
-.about-hero-col {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 22px !important;
-}
-
-.about-badge-pill {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  padding: 6px 18px !important;
-  border-radius: 999px !important;
-  background: rgba(0, 229, 255, 0.08) !important;
-  border: 1px solid rgba(0, 229, 255, 0.4) !important;
-  color: #00e5ff !important;
-  font-family: 'Poppins', sans-serif !important;
-  font-size: 12px !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.15em !important;
-  text-transform: uppercase !important;
-  width: fit-content !important;
-  box-shadow: 0 0 15px rgba(0, 229, 255, 0.15) !important;
-}
-
-.about-headline {
-  font-family: 'Montserrat', sans-serif !important;
-  font-size: 2.7rem !important;
-  font-weight: 900 !important;
-  line-height: 1.15 !important;
-  color: #ffffff !important;
-  letter-spacing: -0.02em !important;
-  margin: 0 !important;
-}
-
-.about-headline .text-accent {
-  background: linear-gradient(135deg, #00e5ff 0%, #0087ff 100%) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-}
-
-.about-description {
-  font-family: 'Open Sans', sans-serif !important;
-  font-size: 15px !important;
-  line-height: 1.65 !important;
-  color: #94a3b8 !important;
-  margin: 0 !important;
-}
-
-.about-features-duo {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 16px !important;
-  margin-top: 6px !important;
-}
-
-.about-feature-box {
-  display: flex !important;
-  align-items: center !important;
-  gap: 14px !important;
-  padding: 16px !important;
-  border-radius: 16px !important;
-  background: rgba(15, 23, 42, 0.65) !important;
-  border: 1px solid rgba(0, 135, 255, 0.25) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  transition: all 0.3s ease !important;
-}
-
-.about-feature-box:hover {
-  border-color: rgba(0, 229, 255, 0.6) !important;
-  box-shadow: 0 8px 24px rgba(0, 135, 255, 0.2) !important;
-  transform: translateY(-2px) !important;
-}
-
-.about-feature-icon {
-  width: 44px !important;
-  height: 44px !important;
-  border-radius: 12px !important;
-  background: linear-gradient(135deg, rgba(0, 135, 255, 0.2), rgba(0, 229, 255, 0.1)) !important;
-  border: 1px solid rgba(0, 135, 255, 0.4) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  color: #00e5ff !important;
-  flex-shrink: 0 !important;
-}
-
-.about-feature-icon svg {
-  width: 22px !important;
-  height: 22px !important;
-  stroke: #00e5ff !important;
-}
-
-.about-feature-text h4 {
-  font-family: 'Montserrat', sans-serif !important;
-  font-size: 13px !important;
-  font-weight: 800 !important;
-  color: #ffffff !important;
-  margin: 0 0 2px 0 !important;
-}
-
-.about-feature-text p {
-  font-size: 11px !important;
-  color: #64748b !important;
-  margin: 0 !important;
-}
-
-.about-cta-group {
-  display: flex !important;
-  align-items: center !important;
-  gap: 20px !important;
-  margin-top: 10px !important;
-  flex-wrap: wrap !important;
-}
-
-.about-btn-glow {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  padding: 14px 28px !important;
-  border-radius: 999px !important;
-  background: linear-gradient(90deg, #0072ff 0%, #00c6ff 100%) !important;
-  color: #ffffff !important;
-  font-family: 'Poppins', sans-serif !important;
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  text-decoration: none !important;
-  box-shadow: 0 0 25px rgba(0, 114, 255, 0.5) !important;
-  transition: all 0.3s ease !important;
-}
-
-.about-btn-glow:hover {
-  box-shadow: 0 0 35px rgba(0, 198, 255, 0.8) !important;
-  transform: translateY(-2px) !important;
-}
-
-.about-btn-subtle {
-  color: #94a3b8 !important;
-  font-family: 'Poppins', sans-serif !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  text-decoration: none !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  transition: color 0.2s ease !important;
-}
-
-.about-btn-subtle:hover {
-  color: #00e5ff !important;
-}
-
-/* Right Team Members Column */
-.about-team-col {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 20px !important;
-}
-
-.team-members-grid {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
-  gap: 20px !important;
-}
-
-.team-card-neon {
-  position: relative !important;
-  border-radius: 20px !important;
-  background: rgba(11, 22, 44, 0.85) !important;
-  border: 1px solid rgba(0, 195, 255, 0.45) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 195, 255, 0.1) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  overflow: hidden !important;
-  display: flex !important;
-  flex-direction: column !important;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-.team-card-neon:hover {
-  border-color: rgba(0, 229, 255, 0.85) !important;
-  box-shadow: 0 16px 40px rgba(0, 195, 255, 0.35), inset 0 0 25px rgba(0, 229, 255, 0.2) !important;
-  transform: translateY(-5px) !important;
-}
-
-.team-card-photo-box {
-  width: 100% !important;
-  height: 270px !important;
-  position: relative !important;
-  overflow: hidden !important;
-  background: linear-gradient(180deg, #0b152c 0%, #060e20 100%) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.team-card-photo-img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  object-position: top center !important;
-  transition: transform 0.4s ease !important;
-}
-
-.team-card-neon:hover .team-card-photo-img {
-  transform: scale(1.04) !important;
-}
-
-.team-card-photo-fallback {
-  width: 100% !important;
-  height: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  color: rgba(0, 195, 255, 0.5) !important;
-  background: radial-gradient(circle at center, rgba(0, 135, 255, 0.2) 0%, rgba(6, 14, 32, 1) 70%) !important;
-}
-
-.team-card-photo-fallback svg {
-  width: 64px !important;
-  height: 64px !important;
-  stroke: #00e5ff !important;
-}
-
-.team-card-content {
-  padding: 16px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 6px !important;
-  flex-grow: 1 !important;
-  background: linear-gradient(180deg, rgba(8, 17, 36, 0.95) 0%, rgba(4, 9, 21, 0.98) 100%) !important;
-  border-top: 1px solid rgba(0, 195, 255, 0.2) !important;
-}
-
-.team-card-role-title {
-  font-family: 'Montserrat', sans-serif !important;
-  font-size: 14px !important;
-  font-weight: 800 !important;
-  color: #ffffff !important;
-  margin: 0 !important;
-  line-height: 1.2 !important;
-}
-
-.team-card-name-title {
-  font-family: 'Poppins', sans-serif !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  color: #00e5ff !important;
-  margin: 0 !important;
-}
-
-.team-card-bio-text {
-  font-size: 12px !important;
-  color: #94a3b8 !important;
-  line-height: 1.45 !important;
-  margin: 4px 0 0 0 !important;
-  display: -webkit-box !important;
-  -webkit-line-clamp: 3 !important;
-  -webkit-box-orient: vertical !important;
-  overflow: hidden !important;
-}
-
-.team-card-tags {
-  margin-top: auto !important;
-  padding-top: 10px !important;
-  font-family: 'Poppins', sans-serif !important;
-  font-size: 10px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.08em !important;
-  color: rgba(148, 163, 184, 0.8) !important;
-  text-transform: uppercase !important;
-  border-top: 1px dashed rgba(255, 255, 255, 0.12) !important;
-  word-break: break-word !important;
-}
-
-.team-card-social-links {
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  margin-top: 8px !important;
-}
-
-.team-card-social-links a {
-  color: #64748b !important;
-  transition: color 0.2s ease !important;
-}
-
-.team-card-social-links a:hover {
-  color: #00e5ff !important;
-}
-
-.team-card-social-links svg {
-  width: 16px !important;
-  height: 16px !important;
-  stroke: currentColor !important;
-}
-
-/* Bottom Globe & Footer Accent */
-.about-globe-accent-bar {
-  display: flex !important;
-  justify-content: flex-end !important;
-  align-items: center !important;
-  margin-top: 40px !important;
-  padding-top: 20px !important;
-  border-top: 1px solid rgba(0, 195, 255, 0.2) !important;
-  position: relative !important;
-  z-index: 2 !important;
-}
-
-.about-globe-text-brand {
-  font-family: 'Poppins', sans-serif !important;
-  font-size: 11px !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.2em !important;
-  color: rgba(148, 163, 184, 0.7) !important;
-  text-transform: uppercase !important;
-  text-align: right !important;
-}
-
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-  .about-main-layout {
-    grid-template-columns: 1fr !important;
-    gap: 32px !important;
-  }
-  .about-headline {
-    font-size: 2.2rem !important;
-  }
-}
-
-@media (max-width: 640px) {
-  .about-features-duo {
-    grid-template-columns: 1fr !important;
-  }
-  .team-members-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .about-headline {
-    font-size: 1.8rem !important;
-  }
-  .about-cta-group {
-    flex-direction: column !important;
-    align-items: stretch !important;
-  }
-}
-
-.team-card-neon {
-  cursor: pointer !important;
-}
-
-.team-card-view-bio-pill {
-  margin-top: 10px !important;
-  padding: 8px 14px !important;
-  border-radius: 12px !important;
-  background: rgba(0, 229, 255, 0.08) !important;
-  border: 1px solid rgba(0, 229, 255, 0.3) !important;
-  color: #00e5ff !important;
-  font-family: 'Poppins', sans-serif !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.05em !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 8px !important;
-  transition: all 0.25s ease !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-.team-card-neon:hover .team-card-view-bio-pill {
-  background: rgba(0, 229, 255, 0.2) !important;
-  border-color: rgba(0, 229, 255, 0.7) !important;
-  box-shadow: 0 0 15px rgba(0, 229, 255, 0.3) !important;
-}
-
-/* Futuristic Ultra-Responsive Person Brief Summary Modal */
-.team-bio-modal-backdrop {
-  position: fixed !important;
-  top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
-  background: rgba(3, 7, 18, 0.92) !important;
-  backdrop-filter: blur(18px) !important;
-  -webkit-backdrop-filter: blur(18px) !important;
-  z-index: 100000 !important;
-  display: none;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 20px !important;
-}
-
-.team-bio-modal-card {
-  position: relative !important;
-  width: 100% !important;
-  max-width: 680px !important;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(6, 14, 32, 0.99) 100%) !important;
-  border: 1px solid rgba(0, 229, 255, 0.5) !important;
-  box-shadow: 0 25px 60px rgba(0, 195, 255, 0.4), inset 0 0 35px rgba(0, 229, 255, 0.15) !important;
-  border-radius: 24px !important;
-  padding: 32px !important;
-  color: #ffffff !important;
-  display: grid !important;
-  grid-template-columns: 200px 1fr !important;
-  gap: 28px !important;
-  align-items: start !important;
-  animation: teamModalScaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-}
-
-@keyframes teamModalScaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.92) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.team-bio-modal-close {
-  position: absolute !important;
-  top: 18px !important;
-  right: 20px !important;
-  background: rgba(255, 255, 255, 0.08) !important;
-  border: 1px solid rgba(0, 229, 255, 0.3) !important;
-  color: #00e5ff !important;
-  font-size: 24px !important;
-  width: 40px !important;
-  height: 40px !important;
-  border-radius: 50% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  transition: all 0.25s ease !important;
-  outline: none !important;
-  z-index: 10 !important;
-}
-
-.team-bio-modal-close:hover {
-  background: rgba(0, 229, 255, 0.25) !important;
-  border-color: #00e5ff !important;
-  box-shadow: 0 0 16px rgba(0, 229, 255, 0.5) !important;
-  transform: scale(1.1) rotate(90deg) !important;
-}
-
-.team-bio-modal-photo-wrap {
-  width: 100% !important;
-  height: 250px !important;
-  border-radius: 18px !important;
-  overflow: hidden !important;
-  background: rgba(0, 135, 255, 0.15) !important;
-  border: 2px solid rgba(0, 229, 255, 0.4) !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
-}
-
-.team-bio-modal-info {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 8px !important;
-}
-
-.team-bio-modal-role {
-  display: inline-block !important;
-  padding: 4px 12px !important;
-  border-radius: 999px !important;
-  background: rgba(0, 229, 255, 0.12) !important;
-  border: 1px solid rgba(0, 229, 255, 0.4) !important;
-  color: #00e5ff !important;
-  font-family: 'Montserrat', sans-serif !important;
-  font-size: 11px !important;
-  font-weight: 800 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.12em !important;
-  width: fit-content !important;
-}
-
-.team-bio-modal-name {
-  font-family: 'Poppins', sans-serif !important;
-  font-size: 24px !important;
-  font-weight: 800 !important;
-  color: #ffffff !important;
-  margin: 4px 0 2px 0 !important;
-}
-
-.team-bio-modal-specialties {
-  font-family: 'Poppins', sans-serif !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.08em !important;
-  color: rgba(148, 163, 184, 0.9) !important;
-  text-transform: uppercase !important;
-  padding-bottom: 10px !important;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.12) !important;
-  margin-bottom: 4px !important;
-}
-
-.team-bio-modal-bio {
-  font-family: 'Open Sans', sans-serif !important;
-  font-size: 14px !important;
-  line-height: 1.65 !important;
-  color: #cbd5e1 !important;
-  margin-top: 4px !important;
-}
-
-.team-bio-modal-socials {
-  display: flex !important;
-  align-items: center !important;
-  gap: 12px !important;
-  margin-top: 14px !important;
-  padding-top: 12px !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
-}
-
-.team-bio-modal-socials a {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  padding: 6px 14px !important;
-  border-radius: 10px !important;
-  background: rgba(15, 23, 42, 0.8) !important;
-  border: 1px solid rgba(0, 229, 255, 0.3) !important;
-  color: #00e5ff !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
-  text-decoration: none !important;
-  transition: all 0.2s ease !important;
-}
-
-.team-bio-modal-socials a:hover {
-  background: rgba(0, 229, 255, 0.2) !important;
-  border-color: #00e5ff !important;
-  color: #ffffff !important;
-  transform: translateY(-2px) !important;
-}
-
-@media (max-width: 640px) {
-  .team-features-duo { grid-template-columns: 1fr !important; }
-  .team-members-grid { grid-template-columns: 1fr !important; }
-  .about-headline { font-size: 1.8rem !important; }
-  .about-cta-group { flex-direction: column !important; align-items: stretch !important; }
-  .about-btn-glow { justify-content: center !important; }
-  .team-bio-modal-card {
-    grid-template-columns: 1fr !important;
-    max-height: 88vh !important;
-    overflow-y: auto !important;
-    padding: 24px !important;
-    gap: 18px !important;
-  }
-  .team-bio-modal-photo-wrap {
-    height: 200px !important;
-  }
-}
-</style>
-
-<main class="about-futuristic-wrapper">
-    <div class="container-fluid px-lg-5">
-        
-        <!-- Top Motto Bar -->
-        <div class="about-top-bar">
-            <!-- <div class="about-top-motto">PEOPLE &times; TECHNOLOGY &times; A BRIGHTER TOMORROW</div> -->
-            <div class="about-handwritten-overlay">Technology People Progress</div>
-        </div>
-
-        <div class="about-main-layout">
+<main class="kt-main-wrapper">
+
+    <!-- Meet Our Team Section (Matching User Mockup) -->
+    <section class="kt-team-showcase-section">
+        <div class="kt-container-fluid">
             
-            <!-- Left Hero Column -->
-            <div class="about-hero-col">
-                <div class="about-badge-pill">ABOUT US</div>
+            <!-- Top Header & Mini Features Row -->
+            <div class="kt-team-header-row">
+                <!-- Left Title & Description -->
+                <div class="kt-team-header-left">
+                    <div class="kt-eyebrow-line-wrap">
+                        <span class="kt-eyebrow-text">MEET OUR TEAM</span>
+                        <span class="kt-eyebrow-line"></span>
+                    </div>
+                    <h2 class="kt-team-main-title">The People Behind <span class="text-green">KendatTech</span></h2>
+                    <p class="kt-team-main-sub">
+                        We are a team of passionate professionals, innovators, and problem solvers, working together to build technology solutions that make a real impact. Our diverse expertise and shared vision drive KendatTech's success and our clients' growth.
+                    </p>
+                </div>
 
-                <h1 class="about-headline">
-                    Building Digital Solutions with Vision and <span class="text-accent">Engineering Excellence</span>
-                </h1>
-
-                <p class="about-description">
-                    <?php echo htmlspecialchars($aboutCompany); ?>
-                </p>
-
-                <!-- Duo Feature Cards -->
-                <div class="about-features-duo">
-                    <div class="about-feature-box">
-                        <div class="about-feature-icon">
-                            <?php echo render_icon('Settings', 22); ?>
-                        </div>
-                        <div class="about-feature-text">
-                            <h4>Innovative Solutions</h4>
-                            <p>For a Smarter Tomorrow</p>
+                <!-- Center 2x2 Mini Feature Grid -->
+                <div class="kt-team-mini-features">
+                    <div class="kt-mini-feature-box">
+                        <div class="kt-mini-icon-circle"><?php echo render_icon('Users', 20); ?></div>
+                        <div class="kt-mini-feature-text">
+                            <h4>Talented Team</h4>
+                            <p>Skilled professionals with diverse expertise.</p>
                         </div>
                     </div>
-                    <div class="about-feature-box">
-                        <div class="about-feature-icon">
-                            <?php echo render_icon('TrendingUp', 22); ?>
+                    <div class="kt-mini-feature-box">
+                        <div class="kt-mini-icon-circle"><?php echo render_icon('Sparkles', 20); ?></div>
+                        <div class="kt-mini-feature-text">
+                            <h4>Innovative Mindset</h4>
+                            <p>Turning ideas into impactful solutions.</p>
                         </div>
-                        <div class="about-feature-text">
-                            <h4>Trusted Technology Partner</h4>
-                            <p>Across Africa and Beyond</p>
+                    </div>
+                    <div class="kt-mini-feature-box">
+                        <div class="kt-mini-icon-circle"><?php echo render_icon('ShieldCheck', 20); ?></div>
+                        <div class="kt-mini-feature-text">
+                            <h4>Client Focused</h4>
+                            <p>Your success is our priority.</p>
+                        </div>
+                    </div>
+                    <div class="kt-mini-feature-box">
+                        <div class="kt-mini-icon-circle"><?php echo render_icon('Rocket', 20); ?></div>
+                        <div class="kt-mini-feature-text">
+                            <h4>Growth Together</h4>
+                            <p>Building a better digital future, together.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- CTA Group -->
-                <div class="about-cta-group">
-                    <a href="<?php echo $baseUrl; ?>contact.php" class="about-btn-glow">
-                        Our Journey Continues <?php echo render_icon('ArrowRight', 16); ?>
-                    </a>
-                    <a href="<?php echo $baseUrl; ?>services.php" class="about-btn-subtle">
-                        Let's Build Together &mdash;&mdash;&mdash;
-                    </a>
+                <!-- Right Handwritten Script Motto Overlay -->
+                <div class="kt-team-script-motto">
+                    <span>Great</span>
+                    <span>People</span>
+                    <span>Build</span>
+                    <span>Great</span>
+                    <span class="highlight">Solutions</span>
                 </div>
             </div>
 
-            <!-- Right Team Members Dynamic Cards Column -->
-            <div class="about-team-col">
-                <div class="team-members-grid">
-                    <?php if (!empty($teamMembers)): ?>
-                        <?php foreach ($teamMembers as $member): 
-                            $photoUrl = !empty($member['photo']) ? upload_asset_url($member['photo']) : '';
-                        ?>
-                            <div class="team-card-neon" 
-                                 data-name="<?php echo htmlspecialchars($member['name']); ?>"
-                                 data-role="<?php echo htmlspecialchars($member['role_title']); ?>"
-                                 data-specialties="<?php echo htmlspecialchars($member['specialties'] ?? ''); ?>"
-                                 data-bio="<?php echo htmlspecialchars($member['bio'] ?? ''); ?>"
-                                 data-photo="<?php echo htmlspecialchars($photoUrl); ?>"
-                                 data-linkedin="<?php echo htmlspecialchars($member['linkedin_url'] ?? ''); ?>"
-                                 data-github="<?php echo htmlspecialchars($member['github_url'] ?? ''); ?>">
-                                <div class="team-card-photo-box">
-                                    <?php if (!empty($member['photo'])): ?>
-                                        <img src="<?php echo htmlspecialchars($photoUrl); ?>" alt="<?php echo htmlspecialchars($member['name']); ?>" class="team-card-photo-img">
-                                    <?php else: ?>
-                                        <div class="team-card-photo-fallback">
-                                            <?php echo render_icon('UserCheck', 64); ?>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="team-card-content">
-                                    <h3 class="team-card-role-title"><?php echo htmlspecialchars($member['role_title']); ?></h3>
-                                    <div class="team-card-name-title"><?php echo htmlspecialchars($member['name']); ?></div>
-
-                                    <?php if (!empty($member['specialties'])): ?>
-                                        <div class="team-card-tags"><?php echo htmlspecialchars($member['specialties']); ?></div>
-                                    <?php endif; ?>
-
-                                    <div class="team-card-view-bio-pill">
-                                        <span>Click for Full Bio</span>
-                                        <?php echo render_icon('ArrowRight', 14); ?>
+            <!-- Team Member Cards 6-Column Grid Row -->
+            <div class="kt-team-cards-grid">
+                <?php if (!empty($teamMembers)): ?>
+                    <?php foreach ($teamMembers as $member): 
+                        $memberName = (string)($member['name'] ?? 'Team Member');
+                        $memberRole = (string)($member['role_title'] ?? $member['position'] ?? 'Team Member');
+                        $memberBio = (string)($member['bio'] ?? 'Dedicated technical specialist at KendatTech.');
+                        $photoFile = $member['photo'] ?? $member['image_path'] ?? '';
+                        $memberPhoto = !empty($photoFile) ? upload_asset_url($photoFile) : '';
+                        $linkedin = !empty($member['linkedin_url']) ? $member['linkedin_url'] : '#';
+                        $github = !empty($member['github_url']) ? $member['github_url'] : '#';
+                    ?>
+                        <article class="kt-card-v2">
+                            <div class="kt-card-v2-img">
+                                <?php if (!empty($memberPhoto)): ?>
+                                    <img src="<?php echo htmlspecialchars($memberPhoto); ?>" alt="<?php echo htmlspecialchars($memberName); ?>">
+                                <?php else: ?>
+                                    <div class="kt-card-v2-fallback">
+                                        <span><?php echo htmlspecialchars(strtoupper(substr($memberName, 0, 1))); ?></span>
                                     </div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="kt-card-v2-body">
+                                <h3 class="kt-card-v2-name"><?php echo htmlspecialchars($memberName); ?></h3>
+                                <span class="kt-card-v2-role"><?php echo htmlspecialchars($memberRole); ?></span>
+                                <p class="kt-card-v2-bio"><?php echo htmlspecialchars($memberBio); ?></p>
+                                <div class="kt-card-v2-socials">
+                                    <a href="<?php echo htmlspecialchars($linkedin); ?>" aria-label="LinkedIn"><?php echo render_icon('Linkedin', 13); ?></a>
+                                    <a href="#" aria-label="Twitter"><?php echo render_icon('Twitter', 13); ?></a>
+                                    <a href="<?php echo htmlspecialchars($github); ?>" aria-label="GitHub"><?php echo render_icon('Github', 13); ?></a>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <div class="team-card-neon p-4 text-center">
-                            <p class="text-muted mb-0">No team members added yet.</p>
-                        </div>
-                    <?php endif; ?>
+                        </article>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+
+            <!-- Join Our Growing Team Bottom Banner -->
+            <div class="kt-join-team-banner">
+                <div class="kt-join-banner-left">
+                    <div class="kt-join-icon-circle">
+                        <?php echo render_icon('Users', 24); ?>
+                    </div>
+                    <div class="kt-join-text">
+                        <h3>Join Our Growing Team</h3>
+                        <p>We're always looking for talented individuals who are passionate about technology and innovation. Be part of something great.</p>
+                    </div>
+                </div>
+                <div class="kt-join-banner-right">
+                    <a href="<?php echo $baseUrl; ?>book-appointment.php" class="kt-btn-join-outline">
+                        View Careers <?php echo render_icon('ArrowRight', 16); ?>
+                    </a>
                 </div>
             </div>
 
         </div>
+    </section>
 
-        <!-- Globe / Footer Accent Bar -->
-        <div class="about-globe-accent-bar">
-            <div class="about-globe-text-brand">
-                AFRICA CONNECTED TO A BRIGHTER TOMORROW
+    <!-- Company Story & Mission/Vision Section -->
+    <section class="kt-about-section">
+        <div class="kt-container">
+            <div class="kt-about-grid">
+                <!-- Left Story Column -->
+                <div class="kt-about-left">
+                    <span class="kt-eyebrow">OUR STORY & VISION</span>
+                    <h2 class="kt-section-title">Engineered for Reliability. Built for the Future.</h2>
+                    <p class="kt-body-text">
+                        <?php echo htmlspecialchars($aboutCompany); ?>
+                    </p>
+                    <p class="kt-body-text">
+                        From high-speed institutional management portals to custom web applications, mobile platforms, and AI automation engines, KendatTech provides end-to-end digital solutions engineered to scale nationwide and globally.
+                    </p>
+
+                    <!-- Stats Row -->
+                    <div class="kt-stats-row">
+                        <div class="kt-stat-block">
+                            <span class="kt-stat-number">50+</span>
+                            <span class="kt-stat-label">Projects Completed</span>
+                        </div>
+                        <div class="kt-stat-block">
+                            <span class="kt-stat-number">20+</span>
+                            <span class="kt-stat-label">Happy Clients</span>
+                        </div>
+                        <div class="kt-stat-block">
+                            <span class="kt-stat-number">3+</span>
+                            <span class="kt-stat-label">Years Experience</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Workspace Image & Cards -->
+                <div class="kt-about-right">
+                    <div class="kt-about-img-wrapper">
+                        <img src="<?php echo $baseUrl; ?>assets/images/about-workspace.jpg" alt="KendatTech Workspace" class="kt-about-img">
+
+                        <div class="kt-mission-card top">
+                            <div class="kt-card-icon-circle green"><?php echo render_icon('Target', 20); ?></div>
+                            <div>
+                                <h4>Our Mission</h4>
+                                <p>To empower businesses with innovative and reliable technology solutions that drive growth, efficiency and long-term success.</p>
+                            </div>
+                        </div>
+
+                        <div class="kt-mission-card bottom">
+                            <div class="kt-card-icon-circle green"><?php echo render_icon('Compass', 20); ?></div>
+                            <div>
+                                <h4>Our Vision</h4>
+                                <p>To be a leading technology company known for excellence, innovation and customer satisfaction.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-    </div>
+    <!-- Core Values Section -->
+    <section class="kt-services-section">
+        <div class="kt-container">
+            <div class="kt-section-head-center">
+                <span class="kt-eyebrow">OUR CORE VALUES</span>
+                <h2 class="kt-section-title">What Drives Our Work</h2>
+                <p class="kt-section-sub">Principles that guide every line of code we write and every solution we deliver.</p>
+            </div>
+
+            <div class="kt-feature-grid">
+                <div class="kt-feature-item">
+                    <div class="kt-feature-icon"><?php echo render_icon('ShieldCheck', 20); ?></div>
+                    <div class="kt-feature-info">
+                        <h3>Uncompromising Security</h3>
+                        <p>PDO prepared queries and data encryption built into every system.</p>
+                    </div>
+                </div>
+                <div class="kt-feature-item">
+                    <div class="kt-feature-icon"><?php echo render_icon('Sparkles', 20); ?></div>
+                    <div class="kt-feature-info">
+                        <h3>High Speed Performance</h3>
+                        <p>Optimized database pipelines delivering response times under 50ms.</p>
+                    </div>
+                </div>
+                <div class="kt-feature-item">
+                    <div class="kt-feature-icon"><?php echo render_icon('BrainCircuit', 20); ?></div>
+                    <div class="kt-feature-info">
+                        <h3>Pioneering Innovation</h3>
+                        <p>Integrating artificial intelligence copilots and modern cloud infrastructure.</p>
+                    </div>
+                </div>
+                <div class="kt-feature-item">
+                    <div class="kt-feature-icon"><?php echo render_icon('Users', 20); ?></div>
+                    <div class="kt-feature-info">
+                        <h3>Dedicated Support</h3>
+                        <p>Direct engineering desks providing ongoing maintenance and upgrades.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="kt-cta-section">
+        <div class="kt-container">
+            <div class="kt-cta-card">
+                <div class="kt-cta-content">
+                    <span class="kt-cta-eyebrow">READY TO GET STARTED?</span>
+                    <h2 class="kt-cta-title">Let's Build Something Great Together</h2>
+                    <p class="kt-cta-sub">Partner with KendatTech and turn your ideas into powerful digital solutions.</p>
+                </div>
+                <div class="kt-cta-action">
+                    <a href="<?php echo $baseUrl; ?>book-appointment.php" class="kt-btn-white-pill">
+                        Get Started <?php echo render_icon('ArrowRight', 16); ?>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
 </main>
 
-<!-- Interactive Person Brief Summary Modal -->
-<div class="team-bio-modal-backdrop" id="teamBioModal">
-    <div class="team-bio-modal-card">
-        <button type="button" class="team-bio-modal-close" id="teamBioModalClose" aria-label="Close modal">&times;</button>
-        <div class="team-bio-modal-photo-wrap" id="modalPhotoWrap"></div>
-        <div class="team-bio-modal-info">
-            <span class="team-bio-modal-role" id="modalRole"></span>
-            <h2 class="team-bio-modal-name" id="modalName"></h2>
-            <div class="team-bio-modal-specialties" id="modalSpecialties"></div>
-            <div class="team-bio-modal-bio" id="modalBio"></div>
-            <div class="team-bio-modal-socials" id="modalSocials"></div>
-        </div>
-    </div>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('teamBioModal');
-    const closeBtn = document.getElementById('teamBioModalClose');
-    if (!modal) return;
-
-    const openModal = () => {
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    };
-
-    const closeModal = () => {
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
-    };
-
-    document.querySelectorAll('.team-card-neon').forEach(card => {
-        card.addEventListener('click', (e) => {
-            if (e.target.closest('a')) return;
-            
-            const name = card.dataset.name || '';
-            const role = card.dataset.role || '';
-            const specialties = card.dataset.specialties || '';
-            const bio = card.dataset.bio || '';
-            const photo = card.dataset.photo || '';
-            const linkedin = card.dataset.linkedin || '';
-            const github = card.dataset.github || '';
-
-            document.getElementById('modalName').textContent = name;
-            document.getElementById('modalRole').textContent = role;
-            document.getElementById('modalSpecialties').textContent = specialties;
-            document.getElementById('modalBio').textContent = bio || 'Executive team member driving software engineering, cloud solutions, and digital transformation.';
-            
-            const photoWrap = document.getElementById('modalPhotoWrap');
-            if (photo) {
-                photoWrap.innerHTML = `<img src="${photo}" alt="${name}" style="width:100%; height:100%; object-fit:cover; object-position:top center; border-radius:16px;">`;
-            } else {
-                photoWrap.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, rgba(0,135,255,0.2), rgba(0,229,255,0.1)); border-radius:16px; color:#00e5ff; font-size:64px;">👤</div>`;
-            }
-
-            const socialsWrap = document.getElementById('modalSocials');
-            let socialsHtml = '';
-            if (linkedin) {
-                socialsHtml += `<a href="${linkedin}" target="_blank" rel="noopener">LinkedIn &rarr;</a>`;
-            }
-            if (github) {
-                socialsHtml += `<a href="${github}" target="_blank" rel="noopener">GitHub &rarr;</a>`;
-            }
-            socialsWrap.innerHTML = socialsHtml;
-
-            openModal();
-        });
-    });
-
-    closeBtn?.addEventListener('click', closeModal);
-
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal();
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.style.display === 'flex') {
-            closeModal();
-        }
-    });
-});
-</script>
-
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
-
 

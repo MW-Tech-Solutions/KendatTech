@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Close menu when clicking outside
         document.addEventListener('click', (e) => {
-            if (!siteHeader.contains(e.target) && navMenu.classList.contains('open')) {
+            if (!navMenu.contains(e.target) && !menuToggle.contains(e.target) && navMenu.classList.contains('open')) {
                 navMenu.classList.remove('open');
                 menuToggle.setAttribute('aria-expanded', 'false');
             }
@@ -113,19 +113,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Admin Sidebar Toggle System
+    // Admin Sidebar Toggle System (Delegated to window.toggleAdminSidebar)
     const adminToggle = document.querySelector('.admin-sidebar-toggle');
-    const adminSidebar = document.querySelector('.admin-sidebar');
-    if (adminToggle && adminSidebar) {
+    if (adminToggle && !adminToggle.hasAttribute('onclick')) {
         adminToggle.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            adminSidebar.classList.toggle('open');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!adminSidebar.contains(e.target) && !adminToggle.contains(e.target) && adminSidebar.classList.contains('open')) {
-                adminSidebar.classList.remove('open');
+            if (typeof window.toggleAdminSidebar === 'function') {
+                window.toggleAdminSidebar(e);
             }
         });
     }

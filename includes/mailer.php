@@ -137,23 +137,23 @@ function build_branded_email_html(string $title, string $bodyHtml): string {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{$title}</title>
     <style>
-        body { margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a; line-height: 1.6; }
-        .wrapper { width: 100%; table-layout: fixed; background-color: #f1f5f9; padding: 40px 10px; }
-        .main-table { width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08); }
-        .email-header { background: linear-gradient(180deg, #050b18 0%, #0b1736 100%); padding: 36px 30px; text-align: center; border-bottom: 3px solid #00E5FF; }
+        body { margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a; line-height: 1.6; }
+        .wrapper { width: 100%; table-layout: fixed; background-color: #f8fafc; padding: 40px 10px; }
+        .main-table { width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 16px 44px rgba(4, 38, 23, 0.08); }
+        .email-header { background: linear-gradient(135deg, #042617 0%, #0B5D3B 100%); padding: 38px 30px; text-align: center; border-bottom: 3.5px solid #10B981; }
         .email-header .brand-title { color: #ffffff; font-size: 24px; font-weight: 900; letter-spacing: -0.02em; margin: 0; text-transform: uppercase; }
-        .email-header .brand-sub { color: #00E5FF; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 6px; }
+        .email-header .brand-sub { color: #10B981; font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; margin-top: 6px; }
         .email-body { padding: 40px 32px; background-color: #ffffff; }
         .email-body h2 { font-size: 22px; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 16px; letter-spacing: -0.02em; }
         .email-body p { font-size: 15px; color: #475569; margin: 0 0 20px; line-height: 1.65; }
         .btn-wrapper { text-align: center; margin: 32px 0; }
-        .btn-primary { display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #0087FF 0%, #0056b3 100%); color: #ffffff !important; text-decoration: none; border-radius: 999px; font-weight: 800; font-size: 14px; letter-spacing: 0.02em; box-shadow: 0 6px 18px rgba(0, 135, 255, 0.35); }
-        .info-card { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 24px; margin: 24px 0; }
-        .info-card .label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; display: block; }
+        .btn-primary { display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #0B5D3B 0%, #064E3B 100%); color: #ffffff !important; text-decoration: none; border-radius: 999px; font-weight: 800; font-size: 14px; letter-spacing: 0.02em; box-shadow: 0 6px 18px rgba(11, 93, 59, 0.35); }
+        .info-card { background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #10B981; border-radius: 14px; padding: 20px 24px; margin: 24px 0; }
+        .info-card .label { font-size: 11px; font-weight: 800; color: #0B5D3B; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; display: block; }
         .info-card .value { font-size: 15px; font-weight: 700; color: #0f172a; margin: 0; }
-        .badge-pill { display: inline-block; padding: 4px 12px; border-radius: 999px; background: rgba(0, 135, 255, 0.1); color: #0087FF; font-size: 12px; font-weight: 800; text-transform: uppercase; }
+        .badge-pill { display: inline-block; padding: 4px 12px; border-radius: 999px; background: #ecfdf5; color: #0B5D3B; border: 1px solid #a7f3d0; font-size: 12px; font-weight: 800; text-transform: uppercase; }
         .email-footer { background-color: #f8fafc; padding: 28px 24px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b; }
-        .email-footer a { color: #0087FF; text-decoration: none; font-weight: 600; }
+        .email-footer a { color: #0B5D3B; text-decoration: none; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -210,7 +210,7 @@ function send_account_activation_email(string $userEmail, string $userName, stri
 
 <div class="info-card">
     <span class="label">Direct Activation Link</span>
-    <p style="margin:6px 0 0; word-break:break-all; font-size:13px; color:#0087FF;"><a href="{$activationLink}" style="color:#0087FF;">{$activationLink}</a></p>
+    <p style="margin:6px 0 0; word-break:break-all; font-size:13px; color:#0B5D3B;"><a href="{$activationLink}" style="color:#0B5D3B; font-weight:700;">{$activationLink}</a></p>
 </div>
 
 <p>Once activated, you can log in, book consultation demos, submit project requests, and track your ongoing software builds.</p>
@@ -464,7 +464,7 @@ function send_password_reset_email(string $userEmail, string $userName, string $
 <p>We received a request to reset the password for your Kendat client profile. Use the 6-digit verification code below to authorize your password reset:</p>
 
 <div style="text-align: center; margin: 28px 0;">
-    <div style="display: inline-block; padding: 16px 36px; background: linear-gradient(135deg, #050b18 0%, #0b1736 100%); color: #00E5FF; border-radius: 16px; border: 1.5px solid #00E5FF; font-family: monospace; font-size: 32px; font-weight: 900; letter-spacing: 0.25em; box-shadow: 0 8px 24px rgba(0, 229, 255, 0.25);">
+    <div style="display: inline-block; padding: 16px 36px; background: linear-gradient(135deg, #042617 0%, #0B5D3B 100%); color: #10B981; border-radius: 16px; border: 1.5px solid #10B981; font-family: monospace; font-size: 32px; font-weight: 900; letter-spacing: 0.25em; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);">
         {$resetCode}
     </div>
 </div>

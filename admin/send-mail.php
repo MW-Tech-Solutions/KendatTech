@@ -210,7 +210,7 @@ $sentHistory = $historyStmt->fetchAll();
             </div>
 
             <div style="margin-top: 8px;">
-                <button class="tc-pill-btn-blue" type="submit" name="send_email_submit" style="display:inline-flex; align-items:center; gap:8px;">
+                <button class="tc-pill-btn-green" type="submit" name="send_email_submit" style="display:inline-flex; align-items:center; gap:8px;">
                     <?php echo render_icon('Send', 18); ?> Dispatch Email Now
                 </button>
             </div>
@@ -259,7 +259,7 @@ $sentHistory = $historyStmt->fetchAll();
                                             <?php echo csrf_input(); ?>
                                             <input type="hidden" name="action" value="retry_email">
                                             <input type="hidden" name="retry_id" value="<?php echo $log['id']; ?>">
-                                            <button type="submit" class="tc-pill-btn-blue" style="padding: 6px 14px; font-size: 11px; border-radius: 8px; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; border:0;" title="Retry sending failed email">
+                                            <button type="submit" class="tc-pill-btn-green" style="padding: 6px 14px; font-size: 11px; border-radius: 8px; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; border:0;" title="Retry sending failed email">
                                                 <?php echo render_icon('RotateCw', 13); ?> Retry Send
                                             </button>
                                         </form>

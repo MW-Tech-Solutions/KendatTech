@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (!isset($_POST['action']) || $_POST
     }
 }
 
+$query = trim($_GET['q'] ?? '');
 $statusFilter = $_GET['status'] ?? 'all';
 $sql = "SELECT * FROM appointments WHERE 1=1";
 $params = [];
@@ -47,6 +48,13 @@ $params = [];
 if ($statusFilter !== 'all') {
     $sql .= " AND status = ?";
     $params[] = $statusFilter;
+}
+if (!empty($query)) {
+    $sql .= " AND (full_name LIKE ? OR email LIKE ? OR phone LIKE ? OR appointment_type LIKE ?)";
+    $params[] = "%{$query}%";
+    $params[] = "%{$query}%";
+    $params[] = "%{$query}%";
+    $params[] = "%{$query}%";
 }
 
 $sql .= " ORDER BY id DESC";
@@ -73,7 +81,8 @@ if (isset($_GET['edit'])) {
 <?php if ($notice): ?><div class="admin-notice success"><?php echo render_icon('CheckCircle2'); ?><?php echo htmlspecialchars($notice); ?></div><?php endif; ?>
 
 <div class="toolbar advanced-toolbar">
-    <form method="get" action="" style="display:flex; gap:10px;">
+    <form method="get" action="" style="display:flex; gap:10px; width:100%;">
+        <input name="q" placeholder="Search appointments by client name, email, phone, or service..." value="<?php echo htmlspecialchars($query); ?>" style="flex:1;">
         <select name="status" onchange="this.form.submit()">
             <option value="all" <?php echo $statusFilter==='all'?'selected':''; ?>>All statuses</option>
             <option value="pending" <?php echo $statusFilter==='pending'?'selected':''; ?>>Pending</option>
@@ -81,6 +90,7 @@ if (isset($_GET['edit'])) {
             <option value="rejected" <?php echo $statusFilter==='rejected'?'selected':''; ?>>Rejected</option>
             <option value="completed" <?php echo $statusFilter==='completed'?'selected':''; ?>>Completed</option>
         </select>
+        <button class="btn small" type="submit"><?php echo render_icon('Search'); ?>Search</button>
     </form>
 </div>
 

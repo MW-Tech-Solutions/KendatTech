@@ -40,87 +40,83 @@ foreach ($socials as [$label, $href]) {
     }
 }
 ?>
-    <!-- Redesigned Modern Enterprise Footer (Task 4 Fix) -->
-    <footer class="footer-modern">
-        <div class="footer-glow-bg"></div>
-        <div class="footer-container">
-            <div class="footer-grid">
-                <!-- Column 1: Brand & Mission -->
-                <div class="footer-col-brand">
-                    <a class="brand" href="<?php echo $baseUrl; ?>" aria-label="<?php echo htmlspecialchars($companyName); ?>">
-                        <span class="brand-mark-wrapper">
-                            <?php if ($logoPath): ?>
-                                <img src="<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($companyName); ?>" class="brand-logo-img">
-                            <?php else: ?>
-                                <span class="brand-logo-text">kendat tech</span>
-                            <?php endif; ?>
-                        </span>
+    <!-- 8. FOOTER SECTION (Matching Attached Image Mockup Exactly) -->
+    <footer class="kt-footer">
+        <div class="kt-container">
+            <div class="kt-footer-grid">
+                <!-- Column 1: Brand & Socials -->
+                <div class="kt-footer-col brand-col">
+                    <a class="brand" href="<?php echo $baseUrl; ?>index.php" aria-label="<?php echo htmlspecialchars($companyName); ?>">
+                        <?php if ($logoPath): ?>
+                            <img src="<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($companyName); ?>" class="brand-logo-img">
+                        <?php else: ?>
+                            <span class="brand-logo-flex">
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="brand-k-icon">
+                                    <rect width="32" height="32" rx="8" fill="#ECFDF5"/>
+                                    <path d="M9 7V25M9 16L18 7M9 16L18 25" stroke="#10B981" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M19 16L24 7M19 16L24 25" stroke="#34D399" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span class="brand-logo-text white">Kendat<span class="brand-logo-accent">Tech</span></span>
+                            </span>
+                        <?php endif; ?>
                     </a>
-                    <p class="footer-mission-text">Kendat Integrated Services provides enterprise software engineering, web development, custom AI automation, and cloud IT infrastructure across Nigeria and globally.</p>
-                    <div class="footer-status-pill">
-                        <span class="status-dot-green"></span>
-                        <span>Systems Ready for Consultation</span>
+                    <p class="kt-footer-slogan">Innovative technology solutions for a smarter tomorrow.</p>
+                    <div class="kt-social-row">
+                        <a href="#" aria-label="LinkedIn"><?php echo render_icon('Linkedin', 16); ?></a>
+                        <a href="#" aria-label="X / Twitter"><?php echo render_icon('Twitter', 16); ?></a>
+                        <a href="#" aria-label="Facebook"><?php echo render_icon('Facebook', 16); ?></a>
+                        <a href="#" aria-label="Instagram"><?php echo render_icon('Instagram', 16); ?></a>
+                        <a href="#" aria-label="YouTube"><?php echo render_icon('Youtube', 16); ?></a>
                     </div>
                 </div>
 
-                <!-- Column 2: Solutions -->
-                <div class="footer-col-nav">
-                    <h4 class="footer-head">SOFTWARE & AI</h4>
-                    <ul class="footer-links-list">
-                        <?php foreach ($servicesLinks as [$label, $href]): ?>
-                            <li><a href="<?php echo htmlspecialchars($href); ?>"><?php echo htmlspecialchars($label); ?></a></li>
-                        <?php endforeach; ?>
+                <!-- Column 2: Quick Links -->
+                <div class="kt-footer-col">
+                    <h4 class="kt-footer-head">Quick Links</h4>
+                    <ul class="kt-footer-links">
+                        <li><a href="<?php echo $baseUrl; ?>index.php">Home</a></li>
+                        <li><a href="<?php echo $baseUrl; ?>about.php">About</a></li>
+                        <li><a href="<?php echo $baseUrl; ?>services.php">Services</a></li>
+                        <li><a href="<?php echo $baseUrl; ?>projects.php">Products & Projects</a></li>
+                        <li><a href="<?php echo $baseUrl; ?>ai-solutions.php">AI Solutions</a></li>
+                        <li><a href="<?php echo $baseUrl; ?>contact.php">Contact</a></li>
+                        <li><a href="<?php echo $baseUrl; ?>admin-login.php"><?php echo render_icon('Lock', 13); ?> Staff Login</a></li>
                     </ul>
                 </div>
 
-                <!-- Column 3: Company -->
-                <div class="footer-col-nav">
-                    <h4 class="footer-head">COMPANY</h4>
-                    <ul class="footer-links-list">
-                        <?php foreach ($companyLinks as [$label, $href]): ?>
-                            <li><a href="<?php echo htmlspecialchars($href); ?>"><?php echo htmlspecialchars($label); ?></a></li>
-                        <?php endforeach; ?>
+                <!-- Column 3: Our Services -->
+                <div class="kt-footer-col">
+                    <h4 class="kt-footer-head">Our Services</h4>
+                    <ul class="kt-footer-links">
+                        <li><a href="<?php echo $baseUrl; ?>services.php">Web Development</a></li>
+                        <li><a href="<?php echo $baseUrl; ?>services.php">Mobile App Development</a></li>
+                        <li><a href="<?php echo $baseUrl; ?>services.php">Cloud Solutions</a></li>
+                        <li><a href="<?php echo $baseUrl; ?>services.php">IT Consulting</a></li>
+                        <li><a href="<?php echo $baseUrl; ?>services.php">Cybersecurity</a></li>
+                        <li><a href="<?php echo $baseUrl; ?>services.php">Custom Software</a></li>
                     </ul>
                 </div>
 
-                <!-- Column 4: Contact & Social -->
-                <div class="footer-col-contact">
-                    <h4 class="footer-head">GET IN TOUCH</h4>
-                    <div class="footer-contact-items">
-                        <a href="mailto:<?php echo htmlspecialchars($settings['contact_email'] ?? 'info@kisprojectslab.com'); ?>" class="footer-contact-link">
-                            <?php echo render_icon('Mail', 16); ?>
-                            <span><?php echo htmlspecialchars($settings['contact_email'] ?? 'info@kisprojectslab.com'); ?></span>
-                        </a>
-                        <a href="tel:<?php echo htmlspecialchars($settings['contact_phone'] ?? '+234800KENDATTECH'); ?>" class="footer-contact-link">
-                            <?php echo render_icon('Phone', 16); ?>
-                            <span><?php echo htmlspecialchars($settings['contact_phone'] ?? '+234 800 KENDAT TECH'); ?></span>
-                        </a>
-                        <a href="https://wa.me/<?php echo htmlspecialchars($settings['whatsapp_number'] ?? '2348000000000'); ?>" target="_blank" rel="noopener" class="footer-contact-link">
-                            <?php echo render_icon('MessageCircle', 16); ?>
-                            <span>WhatsApp Support</span>
-                        </a>
-                    </div>
-                    <div class="footer-social-pills">
-                        <?php foreach ($socials as [$label, $href, $icon]): ?>
-                            <?php if (!empty($href) && $href !== '#'): ?>
-                                <a class="footer-social-btn" href="<?php echo htmlspecialchars($href); ?>" aria-label="<?php echo htmlspecialchars($label); ?>" target="_blank" rel="noopener">
-                                    <?php echo render_icon($icon, 16); ?>
-                                </a>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </div>
+                <!-- Column 4: Contact Us -->
+                <div class="kt-footer-col">
+                    <h4 class="kt-footer-head">Contact Us</h4>
+                    <ul class="kt-footer-contact">
+                        <li><?php echo render_icon('MapPin', 16); ?> <span>Lagos, Nigeria</span></li>
+                        <li><?php echo render_icon('Mail', 16); ?> <span>hello@kendattech.com</span></li>
+                        <li><?php echo render_icon('Phone', 16); ?> <span>+234 803 123 4567</span></li>
+                        <li><?php echo render_icon('Clock3', 16); ?> <span>Mon - Fri, 9:00 AM - 6:00 PM</span></li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- Footer Bottom Bar -->
-            <div class="footer-bottom-bar">
-                <p class="footer-copyright"><?php echo htmlspecialchars($footerText); ?></p>
-                <div class="footer-bottom-links">
+            <!-- Bottom Copyright Bar -->
+            <div class="kt-footer-bottom">
+                <p>© <?php echo date('Y'); ?> KendatTech. All rights reserved.</p>
+                <div class="kt-footer-bottom-links">
                     <a href="<?php echo $baseUrl; ?>privacy.php">Privacy Policy</a>
-                    <span class="sep">•</span>
                     <a href="<?php echo $baseUrl; ?>terms.php">Terms of Service</a>
-                    <span class="sep">•</span>
-                    <a href="https://kisprojectslab.com" target="_blank" rel="noopener">kisprojectslab.com</a>
+                    <a href="<?php echo $baseUrl; ?>contact.php">Support</a>
+                    <a href="<?php echo $baseUrl; ?>admin-login.php" class="kt-staff-login-link"><?php echo render_icon('ShieldCheck', 13); ?> Staff Login</a>
                 </div>
             </div>
         </div>

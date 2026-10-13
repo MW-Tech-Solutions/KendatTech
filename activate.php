@@ -50,7 +50,7 @@ if (!empty($email) && !empty($token)) {
                 </div>
                 <h1 style="font-size: 24px; font-weight: 800; margin: 0 0 12px; color: #0f172a;">Account Activated!</h1>
                 <p style="color: #475569; font-size: 15px; line-height: 1.6; margin-bottom: 28px;"><?php echo htmlspecialchars($message); ?></p>
-                <a href="<?php echo $baseUrl; ?>login.php" class="btn primary" style="width: 100%; min-height: 44px; display: inline-flex; align-items: center; justify-content: center;">
+                <a href="<?php echo $baseUrl; ?>login.php" class="kt-btn-primary" style="width: 100%; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">
                     Proceed to Login <?php echo render_icon('ArrowRight', 18); ?>
                 </a>
             <?php else: ?>
@@ -60,10 +60,10 @@ if (!empty($email) && !empty($token)) {
                 <h1 style="font-size: 24px; font-weight: 800; margin: 0 0 12px; color: #0f172a;">Activation Failed</h1>
                 <p style="color: #475569; font-size: 15px; line-height: 1.6; margin-bottom: 28px;"><?php echo htmlspecialchars($message); ?></p>
                 <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                    <a href="<?php echo $baseUrl; ?>login.php" class="btn primary" style="flex: 1; min-height: 44px; display: inline-flex; align-items: center; justify-content: center;">
+                    <a href="<?php echo $baseUrl; ?>login.php" class="kt-btn-primary" style="flex: 1; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">
                         Go to Login
                     </a>
-                    <a href="<?php echo $baseUrl; ?>register.php" class="btn small" style="flex: 1; min-height: 44px; display: inline-flex; align-items: center; justify-content: center;">
+                    <a href="<?php echo $baseUrl; ?>register.php" class="kt-btn-secondary" style="flex: 1; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">
                         Register Again
                     </a>
                 </div>

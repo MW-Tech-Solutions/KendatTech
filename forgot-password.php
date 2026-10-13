@@ -8,8 +8,10 @@ require_once __DIR__ . '/includes/mailer.php';
 require_once __DIR__ . '/includes/csrf.php';
 require_once __DIR__ . '/includes/rate_limiter.php';
 require_once __DIR__ . '/includes/audit_logger.php';
+require_once __DIR__ . '/includes/auth_layout.php';
 
 $baseUrl = get_base_url();
+$settings = get_settings();
 
 if (is_logged_in()) {
     header("Location: " . $baseUrl . "dashboard.php");
@@ -63,7 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_reset'])) {
             audit_log('PASSWORD_RESET_CODE_SENT', $table, (string)$target['id'], ['email' => $email]);
         }
 
-        // Always show positive notice to protect privacy & prevent enumeration
         $notice = "If an account associated with <strong>" . htmlspecialchars($email) . "</strong> exists in our system, a 6-digit password reset verification code has been sent. Please check your inbox.";
         $step = 'verify';
         $prefillEmail = $email;
@@ -88,170 +89,270 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verify_reset'])) {
     } else {
         $pdo = get_db();
 
-        // 1. Check Users
-        $stmt = $pdo->prepare("SELECT id, full_name, email FROM users WHERE email = ? AND reset_code = ? AND reset_expires_at > NOW() LIMIT 1");
-        $stmt->execute([$email, $code]);
-        $user = $stmt->fetch();
+        // Check users
+        $stmt = $pdo->prepare("SELECT id, full_name, reset_code, reset_expires_at FROM users WHERE email = ? AND status = 'active' LIMIT 1");
+        $stmt->execute([$email]);
+        $targetUser = $stmt->fetch();
+        $targetTable = 'users';
 
-        // 2. Check Admins
-        $admin = null;
-        if (!$user) {
-            $aStmt = $pdo->prepare("SELECT id, full_name, email FROM admins WHERE email = ? AND reset_code = ? AND reset_expires_at > NOW() LIMIT 1");
-            $aStmt->execute([$email, $code]);
-            $admin = $aStmt->fetch();
+        if (!$targetUser) {
+            // Check admins
+            $aStmt = $pdo->prepare("SELECT id, full_name, reset_code, reset_expires_at FROM admins WHERE email = ? AND status = 'active' LIMIT 1");
+            $aStmt->execute([$email]);
+            $targetUser = $aStmt->fetch();
+            $targetTable = 'admins';
         }
 
-        if ($user || $admin) {
-            $target = $user ?: $admin;
-            $table = $user ? 'users' : 'admins';
-            $hash = password_hash($newPassword, PASSWORD_DEFAULT);
+        if ($targetUser && !empty($targetUser['reset_code'])) {
+            $now = time();
+            $expires = !empty($targetUser['reset_expires_at']) ? strtotime($targetUser['reset_expires_at']) : 0;
 
-            $upd = $pdo->prepare("UPDATE {$table} SET password_hash = ?, reset_code = NULL, reset_expires_at = NULL WHERE id = ?");
-            $upd->execute([$hash, $target['id']]);
+            if ($targetUser['reset_code'] !== $code) {
+                $error = 'The verification code you entered is incorrect. Please double check your email.';
+                audit_log('PASSWORD_RESET_INVALID_CODE', $targetTable, (string)$targetUser['id'], ['email' => $email]);
+            } elseif ($now > $expires) {
+                $error = 'The verification code has expired (valid for 15 minutes). Please request a new one.';
+                audit_log('PASSWORD_RESET_EXPIRED_CODE', $targetTable, (string)$targetUser['id'], ['email' => $email]);
+            } else {
+                // Update password
+                $newHash = password_hash($newPassword, PASSWORD_DEFAULT);
+                $upd = $pdo->prepare("UPDATE {$targetTable} SET password_hash = ?, reset_code = NULL, reset_expires_at = NULL WHERE id = ?");
+                $upd->execute([$newHash, $targetUser['id']]);
 
-            audit_log('PASSWORD_RESET_SUCCESS', $table, (string)$target['id'], ['email' => $email]);
-            $notice = "Your password has been reset successfully! You can now log in with your new password below.";
-            $step = 'completed';
+                audit_log('PASSWORD_RESET_SUCCESS', $targetTable, (string)$targetUser['id'], ['email' => $email]);
+                set_flash('success', 'Your password has been successfully reset! You can now log in with your new credentials.');
+
+                $redirectUrl = ($targetTable === 'admins') ? ($baseUrl . 'admin-login.php') : ($baseUrl . 'login.php');
+                header("Location: " . $redirectUrl);
+                exit;
+            }
         } else {
-            $error = 'Invalid or expired verification code. Please request a new reset code.';
+            $error = 'Invalid or expired password reset session. Please request a new code.';
         }
     }
 }
 
-require_once __DIR__ . '/includes/header.php';
+$pageTitle = 'Reset Your Password - ' . ($settings['company_name'] ?? 'KendatTech');
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo htmlspecialchars($pageTitle); ?></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo $baseUrl; ?>assets/css/style.css?v=<?php echo file_exists(__DIR__ . '/assets/css/style.css') ? filemtime(__DIR__ . '/assets/css/style.css') : time(); ?>">
+    <link rel="icon" type="image/png" href="<?php echo htmlspecialchars(upload_asset_url($settings['favicon'] ?? '')); ?>">
+</head>
+<body class="auth-page-body">
 
-<main>
-    <section class="auth-wrap modern-auth">
-        <div class="auth-visual">
-            <div>
-                <span class="eyebrow">Kendat Account Security</span>
-                <h1>Reset Password</h1>
-                <p>Recover access to your Kendat Integrated Services client workspace securely using your registered email address.</p>
-                <div class="auth-chip-grid" style="margin-top: 20px;">
-                    <span><?php echo render_icon('ShieldCheck', 16); ?>Encrypted recovery</span>
-                    <span><?php echo render_icon('Mail', 16); ?>Instant email code</span>
-                    <span><?php echo render_icon('Lock', 16); ?>Protected access</span>
+    <!-- Top Centered Brand Header -->
+    <?php render_auth_header($settings, $baseUrl); ?>
+
+    <!-- Main Central Split Card Container -->
+    <main class="auth-main-container">
+        <div class="auth-split-card">
+
+            <!-- Left Banner: Dark Forest Green with 3D Cyber Shield Illustration -->
+            <div class="auth-banner-panel auth-banner-dark">
+                <div>
+                    <!-- Brand Tag -->
+                    <div class="auth-banner-brand-row">
+                        <a href="<?php echo $baseUrl; ?>" class="banner-brand-link">
+                            <span class="banner-brand-text">Kendat<span style="color:#10B981;">Tech</span></span>
+                        </a>
+                        <span class="banner-brand-slogan">WE DESIGN &bull; WE DEVELOP &bull; WE DELIVER</span>
+                    </div>
+
+                    <!-- Main Heading -->
+                    <h1 class="auth-banner-title">
+                        Reset Your<br><span class="highlight-text">Password</span>
+                    </h1>
+                    <p class="auth-banner-desc">
+                        No worries! It happens. Enter your email address and we'll send you a link to reset your password.
+                    </p>
+
+                    <!-- 3D Security Shield Illustration -->
+                    <div class="auth-illustration-box">
+                        <img src="<?php echo $baseUrl; ?>assets/images/auth-reset-shield.jpg" alt="KendatTech Security & Identity Protection" class="auth-illustration-img">
+                    </div>
+
+                    <!-- Step Timeline Checklist -->
+                    <div class="auth-step-timeline">
+                        <div class="auth-step-item">
+                            <div class="step-item-icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                            </div>
+                            <div class="step-item-content">
+                                <strong>Check your email</strong>
+                                <span>We'll send you a secure link to reset your password.</span>
+                            </div>
+                        </div>
+                        <div class="auth-step-item">
+                            <div class="step-item-icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            </div>
+                            <div class="step-item-content">
+                                <strong>Follow the link</strong>
+                                <span>Click the link in the email to continue.</span>
+                            </div>
+                        </div>
+                        <div class="auth-step-item">
+                            <div class="step-item-icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                            <div class="step-item-content">
+                                <strong>Set a new password</strong>
+                                <span>Choose a strong password and you're all set!</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Handwritten Signature -->
+                <div class="auth-signature-wrap">
+                    <span class="auth-signature-text">Your Vision Our Code</span>
                 </div>
             </div>
 
-            <div class="auth-console">
-                <div><span stop-dot></span> Premier IT consulting &amp; enterprise software solutions</div>
-                <div><span stop-dot></span> End-to-end confidential client portal &amp; data privacy</div>
-                <div><span stop-dot></span> 24/7 technical support &amp; solution engineering</div>
-                <div><span stop-dot></span> Protected corporate infrastructure &amp; verified access</div>
-            </div>
+            <!-- Right Panel: White Card Form -->
+            <div class="auth-form-panel-v2">
 
-            <div class="auth-footer-badge" style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #cbd5e1; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.15);">
-                <?php echo render_icon('ShieldCheck', 20); ?>
-                <span>100% Confidential &amp; Verified Account Security</span>
-            </div>
-        </div>
-
-        <div class="auth-form-panel">
-            <div class="glass-card form auth-card modern-auth-card">
-                <?php if ($step === 'completed'): ?>
-                    <div class="form-head">
-                        <span class="form-badge" style="background: rgba(34, 197, 94, 0.15); color: #16a34a; border-color: rgba(34, 197, 94, 0.3);">
-                            <?php echo render_icon('CheckCircle', 15); ?>SUCCESS
-                        </span>
-                        <h2>Password Reset</h2>
-                        <p>Your password update is complete.</p>
+                <?php if ($step === 'verify'): ?>
+                    <!-- Step 2: Enter Verification Code & New Password -->
+                    <div class="auth-form-head">
+                        <h2>Set New Password</h2>
+                        <p>Enter the 6-digit code sent to your email and set a new password.</p>
                     </div>
 
-                    <div class="notice success" style="padding: 16px; border-radius: 14px; background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.3); color: #166534; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
-                        <?php echo $notice; ?>
-                    </div>
+                    <?php if ($notice): ?>
+                        <div class="success" style="margin-bottom: 18px; font-size: 13.5px; border-radius: 12px;">
+                            <?php echo $notice; ?>
+                        </div>
+                    <?php endif; ?>
 
-                    <a class="tc-pill-btn-blue" href="<?php echo $baseUrl; ?>login.php" style="width: 100%; justify-content: center; text-decoration: none;">
-                        Proceed to Login <?php echo render_icon('ArrowRight', 18); ?>
-                    </a>
+                    <?php if ($error): ?>
+                        <div class="error" style="margin-bottom: 18px; font-size: 13.5px; border-radius: 12px;">
+                            <?php echo htmlspecialchars($error); ?>
+                        </div>
+                    <?php endif; ?>
 
-                <?php elseif ($step === 'verify'): ?>
-                    <form method="post" action="">
+                    <form method="post" action="?step=verify" novalidate>
                         <?php echo csrf_input(); ?>
-                        <div class="form-head">
-                            <span class="form-badge"><?php echo render_icon('KeyRound', 15); ?>VERIFY &amp; RESET</span>
-                            <h2>Enter Verification Code</h2>
-                            <p>Enter the 6-digit code sent to your email and set a new password.</p>
+
+                        <div class="auth-form-group">
+                            <label for="verifyEmail">Email Address</label>
+                            <div class="auth-input-wrapper">
+                                <span class="auth-input-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                                </span>
+                                <input type="email" id="verifyEmail" name="email" class="auth-text-input" placeholder="you@example.com" value="<?php echo htmlspecialchars($prefillEmail); ?>" required autocomplete="email">
+                            </div>
                         </div>
 
-                        <?php if ($notice): ?>
-                            <div class="notice success" style="padding: 14px 16px; border-radius: 12px; background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.3); color: #166534; font-size: 13.5px; line-height: 1.6; margin-bottom: 20px;">
-                                <?php echo $notice; ?>
+                        <div class="auth-form-group">
+                            <label for="resetCode">6-Digit Verification Code</label>
+                            <div class="auth-input-wrapper">
+                                <span class="auth-input-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
+                                </span>
+                                <input type="text" id="resetCode" name="code" class="auth-text-input" placeholder="e.g. 583921" maxlength="6" required autocomplete="one-time-code" style="letter-spacing: 0.2em; font-weight: 800; font-size: 16px;">
                             </div>
-                        <?php endif; ?>
+                        </div>
 
-                        <?php if ($error): ?>
-                            <div class="error" style="margin-bottom: 18px;"><?php echo htmlspecialchars($error); ?></div>
-                        <?php endif; ?>
-
-                        <label>Registered Email Address
-                            <input name="email" type="email" value="<?php echo htmlspecialchars($prefillEmail); ?>" required>
-                        </label>
-
-                        <label>6-Digit Verification Code
-                            <input name="code" type="text" placeholder="e.g. 849201" maxlength="6" pattern="[0-9]{6}" style="letter-spacing: 0.25em; font-size: 18px; font-weight: 800; text-align: center;" required>
-                        </label>
-
-                        <label>New Password
-                            <span class="password-field">
-                                <input name="new_password" type="password" placeholder="Minimum 6 characters" required>
-                                <button type="button" class="password-toggle" aria-label="Toggle password visibility">
-                                    <span class="icon-eye"><?php echo render_icon('Eye', 18); ?></span>
-                                    <span class="icon-eye-off" style="display:none;"><?php echo render_icon('EyeOff', 18); ?></span>
+                        <div class="auth-form-group">
+                            <label for="newPassword">New Password</label>
+                            <div class="auth-input-wrapper">
+                                <span class="auth-input-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                </span>
+                                <input type="password" id="newPassword" name="new_password" class="auth-text-input" placeholder="Enter new strong password" required autocomplete="new-password">
+                                <button type="button" class="auth-password-toggle-btn" onclick="toggleAuthPassword(this)" aria-label="Toggle password visibility">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                                 </button>
-                            </span>
-                        </label>
+                            </div>
+                        </div>
 
-                        <label>Confirm New Password
-                            <span class="password-field">
-                                <input name="confirm_password" type="password" placeholder="Re-enter new password" required>
-                                <button type="button" class="password-toggle" aria-label="Toggle password visibility">
-                                    <span class="icon-eye"><?php echo render_icon('Eye', 18); ?></span>
-                                    <span class="icon-eye-off" style="display:none;"><?php echo render_icon('EyeOff', 18); ?></span>
+                        <div class="auth-form-group">
+                            <label for="confirmPassword">Confirm New Password</label>
+                            <div class="auth-input-wrapper">
+                                <span class="auth-input-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                </span>
+                                <input type="password" id="confirmPassword" name="confirm_password" class="auth-text-input" placeholder="Confirm new password" required autocomplete="new-password">
+                                <button type="button" class="auth-password-toggle-btn" onclick="toggleAuthPassword(this)" aria-label="Toggle password visibility">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                                 </button>
-                            </span>
-                        </label>
+                            </div>
+                        </div>
 
-                        <button class="tc-pill-btn-blue" type="submit" name="verify_reset" style="width: 100%; justify-content: center; margin-top: 10px;">
-                            Reset Password Now <?php echo render_icon('ShieldCheck', 18); ?>
+                        <button type="submit" name="verify_reset" class="auth-submit-btn" style="margin-top: 14px;">
+                            <span>Reset Password</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                         </button>
 
-                        <div class="auth-switch" style="text-align: center; margin-top: 20px; font-size: 14px; color: var(--muted);">
-                            Didn't get code? <a href="<?php echo $baseUrl; ?>forgot-password.php" style="color: var(--blue); font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Resend code <?php echo render_icon('ArrowRight', 14); ?></a>
+                        <div style="text-align: center; margin-top: 18px;">
+                            <a href="<?php echo $baseUrl; ?>login.php" class="auth-back-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                                <span>Back to Login</span>
+                            </a>
                         </div>
                     </form>
 
                 <?php else: ?>
-                    <form method="post" action="">
+                    <!-- Step 1: Request Reset Link -->
+                    <div class="auth-form-head">
+                        <h2>Reset Your Password</h2>
+                        <p>Enter your email address and we'll send you a reset link.</p>
+                    </div>
+
+                    <?php if ($notice): ?>
+                        <div class="success" style="margin-bottom: 18px; font-size: 13.5px; border-radius: 12px;">
+                            <?php echo $notice; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($error): ?>
+                        <div class="error" style="margin-bottom: 18px; font-size: 13.5px; border-radius: 12px;">
+                            <?php echo htmlspecialchars($error); ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <form method="post" action="?step=request" novalidate>
                         <?php echo csrf_input(); ?>
-                        <div class="form-head">
-                            <span class="form-badge"><?php echo render_icon('Lock', 15); ?>RECOVERY ASSISTANT</span>
-                            <h2>Forgot Password?</h2>
-                            <p>Enter your registered email address and we'll send you a 6-digit verification code to reset your password.</p>
+
+                        <div class="auth-form-group">
+                            <label for="resetEmail">Email Address</label>
+                            <div class="auth-input-wrapper">
+                                <span class="auth-input-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                                </span>
+                                <input type="email" id="resetEmail" name="email" class="auth-text-input" placeholder="you@example.com" value="<?php echo htmlspecialchars($prefillEmail); ?>" required autocomplete="email">
+                            </div>
                         </div>
 
-                        <?php if ($error): ?>
-                            <div class="error" style="margin-bottom: 18px;"><?php echo htmlspecialchars($error); ?></div>
-                        <?php endif; ?>
-
-                        <label>Registered Email Address
-                            <input name="email" type="email" placeholder="tunde.adebayo@company.ng" value="<?php echo htmlspecialchars($prefillEmail); ?>" required>
-                        </label>
-
-                        <button class="tc-pill-btn-blue" type="submit" name="request_reset" style="width: 100%; justify-content: center; margin-top: 10px;">
-                            Send Reset Code <?php echo render_icon('Mail', 18); ?>
+                        <button type="submit" name="request_reset" class="auth-submit-btn" style="margin-top: 14px;">
+                            <span>Send Reset Link</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                         </button>
 
-                        <div class="auth-switch" style="text-align: center; margin-top: 20px; font-size: 14px; color: var(--muted);">
-                            Remembered password? <a href="<?php echo $baseUrl; ?>login.php" style="color: var(--blue); font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Return to login <?php echo render_icon('ArrowRight', 14); ?></a>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <a href="<?php echo $baseUrl; ?>login.php" class="auth-back-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                                <span>Back to Login</span>
+                            </a>
                         </div>
                     </form>
                 <?php endif; ?>
+
             </div>
         </div>
-    </section>
-</main>
+    </main>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+    <!-- Bottom Double Green Wave Footer -->
+    <?php render_auth_footer($settings); ?>
+
+</body>
+</html>

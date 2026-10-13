@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/functions.php';
+
 function start_app_session(): void {
     if (session_status() === PHP_SESSION_NONE) {
         if (!headers_sent()) {

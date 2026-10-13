@@ -49,11 +49,17 @@ declare(strict_types=1);
     </div>
 
 <?php
-$footerDb = get_db();
-$footerNotifs = $footerDb->query("SELECT * FROM appointments ORDER BY id DESC LIMIT 4")->fetchAll();
-$footerMsgs = $footerDb->query("SELECT * FROM contact_messages ORDER BY id DESC LIMIT 4")->fetchAll();
-$pendingCount = (int)$footerDb->query("SELECT COUNT(*) FROM appointments WHERE status = 'pending'")->fetchColumn();
-$newMsgCount = (int)$footerDb->query("SELECT COUNT(*) FROM contact_messages WHERE status = 'new'")->fetchColumn();
+$footerNotifs = [];
+$footerMsgs = [];
+$pendingCount = 0;
+$newMsgCount = 0;
+try {
+    $footerDb = get_db();
+    $footerNotifs = $footerDb->query("SELECT * FROM appointments ORDER BY id DESC LIMIT 4")->fetchAll();
+    $footerMsgs = $footerDb->query("SELECT * FROM contact_messages ORDER BY id DESC LIMIT 4")->fetchAll();
+    $pendingCount = (int)$footerDb->query("SELECT COUNT(*) FROM appointments WHERE status = 'pending'")->fetchColumn();
+    $newMsgCount = (int)$footerDb->query("SELECT COUNT(*) FROM contact_messages WHERE status = 'new'")->fetchColumn();
+} catch (Throwable $e) {}
 ?>
     <!-- Notification Dropdown Popover -->
     <div class="admin-popover-menu" id="notifPopover" style="display:none;">
@@ -193,10 +199,20 @@ $newMsgCount = (int)$footerDb->query("SELECT COUNT(*) FROM contact_messages WHER
 
     // Dropdowns and Popovers logic
     function closeAllPopovers() {
-        ['notifPopover', 'msgPopover', 'adminUserDropdown'].forEach(id => {
+        ['notifPopover', 'msgPopover'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
         });
+        const ud = document.getElementById('adminUserDropdown');
+        if (ud) {
+            ud.style.display = 'none';
+            ud.classList.remove('show');
+        }
+        const umt = document.getElementById('adminUserMenuTrigger');
+        if (umt) {
+            umt.setAttribute('aria-expanded', 'false');
+            umt.classList.remove('active');
+        }
     }
 
     const notifTrigger = document.getElementById('notifDropdownTrigger');
@@ -232,18 +248,33 @@ $newMsgCount = (int)$footerDb->query("SELECT COUNT(*) FROM contact_messages WHER
     }
 
     const userMenuTrigger = document.getElementById('adminUserMenuTrigger');
-    if (userMenuTrigger) {
+    const userDropdown = document.getElementById('adminUserDropdown');
+
+    if (userMenuTrigger && userDropdown) {
         userMenuTrigger.addEventListener('click', function(e) {
+            e.preventDefault();
             e.stopPropagation();
-            const p = document.getElementById('adminUserDropdown');
-            const isOpen = p.style.display === 'block';
+            const isOpen = userDropdown.classList.contains('show') || userDropdown.style.display === 'block';
             closeAllPopovers();
-            if (!isOpen) p.style.display = 'block';
+            if (!isOpen) {
+                userDropdown.style.display = 'block';
+                userDropdown.classList.add('show');
+                userMenuTrigger.setAttribute('aria-expanded', 'true');
+                userMenuTrigger.classList.add('active');
+            }
+        });
+
+        // Crucial: clicks inside dropdown should not dismiss it prematurely,
+        // allowing normal navigation when links (such as logout) are clicked.
+        userDropdown.addEventListener('click', function(e) {
+            e.stopPropagation();
         });
     }
 
-    document.addEventListener('click', function() {
-        closeAllPopovers();
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#adminUserMenuWrapper') && !e.target.closest('#notifDropdownTrigger') && !e.target.closest('#msgDropdownTrigger')) {
+            closeAllPopovers();
+        }
     });
 
     // Theme Toggle

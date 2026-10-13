@@ -118,18 +118,25 @@ $unreadMsgCount = (int)$adminDb->query("SELECT COUNT(*) FROM contact_messages WH
                     <div class="admin-divider-v"></div>
 
                     <!-- User Profile Dropdown Pill -->
-                    <div class="admin-user-profile-pill" id="adminUserMenuTrigger">
-                        <div class="admin-user-avatar">
-                            <?php echo htmlspecialchars($initials); ?>
+                    <div class="admin-user-menu-wrapper" id="adminUserMenuWrapper">
+                        <div class="admin-user-profile-pill" id="adminUserMenuTrigger" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false" title="Account Menu">
+                            <div class="admin-user-avatar">
+                                <?php echo htmlspecialchars($initials); ?>
+                            </div>
+                            <div class="admin-user-details">
+                                <span class="user-name"><?php echo htmlspecialchars($adminFullName); ?></span>
+                                <span class="user-role"><?php echo htmlspecialchars($adminRoleName); ?></span>
+                            </div>
+                            <?php echo render_icon('ChevronDown', 15); ?>
                         </div>
-                        <div class="admin-user-details">
-                            <span class="user-name"><?php echo htmlspecialchars($adminFullName); ?></span>
-                            <span class="user-role"><?php echo htmlspecialchars($adminRoleName); ?></span>
-                        </div>
-                        <?php echo render_icon('ChevronDown', 15); ?>
 
-                        <!-- Dropdown Menu -->
+                        <!-- Dropdown Menu (Sibling of Trigger) -->
                         <div class="admin-user-dropdown" id="adminUserDropdown">
+                            <div class="admin-dropdown-user-header">
+                                <strong><?php echo htmlspecialchars($adminFullName); ?></strong>
+                                <small><?php echo htmlspecialchars($adminRoleName); ?></small>
+                            </div>
+                            <div class="dropdown-divider"></div>
                             <a href="<?php echo $baseUrl; ?>admin/settings.php">
                                 <?php echo render_icon('User', 15); ?> Profile &amp; Settings
                             </a>
@@ -137,7 +144,7 @@ $unreadMsgCount = (int)$adminDb->query("SELECT COUNT(*) FROM contact_messages WH
                                 <?php echo render_icon('ExternalLink', 15); ?> Live Website
                             </a>
                             <div class="dropdown-divider"></div>
-                            <a href="<?php echo $baseUrl; ?>logout.php" class="logout-link">
+                            <a href="<?php echo $baseUrl; ?>logout.php" class="logout-link" id="adminLogoutLink" onclick="window.location.href='<?php echo $baseUrl; ?>logout.php'; return true;">
                                 <?php echo render_icon('LogOut', 15); ?> Logout Session
                             </a>
                         </div>

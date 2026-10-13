@@ -95,8 +95,8 @@ $dynamicLogoUrl = !empty($settings['logo']) ? upload_asset_url($settings['logo']
             <strong class="sidebar-user-name"><?php echo htmlspecialchars($adminFullName); ?></strong>
             <span class="sidebar-user-role"><?php echo htmlspecialchars($adminRoleName); ?></span>
         </div>
-        <span class="sidebar-user-chevron">
-            <?php echo render_icon('ChevronDown', 14); ?>
-        </span>
+        <a href="<?php echo $baseUrl; ?>logout.php" class="sidebar-user-logout-btn" title="Logout Session" onclick="window.location.href='<?php echo $baseUrl; ?>logout.php';">
+            <?php echo render_icon('LogOut', 15); ?>
+        </a>
     </div>
 </aside>

@@ -7,6 +7,10 @@ require_once __DIR__ . '/includes/csrf.php';
 
 require_csrf_token();
 
+$contactEmail = $settings['contact_email'] ?? 'hello@kendatservices.com';
+$contactPhone = $settings['contact_phone'] ?? '+234 800 000 0000';
+$officeAddress = $settings['office_address'] ?? 'Lagos, Nigeria';
+
 $messageSent = '';
 $errorMessage = '';
 
@@ -232,7 +236,7 @@ $user = get_current_user_data();
                                     <?php echo render_icon('Phone', 18); ?>
                                 </div>
                                 <div class="kt-immediate-text">
-                                    <strong class="item-title">+234 803 123 4567</strong>
+                                    <strong class="item-title"><a href="tel:<?php echo htmlspecialchars(preg_replace('/[^0-9+]/', '', $contactPhone)); ?>" style="color:inherit;text-decoration:none;"><?php echo htmlspecialchars($contactPhone); ?></a></strong>
                                     <span class="item-desc">Call us anytime</span>
                                 </div>
                             </div>
@@ -242,7 +246,7 @@ $user = get_current_user_data();
                                     <?php echo render_icon('Mail', 18); ?>
                                 </div>
                                 <div class="kt-immediate-text">
-                                    <strong class="item-title">info@kendattech.com</strong>
+                                    <strong class="item-title"><a href="mailto:<?php echo htmlspecialchars($contactEmail); ?>" style="color:inherit;text-decoration:none;"><?php echo htmlspecialchars($contactEmail); ?></a></strong>
                                     <span class="item-desc">We'll respond within 24 hours</span>
                                 </div>
                             </div>
@@ -252,7 +256,7 @@ $user = get_current_user_data();
                                     <?php echo render_icon('MapPin', 18); ?>
                                 </div>
                                 <div class="kt-immediate-text">
-                                    <strong class="item-title">Lagos, Nigeria</strong>
+                                    <strong class="item-title"><?php echo htmlspecialchars($officeAddress); ?></strong>
                                     <span class="item-desc">Our office location</span>
                                 </div>
                             </div>

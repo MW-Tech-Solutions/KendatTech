@@ -41,7 +41,7 @@ $values = get_settings();
 $groups = [
     'Identity' => ['website_name','company_name','website_slogan','footer_text'],
     'About Content' => ['about_company','mission_statement','vision_statement','hero_title','hero_subtitle'],
-    'Contact' => ['contact_email','contact_phone','whatsapp_number','office_address'],
+    'Contact' => ['contact_email','contact_phone','whatsapp_number','office_address','office_hours'],
     'Social Links' => ['facebook_link','twitter_link','instagram_link','linkedin_link','youtube_link'],
     'Theme And Metrics' => ['primary_color','secondary_color','maintenance_mode','years_experience','completed_projects','clients_served'],
 ];

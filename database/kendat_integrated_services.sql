@@ -225,6 +225,7 @@ INSERT INTO system_settings (setting_key, setting_value, input_type) VALUES
 ('contact_phone','+234 800 000 0000','text'),
 ('whatsapp_number','2348000000000','text'),
 ('office_address','Lagos, Nigeria','textarea'),
+('office_hours','Mon - Fri, 9:00 AM - 6:00 PM','text'),
 ('facebook_link','#','url'),
 ('twitter_link','#','url'),
 ('instagram_link','#','url'),

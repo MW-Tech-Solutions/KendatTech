@@ -129,6 +129,9 @@ function send_smtp_email(string $toEmail, string $toName, string $subject, strin
  */
 function build_branded_email_html(string $title, string $bodyHtml): string {
     $year = date('Y');
+    $settings = get_settings();
+    $companyName = htmlspecialchars($settings['company_name'] ?? 'Kendat Integrated Services');
+    $contactEmail = htmlspecialchars($settings['contact_email'] ?? 'hello@kendatservices.com');
     return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -172,8 +175,8 @@ function build_branded_email_html(string $title, string $bodyHtml): string {
             </tr>
             <tr>
                 <td class="email-footer">
-                    &copy; {$year} Kendat Integrated Services. All rights reserved.<br>
-                    Need assistance? Contact our engineering team at <a href="mailto:hello@kisprojectslab.com">hello@kisprojectslab.com</a>
+                    &copy; {$year} {$companyName}. All rights reserved.<br>
+                    Need assistance? Contact our engineering team at <a href="mailto:{$contactEmail}">{$contactEmail}</a>
                 </td>
             </tr>
         </table>
@@ -249,7 +252,8 @@ HTML;
  * 3. Project Request Alert to Admin
  */
 function send_admin_project_request_alert(string $userName, string $userEmail, string $phone, string $projectType, string $budget, string $description): bool {
-    $adminEmail = 'hello@kisprojectslab.com';
+    $settings = get_settings();
+    $adminEmail = $settings['contact_email'] ?? 'hello@kisprojectslab.com';
     $subject = "⚡ New Project Request: " . $projectType . " (from " . $userName . ")";
     
     $descEscaped = nl2br(htmlspecialchars($description));
@@ -344,7 +348,8 @@ HTML;
  * 6. Demo / Appointment Alert to Admin
  */
 function send_admin_appointment_alert(string $userName, string $userEmail, string $phone, string $date, string $time, string $type, string $message): bool {
-    $adminEmail = 'hello@kisprojectslab.com';
+    $settings = get_settings();
+    $adminEmail = $settings['contact_email'] ?? 'hello@kisprojectslab.com';
     $subject = "📅 New Demo Booking: " . $type . " (from " . $userName . ")";
     
     $msgEscaped = nl2br(htmlspecialchars($message));

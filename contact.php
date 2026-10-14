@@ -6,6 +6,17 @@ require_once __DIR__ . '/includes/csrf.php';
 
 require_csrf_token();
 
+$contactEmail = $settings['contact_email'] ?? 'hello@kendatservices.com';
+$contactPhone = $settings['contact_phone'] ?? '+234 800 000 0000';
+$officeAddress = $settings['office_address'] ?? 'Lagos, Nigeria';
+$officeHours = $settings['office_hours'] ?? 'Mon - Fri: 8:00 AM - 5:00 PM';
+$whatsappNumber = $settings['whatsapp_number'] ?? '';
+$linkedinLink = $settings['linkedin_link'] ?? '#';
+$twitterLink = $settings['twitter_link'] ?? '#';
+$instagramLink = $settings['instagram_link'] ?? '#';
+$youtubeLink = $settings['youtube_link'] ?? '#';
+$facebookLink = $settings['facebook_link'] ?? '#';
+
 $messageSent = '';
 $errorMessage = '';
 
@@ -202,8 +213,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                             <div class="kt-channel-text">
                                 <span class="channel-label">Phone</span>
-                                <strong class="channel-value">+234 803 123 4567</strong>
-                                <span class="channel-hint">Mon - Fri: 8:00 AM - 5:00 PM</span>
+                                <strong class="channel-value"><a href="tel:<?php echo htmlspecialchars(preg_replace('/[^0-9+]/', '', $contactPhone)); ?>" style="color:inherit;text-decoration:none;"><?php echo htmlspecialchars($contactPhone); ?></a></strong>
+                                <span class="channel-hint"><?php echo htmlspecialchars($officeHours); ?></span>
                             </div>
                         </div>
 
@@ -214,7 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                             <div class="kt-channel-text">
                                 <span class="channel-label">Email</span>
-                                <strong class="channel-value">info@kendattech.com</strong>
+                                <strong class="channel-value"><a href="mailto:<?php echo htmlspecialchars($contactEmail); ?>" style="color:inherit;text-decoration:none;"><?php echo htmlspecialchars($contactEmail); ?></a></strong>
                                 <span class="channel-hint">We'll respond within 24 hours</span>
                             </div>
                         </div>
@@ -226,7 +237,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                             <div class="kt-channel-text">
                                 <span class="channel-label">Office Address</span>
-                                <strong class="channel-value">Makurdi, Benue State, Nigeria</strong>
+                                <strong class="channel-value"><?php echo htmlspecialchars($officeAddress); ?></strong>
                                 <span class="channel-hint">Our headquarters & tech hub</span>
                             </div>
                         </div>
@@ -239,10 +250,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="kt-channel-text">
                                 <span class="channel-label">Follow Us</span>
                                 <div class="kt-contact-social-icons">
-                                    <a href="#" aria-label="LinkedIn" class="kt-social-icon-btn"><?php echo render_icon('Linkedin', 16); ?></a>
-                                    <a href="#" aria-label="X (Twitter)" class="kt-social-icon-btn"><?php echo render_icon('XTwitter', 16); ?></a>
-                                    <a href="#" aria-label="Instagram" class="kt-social-icon-btn"><?php echo render_icon('Instagram', 16); ?></a>
-                                    <a href="#" aria-label="YouTube" class="kt-social-icon-btn"><?php echo render_icon('Youtube', 16); ?></a>
+                                    <?php if (!empty($linkedinLink) && $linkedinLink !== '#'): ?>
+                                        <a href="<?php echo htmlspecialchars($linkedinLink); ?>" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="kt-social-icon-btn"><?php echo render_icon('Linkedin', 16); ?></a>
+                                    <?php endif; ?>
+                                    <?php if (!empty($twitterLink) && $twitterLink !== '#'): ?>
+                                        <a href="<?php echo htmlspecialchars($twitterLink); ?>" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" class="kt-social-icon-btn"><?php echo render_icon('Twitter', 16); ?></a>
+                                    <?php endif; ?>
+                                    <?php if (!empty($instagramLink) && $instagramLink !== '#'): ?>
+                                        <a href="<?php echo htmlspecialchars($instagramLink); ?>" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="kt-social-icon-btn"><?php echo render_icon('Instagram', 16); ?></a>
+                                    <?php endif; ?>
+                                    <?php if (!empty($facebookLink) && $facebookLink !== '#'): ?>
+                                        <a href="<?php echo htmlspecialchars($facebookLink); ?>" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="kt-social-icon-btn"><?php echo render_icon('Facebook', 16); ?></a>
+                                    <?php endif; ?>
+                                    <?php if (!empty($youtubeLink) && $youtubeLink !== '#'): ?>
+                                        <a href="<?php echo htmlspecialchars($youtubeLink); ?>" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="kt-social-icon-btn"><?php echo render_icon('Youtube', 16); ?></a>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -263,7 +285,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="kt-map-wrapper">
                         <iframe
                             title="Kendat office location map"
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.659073130574!2d8.53492647476523!3d7.719680092298334!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x105081c80f0bac79%3A0xb52537c1831b17d9!2sKatsina%20Ala%20Street%2C%20Wurukum%2C%20Markurdi%20970101%2C%20Benue!5e0!3m2!1sen!2sng!4v1780922412575!5m2!1sen!2sng"
+                            src="https://maps.google.com/maps?q=<?php echo urlencode($officeAddress); ?>&t=&z=14&ie=UTF8&iwloc=&output=embed"
                             width="100%"
                             height="100%"
                             style="border:0; min-height: 400px; width: 100%; display: block;"
@@ -276,10 +298,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <span class="map-pin-icon"><?php echo render_icon('MapPin', 18); ?></span>
                                 <div class="overlay-text">
                                     <strong class="overlay-title">Headquarters</strong>
-                                    <span class="overlay-sub">Makurdi, Benue State, Nigeria</span>
+                                    <span class="overlay-sub"><?php echo htmlspecialchars($officeAddress); ?></span>
                                 </div>
                             </div>
-                            <a href="https://maps.google.com/?q=Katsina+Ala+Street,+Wurukum,+Makurdi" target="_blank" rel="noopener noreferrer" class="kt-map-cta-btn">
+                            <a href="https://maps.google.com/?q=<?php echo urlencode($officeAddress); ?>" target="_blank" rel="noopener noreferrer" class="kt-map-cta-btn">
                                 Open in Google Maps <?php echo render_icon('ArrowRight', 14); ?>
                             </a>
                         </div>

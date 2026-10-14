@@ -4,7 +4,11 @@ declare(strict_types=1);
 $settings = get_settings();
 $companyName = $settings['company_name'] ?? 'Kendat Integrated Services';
 $slogan = $settings['website_slogan'] ?? 'Building Intelligent Digital Solutions for Businesses, Institutions, and the Future.';
-$footerText = $settings['footer_text'] ?? '© ' . date('Y') . ' Kendat Integrated Services. Intelligent software for modern organizations.';
+$footerText = $settings['footer_text'] ?? '© ' . date('Y') . ' Kendat Integrated Services. All rights reserved.';
+$contactEmail = $settings['contact_email'] ?? 'hello@kendatservices.com';
+$contactPhone = $settings['contact_phone'] ?? '+234 800 000 0000';
+$officeAddress = $settings['office_address'] ?? 'Lagos, Nigeria';
+$officeHours = $settings['office_hours'] ?? 'Mon - Fri, 9:00 AM - 6:00 PM';
 $logoPath = upload_asset_url($settings['logo'] ?? '');
 $baseUrl = get_base_url();
 
@@ -40,7 +44,7 @@ foreach ($socials as [$label, $href]) {
     }
 }
 ?>
-    <!-- 8. FOOTER SECTION (Matching Attached Image Mockup Exactly) -->
+    <!-- 8. FOOTER SECTION (Dynamic Contact Data from System Settings) -->
     <footer class="kt-footer">
         <div class="kt-container">
             <div class="kt-footer-grid">
@@ -60,13 +64,15 @@ foreach ($socials as [$label, $href]) {
                             </span>
                         <?php endif; ?>
                     </a>
-                    <p class="kt-footer-slogan">Innovative technology solutions for a smarter tomorrow.</p>
+                    <p class="kt-footer-slogan"><?php echo htmlspecialchars($slogan); ?></p>
                     <div class="kt-social-row">
-                        <a href="#" aria-label="LinkedIn"><?php echo render_icon('Linkedin', 16); ?></a>
-                        <a href="#" aria-label="X / Twitter"><?php echo render_icon('Twitter', 16); ?></a>
-                        <a href="#" aria-label="Facebook"><?php echo render_icon('Facebook', 16); ?></a>
-                        <a href="#" aria-label="Instagram"><?php echo render_icon('Instagram', 16); ?></a>
-                        <a href="#" aria-label="YouTube"><?php echo render_icon('Youtube', 16); ?></a>
+                        <?php foreach ($socials as [$label, $href, $iconName]): ?>
+                            <?php if (!empty($href) && $href !== '#'): ?>
+                                <a href="<?php echo htmlspecialchars($href); ?>" target="_blank" rel="noopener noreferrer" aria-label="<?php echo htmlspecialchars($label); ?>"><?php echo render_icon($iconName, 16); ?></a>
+                            <?php else: ?>
+                                <a href="#" aria-label="<?php echo htmlspecialchars($label); ?>"><?php echo render_icon($iconName, 16); ?></a>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
                     </div>
                 </div>
 
@@ -101,17 +107,17 @@ foreach ($socials as [$label, $href]) {
                 <div class="kt-footer-col contact-col">
                     <h4 class="kt-footer-head">Contact Us</h4>
                     <ul class="kt-footer-contact">
-                        <li><?php echo render_icon('MapPin', 16); ?> <span>Lagos, Nigeria</span></li>
-                        <li><?php echo render_icon('Mail', 16); ?> <span>hello@kendattech.com</span></li>
-                        <li><?php echo render_icon('Phone', 16); ?> <span>+234 803 123 4567</span></li>
-                        <li><?php echo render_icon('Clock3', 16); ?> <span>Mon - Fri, 9:00 AM - 6:00 PM</span></li>
+                        <li><?php echo render_icon('MapPin', 16); ?> <span><?php echo htmlspecialchars($officeAddress); ?></span></li>
+                        <li><?php echo render_icon('Mail', 16); ?> <a href="mailto:<?php echo htmlspecialchars($contactEmail); ?>" style="color:inherit;text-decoration:none;"><span><?php echo htmlspecialchars($contactEmail); ?></span></a></li>
+                        <li><?php echo render_icon('Phone', 16); ?> <a href="tel:<?php echo htmlspecialchars(preg_replace('/[^0-9+]/', '', $contactPhone)); ?>" style="color:inherit;text-decoration:none;"><span><?php echo htmlspecialchars($contactPhone); ?></span></a></li>
+                        <li><?php echo render_icon('Clock3', 16); ?> <span><?php echo htmlspecialchars($officeHours); ?></span></li>
                     </ul>
                 </div>
             </div>
 
             <!-- Bottom Copyright Bar -->
             <div class="kt-footer-bottom">
-                <p>© <?php echo date('Y'); ?> KendatTech. All rights reserved.</p>
+                <p><?php echo htmlspecialchars($footerText); ?></p>
                 <div class="kt-footer-bottom-links">
                     <a href="<?php echo $baseUrl; ?>privacy.php">Privacy Policy</a>
                     <a href="<?php echo $baseUrl; ?>terms.php">Terms of Service</a>

@@ -71,7 +71,7 @@ foreach ($socials as [$label, $href]) {
                 </div>
 
                 <!-- Column 2: Quick Links -->
-                <div class="kt-footer-col">
+                <div class="kt-footer-col links-col">
                     <h4 class="kt-footer-head">Quick Links</h4>
                     <ul class="kt-footer-links">
                         <li><a href="<?php echo $baseUrl; ?>index.php">Home</a></li>
@@ -85,7 +85,7 @@ foreach ($socials as [$label, $href]) {
                 </div>
 
                 <!-- Column 3: Our Services -->
-                <div class="kt-footer-col">
+                <div class="kt-footer-col services-col">
                     <h4 class="kt-footer-head">Our Services</h4>
                     <ul class="kt-footer-links">
                         <li><a href="<?php echo $baseUrl; ?>services.php">Web Development</a></li>
@@ -98,7 +98,7 @@ foreach ($socials as [$label, $href]) {
                 </div>
 
                 <!-- Column 4: Contact Us -->
-                <div class="kt-footer-col">
+                <div class="kt-footer-col contact-col">
                     <h4 class="kt-footer-head">Contact Us</h4>
                     <ul class="kt-footer-contact">
                         <li><?php echo render_icon('MapPin', 16); ?> <span>Lagos, Nigeria</span></li>

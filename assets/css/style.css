@@ -11123,13 +11123,118 @@ body.cursor-active .custom-cursor-ring {
   }
 }
 
+@media (max-width: 768px) {
+  /* Compact Modern Mobile Footer (Cuts scroll height by ~60%) */
+  .kt-footer {
+    padding: 28px 0 16px;
+  }
+
+  .kt-footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 16px;
+    margin-bottom: 20px;
+  }
+
+  .kt-footer-col.brand-col {
+    grid-column: 1 / -1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .kt-footer-col.brand-col .brand {
+    display: inline-flex;
+    justify-content: center;
+  }
+
+  .kt-footer-slogan {
+    margin: 8px auto 12px;
+    font-size: 13px;
+    line-height: 1.45;
+    max-width: 320px;
+    text-align: center;
+  }
+
+  .kt-social-row {
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .kt-social-row a {
+    width: 30px;
+    height: 30px;
+  }
+
+  .kt-footer-head {
+    font-size: 13.5px;
+    margin: 0 0 10px 0;
+    color: #F8FAFC;
+    letter-spacing: 0.02em;
+  }
+
+  .kt-footer-links li {
+    margin-bottom: 5px;
+  }
+
+  .kt-footer-links a {
+    font-size: 12.5px;
+    line-height: 1.4;
+    display: inline-block;
+  }
+
+  .kt-footer-col.contact-col {
+    grid-column: 1 / -1;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 16px;
+    margin-top: 4px;
+  }
+
+  .kt-footer-col.contact-col .kt-footer-head {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .kt-footer-contact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+  }
+
+  .kt-footer-contact li {
+    font-size: 12px;
+    margin-bottom: 0;
+    line-height: 1.35;
+  }
+
+  .kt-footer-contact svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .kt-footer-bottom {
+    padding-top: 14px;
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .kt-footer-bottom-links {
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+}
+
 @media (max-width: 640px) {
 
   .kt-feature-grid,
   .kt-services-grid,
   .kt-projects-grid,
-  .kt-testimonials-grid,
-  .kt-footer-grid {
+  .kt-testimonials-grid {
     grid-template-columns: 1fr;
   }
 
@@ -11143,6 +11248,18 @@ body.cursor-active .custom-cursor-ring {
     position: static;
     max-width: 100%;
     margin-top: 16px;
+  }
+}
+
+@media (max-width: 440px) {
+  .kt-footer-contact {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .kt-footer-contact li {
+    justify-content: center;
+    text-align: center;
   }
 }
 
@@ -11378,11 +11495,11 @@ body.cursor-active .custom-cursor-ring {
   text-decoration-color: #F59E0B;
 }
 
-/* Team Member Cards Grid Row (6 Columns) */
+/* Team Member Cards Grid Row */
 .kt-team-cards-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
   margin-bottom: 48px;
 }
 
@@ -11405,22 +11522,25 @@ body.cursor-active .custom-cursor-ring {
 
 .kt-card-v2-img {
   width: 100%;
-  height: 190px;
-  background: #F1F5F9;
+  height: 290px;
+  background: radial-gradient(circle at 50% 30%, #F8FAFC 0%, #EDF2F7 100%);
   overflow: hidden;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .kt-card-v2-img img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: top center;
-  transition: transform 0.4s ease;
+  object-fit: contain;
+  object-position: center bottom;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .kt-card-v2:hover .kt-card-v2-img img {
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
 
 .kt-card-v2-fallback {
@@ -11593,6 +11713,14 @@ body.cursor-active .custom-cursor-ring {
 
   .kt-team-cards-grid {
     grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+}
+
+@media (max-width: 900px) {
+  .kt-team-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
   }
 }
 
@@ -11604,6 +11732,11 @@ body.cursor-active .custom-cursor-ring {
 
   .kt-team-cards-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  .kt-card-v2-img {
+    height: 300px;
   }
 
   .kt-join-team-banner {
@@ -11618,9 +11751,16 @@ body.cursor-active .custom-cursor-ring {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 540px) {
   .kt-team-cards-grid {
     grid-template-columns: 1fr;
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .kt-card-v2-img {
+    height: 320px;
   }
 }
 

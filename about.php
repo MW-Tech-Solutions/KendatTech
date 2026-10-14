@@ -11,6 +11,65 @@ try {
     $teamMembers = [];
 }
 
+if (empty($teamMembers)) {
+    $teamMembers = [
+        [
+            'name' => 'Maher Adamu',
+            'role_title' => 'CEO & Founder',
+            'specialties' => 'LEADERSHIP • STRATEGY',
+            'photo' => 'assets/images/team-maher.jpg',
+            'bio' => 'Visionary leader with a passion for technology and innovation. Maher drives the strategic direction of KendatTech and ensures we deliver exceptional value to our clients.',
+            'linkedin_url' => '#',
+            'github_url' => '#'
+        ],
+        [
+            'name' => 'Usman Ibrahim',
+            'role_title' => 'Lead Developer',
+            'specialties' => 'FULL-STACK • PHP • ARCHITECTURE',
+            'photo' => '',
+            'bio' => 'Full-stack developer with expertise in modern web technologies. Usman leads our development team in building scalable and high-performance solutions.',
+            'linkedin_url' => '#',
+            'github_url' => '#'
+        ],
+        [
+            'name' => 'Aisha Bello',
+            'role_title' => 'UI/UX Designer',
+            'specialties' => 'UI/UX • PRODUCT DESIGN',
+            'photo' => '',
+            'bio' => 'Creative designer focused on user-centered experiences. Aisha designs intuitive and beautiful interfaces that make technology simple and accessible.',
+            'linkedin_url' => '#',
+            'github_url' => '#'
+        ],
+        [
+            'name' => 'Abdullahi Musa',
+            'role_title' => 'Backend Developer',
+            'specialties' => 'BACKEND • CLOUD • APIs',
+            'photo' => '',
+            'bio' => 'Specializes in building secure, reliable, and efficient server-side systems. Abdullahi ensures our applications run smoothly and handle real-world challenges.',
+            'linkedin_url' => '#',
+            'github_url' => '#'
+        ],
+        [
+            'name' => 'Sadiq Hassan',
+            'role_title' => 'Frontend Developer',
+            'specialties' => 'FRONTEND • JS • INTERFACES',
+            'photo' => '',
+            'bio' => 'Passionate about creating responsive and engaging web experiences. Sadiq turns designs into clean, interactive, and high-performance interfaces.',
+            'linkedin_url' => '#',
+            'github_url' => '#'
+        ],
+        [
+            'name' => 'Fatima Usman',
+            'role_title' => 'IT Support & Operations',
+            'specialties' => 'DEVOPS • SUPPORT • INFRASTRUCTURE',
+            'photo' => '',
+            'bio' => 'Keeps everything running smoothly. Fatima provides technical support and ensures our systems are always available and secure.',
+            'linkedin_url' => '#',
+            'github_url' => '#'
+        ]
+    ];
+}
+
 $aboutCompany = $settings['about_company'] ?? 'KendatTech is a forward-thinking technology company focused on building high-quality, scalable and secure software solutions for businesses of all sizes. We combine innovation, expertise and passion to deliver digital products that make a real impact.';
 ?>
 

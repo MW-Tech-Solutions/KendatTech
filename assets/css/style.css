@@ -6515,21 +6515,22 @@ body.cursor-active .custom-cursor-ring {
   left: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
-  background: #050b18 !important;
+  background: radial-gradient(circle at 50% 50%, #FFFFFF 0%, #F4FBF7 60%, #E6F7EF 100%) !important;
   z-index: 999999 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(8px) !important;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .kendat-preloader.is-loaded {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  transform: translateY(-10px) !important;
+  transform: translateY(-8px) !important;
 }
 
 .preloader-content {
@@ -6537,7 +6538,7 @@ body.cursor-active .custom-cursor-ring {
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 22px !important;
+  gap: 20px !important;
 }
 
 .preloader-logo-wrap {
@@ -6545,19 +6546,19 @@ body.cursor-active .custom-cursor-ring {
 }
 
 .preloader-logo-img {
-  max-height: 60px !important;
+  max-height: 64px !important;
   width: auto !important;
   object-fit: contain !important;
-  filter: drop-shadow(0 0 20px rgba(0, 229, 255, 0.4)) !important;
+  filter: drop-shadow(0 10px 24px rgba(11, 93, 59, 0.12)) !important;
 }
 
 .preloader-logo-text {
   font-family: var(--font-heading) !important;
-  font-size: 26px !important;
+  font-size: 28px !important;
   font-weight: 900 !important;
   letter-spacing: -0.02em !important;
-  color: #ffffff !important;
-  background: linear-gradient(135deg, #ffffff 0%, #00E5FF 100%) !important;
+  color: #0B5D3B !important;
+  background: linear-gradient(135deg, #0B5D3B 0%, #10B981 100%) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
 }
@@ -6574,24 +6575,28 @@ body.cursor-active .custom-cursor-ring {
   width: 10px !important;
   height: 10px !important;
   border-radius: 50% !important;
-  background: var(--cyan) !important;
-  box-shadow: 0 0 12px var(--cyan) !important;
+  background: #0B5D3B !important;
+  box-shadow: 0 4px 12px rgba(11, 93, 59, 0.35) !important;
   display: inline-block !important;
   animation: preloaderDotBounce 1.2s ease-in-out infinite alternate !important;
 }
 
 .preloader-dots-row .dot-1 {
   animation-delay: 0s !important;
+  background: #0B5D3B !important;
+  box-shadow: 0 4px 12px rgba(11, 93, 59, 0.4) !important;
 }
 
 .preloader-dots-row .dot-2 {
   animation-delay: 0.25s !important;
-  background: var(--blue) !important;
-  box-shadow: 0 0 12px var(--blue) !important;
+  background: #10B981 !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
 }
 
 .preloader-dots-row .dot-3 {
   animation-delay: 0.5s !important;
+  background: #059669 !important;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4) !important;
 }
 
 @keyframes preloaderLogoPulse {
@@ -16644,5 +16649,84 @@ button.kt-btn-green:active,
 
   .pdetail-hero-section {
     padding-top: 100px;
+  }
+}
+
+/* ==========================================================================
+   MOBILE TYPOGRAPHY: UNIVERSAL JUSTIFIED TEXT SYSTEM (<= 768px and <= 480px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  p,
+  .kt-hero-lead,
+  .kt-body-text,
+  .kt-section-sub,
+  .kt-project-desc,
+  .kt-quote-text,
+  .kt-cta-sub,
+  .kt-feature-info p,
+  .kt-service-card-info p,
+  .kt-mission-card p,
+  .kt-about-section p,
+  .kt-services-section p,
+  .kt-projects-section p,
+  .kt-testimonials-split-section p,
+  .kt-serv-hero-desc,
+  .kt-serv-card-desc,
+  .kt-why-card p,
+  .kt-team-card p,
+  .kt-team-card-bio,
+  .kt-step-flow-item p,
+  .service-card p,
+  .service-desc,
+  .service-detail p,
+  .about-text,
+  .about-content p,
+  .post-card p,
+  .post-excerpt,
+  .blog-card p,
+  .blog-card-excerpt,
+  .article p,
+  .testimonial-quote,
+  .testimonial-text,
+  .testimonial-card p,
+  .faq-answer,
+  .accordion-body,
+  .lead,
+  .card-text,
+  blockquote,
+  .legal-content p,
+  .terms-content p,
+  .contact-info p,
+  .kt-contact-info-card p,
+  .kt-contact-why-card p,
+  .page-hero p,
+  .booking-hero p,
+  .contact-hero p,
+  .kt-cta-card p,
+  .related-body p,
+  .tc-hero-subtitle-main,
+  .tc-cta-subtext {
+    text-align: justify !important;
+    text-justify: inter-word !important;
+    text-align-last: left !important;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  p,
+  .kt-hero-lead,
+  .kt-body-text,
+  .kt-section-sub,
+  .kt-quote-text,
+  .kt-project-desc,
+  .kt-feature-info p,
+  .kt-service-card-info p,
+  .kt-mission-card p {
+    text-align: justify !important;
+    text-justify: inter-word !important;
+    text-align-last: left !important;
   }
 }

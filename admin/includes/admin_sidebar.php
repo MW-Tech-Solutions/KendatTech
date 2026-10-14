@@ -17,6 +17,7 @@ $adminRoleName = !empty($user['role']) ? ucfirst(str_replace('_', ' ', (string)$
 // Comprehensive dynamic navigation links matching Kendat Admin
 $adminLinks = [
     ['Dashboard', $baseUrl . 'admin/index.php', 'LayoutDashboard'],
+    ['Hero Carousel', $baseUrl . 'admin/hero-slides.php', 'Layers3'],
     ['Appointments', $baseUrl . 'admin/appointments.php', 'CalendarCheck'],
     ['Project Requests', $baseUrl . 'admin/requests.php', 'ClipboardList'],
     ['Customers', $baseUrl . 'admin/users.php', 'Users'],
@@ -27,6 +28,7 @@ $adminLinks = [
     ['Team Members', $baseUrl . 'admin/team.php', 'UserCheck'],
     ['Testimonials', $baseUrl . 'admin/testimonials.php', 'MessageSquareQuote'],
     ['Blog Posts', $baseUrl . 'admin/blog.php', 'Newspaper'],
+    ['Database Manager', $baseUrl . 'admin/database-manager.php', 'Database'],
     ['Audit Logs', $baseUrl . 'admin/audit-logs.php', 'BarChart3'],
     ['Settings', $baseUrl . 'admin/settings.php', 'Settings'],
 ];

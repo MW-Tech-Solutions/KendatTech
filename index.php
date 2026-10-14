@@ -33,6 +33,94 @@ try {
     $testimonials = [];
 }
 
+try {
+    $heroSlidesStmt = $pdo->query("SELECT * FROM hero_slides WHERE status = 'active' ORDER BY sort_order ASC, id ASC");
+    $heroSlides = $heroSlidesStmt->fetchAll();
+} catch (Throwable $e) {
+    $heroSlides = [];
+}
+
+if (empty($heroSlides)) {
+    $heroSlides = [
+        [
+            'id' => 1,
+            'badge_text' => 'INNOVATIVE TECHNOLOGY SOLUTIONS',
+            'title' => 'Build Smarter With KendatTech',
+            'highlight_text' => 'KendatTech',
+            'description' => 'We design, develop and deliver modern software solutions that help businesses grow, operate efficiently and stay ahead in a digital world.',
+            'primary_cta_text' => 'Our Services',
+            'primary_cta_url' => 'services.php',
+            'secondary_cta_text' => 'Learn More',
+            'secondary_cta_url' => 'about.php',
+            'slide_image' => 'assets/images/hero-laptop.png',
+            'badge1_icon' => 'Code2',
+            'badge1_title' => 'Clean Code',
+            'badge1_subtitle' => 'Scalable & Maintainable',
+            'badge2_icon' => 'ShieldCheck',
+            'badge2_title' => 'Reliable Security',
+            'badge2_subtitle' => 'Your Data, Our Priority',
+            'tech_tags' => 'PHP, React, MySQL, REST APIs'
+        ],
+        [
+            'id' => 2,
+            'badge_text' => 'FULL-STACK SOFTWARE ENGINEERING',
+            'title' => 'Enterprise Web & Mobile App Development',
+            'highlight_text' => 'Enterprise Web & Mobile',
+            'description' => 'End-to-end custom software engineering with reactive frontends, resilient databases, and automated business workflows built to scale seamlessly.',
+            'primary_cta_text' => 'Request a Project',
+            'primary_cta_url' => 'request-project.php',
+            'secondary_cta_text' => 'View Projects',
+            'secondary_cta_url' => 'projects.php',
+            'slide_image' => 'assets/images/services-hero-laptop.jpg',
+            'badge1_icon' => 'Smartphone',
+            'badge1_title' => 'Cross-Platform',
+            'badge1_subtitle' => 'iOS, Android & Web',
+            'badge2_icon' => 'Rocket',
+            'badge2_title' => 'Blazing Fast',
+            'badge2_subtitle' => 'High Performance Core',
+            'tech_tags' => 'React, Next.js, Laravel, Flutter'
+        ],
+        [
+            'id' => 3,
+            'badge_text' => 'CLOUD ARCHITECTURE & MICROSERVICES',
+            'title' => 'Scalable Cloud Systems & High-Speed APIs',
+            'highlight_text' => 'Cloud Systems & APIs',
+            'description' => 'Architecting resilient cloud backends, optimized databases, and bulletproof microservices capable of processing millions of concurrent transactions.',
+            'primary_cta_text' => 'Book Consultation',
+            'primary_cta_url' => 'book-appointment.php',
+            'secondary_cta_text' => 'Explore Services',
+            'secondary_cta_url' => 'services.php',
+            'slide_image' => 'assets/images/about-workspace.jpg',
+            'badge1_icon' => 'Cloud',
+            'badge1_title' => 'Cloud Native',
+            'badge1_subtitle' => '99.99% Guaranteed Uptime',
+            'badge2_icon' => 'Database',
+            'badge2_title' => 'Optimized SQL',
+            'badge2_subtitle' => 'High-Throughput Engines',
+            'tech_tags' => 'AWS, Docker, Microservices, CI/CD'
+        ],
+        [
+            'id' => 4,
+            'badge_text' => 'AI & INTELLIGENT AUTOMATION',
+            'title' => 'AI-Powered Systems & Smart Business Automation',
+            'highlight_text' => 'AI-Powered Systems',
+            'description' => 'Empower your applications with artificial intelligence, machine learning forecasting, and automated decision bots tailored to accelerate operations.',
+            'primary_cta_text' => 'AI Solutions',
+            'primary_cta_url' => 'ai-solutions.php',
+            'secondary_cta_text' => 'Contact Us',
+            'secondary_cta_url' => 'contact.php',
+            'slide_image' => 'assets/images/ai-hero-visual.png',
+            'badge1_icon' => 'Cpu',
+            'badge1_title' => 'Intelligent AI',
+            'badge1_subtitle' => 'NLP & Machine Learning',
+            'badge2_icon' => 'Bot',
+            'badge2_title' => 'Smart Automation',
+            'badge2_subtitle' => '24/7 Workflow Processing',
+            'tech_tags' => 'Python, OpenAI, PyTorch, Automation'
+        ]
+    ];
+}
+
 // Fallback data if server DB has fewer than 3 items or missing tables
 if (count($projects) < 3) {
     $defaultProjects = [
@@ -107,9 +195,9 @@ if (empty($testimonials)) {
 
 <main class="kt-main-wrapper">
 
-    <!-- 1. HERO SECTION WITH CINEMATIC VIDEO BACKGROUND WALLPAPER -->
-    <section class="kt-hero-stage kt-hero-with-video">
-        <!-- Background Video Wallpaper -->
+    <!-- 1. DYNAMIC HERO CAROUSEL WITH CINEMATIC VIDEO BACKGROUND WALLPAPER -->
+    <section class="kt-hero-stage kt-hero-with-video" id="heroStage">
+        <!-- Background Video Wallpaper (Continuously Active & Cinematic) -->
         <div class="kt-hero-video-bg" aria-hidden="true">
             <video autoplay muted loop playsinline preload="auto" poster="<?php echo $baseUrl; ?>assets/images/hero-video-poster.jpg" class="kt-hero-bg-video" id="ktHeroBgVideo">
                 <source src="<?php echo $baseUrl; ?>assets/videos/hero-background.mp4" type="video/mp4">
@@ -119,35 +207,304 @@ if (empty($testimonials)) {
         </div>
 
         <div class="kt-container" style="position: relative; z-index: 3;">
-            <div class="kt-hero-grid">
-                <!-- Hero Left Column -->
-                <div class="kt-hero-left">
-                    <span class="kt-eyebrow">INNOVATIVE TECHNOLOGY SOLUTIONS</span>
-                    <h1 class="kt-hero-title">
-                        Build Smarter<br>With <span class="kt-text-brand">KendatTech</span>
-                    </h1>
-                    <p class="kt-hero-lead">
-                        We design, develop and deliver modern software solutions that help businesses grow, operate efficiently and stay ahead in a digital world.
-                    </p>
-                    <div class="kt-hero-ctas">
-                        <a href="<?php echo $baseUrl; ?>services.php" class="kt-btn-primary">
-                            Our Services <?php echo render_icon('ArrowRight', 16); ?>
-                        </a>
-                        <a href="<?php echo $baseUrl; ?>about.php" class="kt-btn-outline">
-                            Learn More
-                        </a>
+            <div class="kt-hero-carousel-container" id="ktHeroCarousel">
+
+                <!-- Previous & Next Arrow Controls -->
+                <button type="button" class="kt-hero-nav-arrow prev" id="ktHeroPrev" aria-label="Previous Slide">
+                    <?php echo render_icon('ChevronLeft', 24); ?>
+                </button>
+                <button type="button" class="kt-hero-nav-arrow next" id="ktHeroNext" aria-label="Next Slide">
+                    <?php echo render_icon('ChevronRight', 24); ?>
+                </button>
+
+                <!-- Slides Viewport -->
+                <div class="kt-hero-slides-wrapper">
+                    <?php 
+                    $slideCount = count($heroSlides);
+                    foreach ($heroSlides as $idx => $slide): 
+                        $isActive = ($idx === 0);
+                        
+                        // Highlight text replacement with brand accent
+                        $titleRaw = $slide['title'];
+                        $highlight = trim((string)($slide['highlight_text'] ?? ''));
+                        if ($highlight !== '' && stripos($titleRaw, $highlight) !== false) {
+                            $quoted = preg_quote($highlight, '/');
+                            $formattedTitle = preg_replace('/(' . $quoted . ')/i', '<span class="kt-text-brand">$1</span>', htmlspecialchars($titleRaw));
+                        } else {
+                            $formattedTitle = htmlspecialchars($titleRaw);
+                        }
+
+                        // Tech tags
+                        $techTags = array_filter(array_map('trim', explode(',', (string)($slide['tech_tags'] ?? ''))));
+                        
+                        // URLs
+                        $pUrl = !empty($slide['primary_cta_url']) ? $slide['primary_cta_url'] : 'services.php';
+                        if (!str_starts_with($pUrl, 'http://') && !str_starts_with($pUrl, 'https://') && !str_starts_with($pUrl, '#')) {
+                            $pUrl = $baseUrl . ltrim($pUrl, '/');
+                        }
+                        $sUrl = !empty($slide['secondary_cta_url']) ? $slide['secondary_cta_url'] : 'about.php';
+                        if (!str_starts_with($sUrl, 'http://') && !str_starts_with($sUrl, 'https://') && !str_starts_with($sUrl, '#')) {
+                            $sUrl = $baseUrl . ltrim($sUrl, '/');
+                        }
+                    ?>
+                        <div class="kt-hero-carousel-slide <?php echo $isActive ? 'active' : ''; ?>" data-slide-index="<?php echo $idx; ?>">
+                            <div class="kt-hero-grid">
+                                <!-- Hero Left Column: Copy & Actions -->
+                                <div class="kt-hero-left">
+                                    <span class="kt-eyebrow">
+                                        <?php echo htmlspecialchars($slide['badge_text']); ?>
+                                    </span>
+
+                                    <h1 class="kt-hero-title">
+                                        <?php echo $formattedTitle; ?>
+                                    </h1>
+
+                                    <p class="kt-hero-lead">
+                                        <?php echo htmlspecialchars($slide['description']); ?>
+                                    </p>
+
+                                    <?php if (!empty($techTags)): ?>
+                                        <div class="kt-hero-tech-chips">
+                                            <?php foreach ($techTags as $tag): ?>
+                                                <span class="kt-hero-tech-chip">
+                                                    <?php echo render_icon('Code2', 13); ?>
+                                                    <span><?php echo htmlspecialchars($tag); ?></span>
+                                                </span>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <div class="kt-hero-ctas">
+                                        <a href="<?php echo htmlspecialchars($pUrl); ?>" class="kt-btn-primary">
+                                            <?php echo htmlspecialchars($slide['primary_cta_text'] ?? 'Our Services'); ?> <?php echo render_icon('ArrowRight', 16); ?>
+                                        </a>
+                                        <a href="<?php echo htmlspecialchars($sUrl); ?>" class="kt-btn-outline">
+                                            <?php echo htmlspecialchars($slide['secondary_cta_text'] ?? 'Learn More'); ?>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Center Connection Node Axis -->
+                                <div class="kt-hero-center-axis" aria-hidden="true">
+                                    <div class="kt-hero-axis-dot"></div>
+                                </div>
+
+                                <!-- Hero Right Column: Graphic Showcase & Floating Badges -->
+                                <div class="kt-hero-right">
+                                    <div class="kt-hero-showcase-stage">
+                                        <!-- Angled Brand Geometric Polygons -->
+                                        <div class="kt-hero-poly-green" aria-hidden="true"></div>
+                                        <div class="kt-hero-poly-amber" aria-hidden="true"></div>
+
+                                        <!-- Showcase Card -->
+                                        <div class="kt-hero-showcase-card">
+                                            <img src="<?php echo htmlspecialchars(upload_asset_url($slide['slide_image'])); ?>" 
+                                                 alt="<?php echo htmlspecialchars($slide['title']); ?>" 
+                                                 class="kt-hero-showcase-img">
+
+                                            <!-- Floating Badge 1 (Top-Left) -->
+                                            <div class="kt-hero-float-badge badge-top-left">
+                                                <div class="kt-hero-float-icon">
+                                                    <?php 
+                                                    $b1Icon = $slide['badge1_icon'] ?? 'Code2';
+                                                    if ($b1Icon === 'Code2') {
+                                                        echo '&lt;/&gt;';
+                                                    } else {
+                                                        echo render_icon($b1Icon, 18);
+                                                    }
+                                                    ?>
+                                                </div>
+                                                <div class="kt-hero-float-meta">
+                                                    <strong><?php echo htmlspecialchars($slide['badge1_title'] ?? 'Clean Code'); ?></strong>
+                                                    <span><?php echo htmlspecialchars($slide['badge1_subtitle'] ?? 'Scalable & Maintainable'); ?></span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Floating Badge 2 (Bottom-Right) -->
+                                            <div class="kt-hero-float-badge badge-bottom-right">
+                                                <div class="kt-hero-float-icon" style="background:rgba(11,93,59,0.12); color:#0B5D3B;">
+                                                    <?php echo render_icon($slide['badge2_icon'] ?? 'ShieldCheck', 18); ?>
+                                                </div>
+                                                <div class="kt-hero-float-meta">
+                                                    <strong><?php echo htmlspecialchars($slide['badge2_title'] ?? 'Reliable Security'); ?></strong>
+                                                    <span><?php echo htmlspecialchars($slide['badge2_subtitle'] ?? 'Your Data, Our Priority'); ?></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <!-- Bottom Carousel Indicators Dock -->
+                <div class="kt-hero-bottom-dock">
+                    <div class="kt-hero-dock-pill">
+                        <span class="kt-hero-counter-label" id="ktHeroCounter">
+                            01 / <?php echo sprintf('%02d', $slideCount); ?>
+                        </span>
+                        
+                        <div class="kt-hero-dots-wrap" role="tablist" aria-label="Hero Carousel Slides">
+                            <?php for ($i = 0; $i < $slideCount; $i++): ?>
+                                <button type="button" 
+                                        class="kt-hero-dot-btn <?php echo $i === 0 ? 'active' : ''; ?>" 
+                                        data-slide-to="<?php echo $i; ?>" 
+                                        aria-label="Go to slide <?php echo $i + 1; ?>">
+                                </button>
+                            <?php endfor; ?>
+                        </div>
+
+                        <button type="button" class="kt-hero-pause-btn" id="ktHeroPause" title="Pause / Resume Rotation" aria-label="Pause Auto Rotation">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+                                <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+                            </svg>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Hero Right Column (Exact 3D Laptop Graphic from Mockup) -->
-                <div class="kt-hero-right">
-                    <div class="kt-hero-graphic-wrap">
-                        <img src="<?php echo $baseUrl; ?>assets/images/hero-laptop.png" alt="KendatTech Software Platform" class="kt-hero-graphic-img">
-                    </div>
-                </div>
             </div>
         </div>
     </section>
+
+    <!-- Carousel Vanilla Controller Script -->
+    <script>
+    (function() {
+        function initHeroCarousel() {
+            const carousel = document.getElementById('ktHeroCarousel');
+            if (!carousel) return;
+
+            const slides = carousel.querySelectorAll('.kt-hero-carousel-slide');
+            const dots = carousel.querySelectorAll('.kt-hero-dot-btn');
+            const prevBtn = document.getElementById('ktHeroPrev');
+            const nextBtn = document.getElementById('ktHeroNext');
+            const counter = document.getElementById('ktHeroCounter');
+            const pauseBtn = document.getElementById('ktHeroPause');
+            
+            if (slides.length <= 1) return;
+
+            let currentIndex = 0;
+            let isPaused = false;
+            let autoInterval = null;
+            const slideDuration = 5500;
+
+            function formatNumber(num) {
+                return num < 10 ? '0' + num : num;
+            }
+
+            function goToSlide(index) {
+                slides[currentIndex].classList.remove('active');
+                if (dots[currentIndex]) dots[currentIndex].classList.remove('active');
+
+                currentIndex = (index + slides.length) % slides.length;
+
+                slides[currentIndex].classList.add('active');
+                if (dots[currentIndex]) dots[currentIndex].classList.add('active');
+
+                if (counter) {
+                    counter.textContent = `${formatNumber(currentIndex + 1)} / ${formatNumber(slides.length)}`;
+                }
+            }
+
+            function nextSlide() {
+                goToSlide(currentIndex + 1);
+            }
+
+            function prevSlide() {
+                goToSlide(currentIndex - 1);
+            }
+
+            function startAutoPlay() {
+                stopAutoPlay();
+                autoInterval = setInterval(() => {
+                    if (!isPaused) {
+                        nextSlide();
+                    }
+                }, slideDuration);
+            }
+
+            function stopAutoPlay() {
+                if (autoInterval) {
+                    clearInterval(autoInterval);
+                    autoInterval = null;
+                }
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    nextSlide();
+                    startAutoPlay();
+                });
+            }
+
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    prevSlide();
+                    startAutoPlay();
+                });
+            }
+
+            dots.forEach(function(dot, idx) {
+                dot.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    goToSlide(idx);
+                    startAutoPlay();
+                });
+            });
+
+            if (pauseBtn) {
+                pauseBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    isPaused = !isPaused;
+                    pauseBtn.setAttribute('aria-label', isPaused ? 'Resume auto slide' : 'Pause auto slide');
+                    pauseBtn.style.opacity = isPaused ? '0.4' : '1';
+                });
+            }
+
+            carousel.addEventListener('mouseenter', function() { isPaused = true; });
+            carousel.addEventListener('mouseleave', function() { isPaused = false; });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+                if (e.key === 'ArrowLeft') { prevSlide(); startAutoPlay(); }
+                else if (e.key === 'ArrowRight') { nextSlide(); startAutoPlay(); }
+            });
+
+            // Touch swipe support
+            let touchStartX = 0;
+            carousel.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].clientX;
+                isPaused = true;
+            }, { passive: true });
+
+            carousel.addEventListener('touchend', function(e) {
+                const touchEndX = e.changedTouches[0].clientX;
+                const diffX = touchEndX - touchStartX;
+                if (Math.abs(diffX) > 40) {
+                    if (diffX < 0) {
+                        nextSlide();
+                    } else {
+                        prevSlide();
+                    }
+                }
+                isPaused = false;
+                startAutoPlay();
+            }, { passive: true });
+
+            startAutoPlay();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initHeroCarousel);
+        } else {
+            initHeroCarousel();
+        }
+    })();
+    </script>
 
     <!-- 2. VALUE HIGHLIGHTS STRIP (4 Columns across) -->
     <section class="kt-feature-bar">

@@ -20,6 +20,10 @@ function csrf_input(): string {
     return '<input type="hidden" name="csrf_token" value="' . $token . '">';
 }
 
+function csrf_field(): string {
+    return csrf_input();
+}
+
 function validate_csrf_token(?string $submittedToken): bool {
     start_app_session();
     $sessionToken = $_SESSION['csrf_token'] ?? '';

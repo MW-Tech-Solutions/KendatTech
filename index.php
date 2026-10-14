@@ -398,32 +398,65 @@ if (empty($testimonials)) {
                     </p>
                 </div>
 
-                <!-- Right Column: 3 Side-by-Side Cards -->
-                <div class="kt-testimonials-right-cards">
-                    <?php foreach ($testimonials as $t): 
-                        $nameParts = explode(' ', (string)($t['client_name'] ?? 'Client'));
-                        $initialsStr = '';
-                        foreach ($nameParts as $nP) {
-                            if (!empty($nP)) {
-                                $initialsStr .= strtoupper($nP[0]);
+                <!-- Right Column: Cards (Desktop: 3-Col Grid, Mobile: Seamless Infinite Marquee) -->
+                <div class="kt-testimonials-marquee-wrapper" id="ktTestimonialsMarqueeWrapper">
+                    <div class="kt-testimonials-right-cards kt-testimonials-marquee-track" id="ktTestimonialsMarqueeTrack">
+                        <?php 
+                        // Set 1: Primary Cards
+                        foreach ($testimonials as $t): 
+                            $nameParts = explode(' ', (string)($t['client_name'] ?? 'Client'));
+                            $initialsStr = '';
+                            foreach ($nameParts as $nP) {
+                                if (!empty($nP)) {
+                                    $initialsStr .= strtoupper($nP[0]);
+                                }
                             }
-                        }
-                        $initials = !empty($initialsStr) ? substr($initialsStr, 0, 2) : 'KT';
-                    ?>
-                        <article class="kt-testimonial-card-mini">
-                            <p class="kt-quote-text">"<?php echo htmlspecialchars($t['message']); ?>"</p>
-                            <div class="kt-client-row">
-                                <div class="kt-client-avatar">
-                                    <?php echo htmlspecialchars(substr($initials, 0, 2)); ?>
+                            $initials = !empty($initialsStr) ? substr($initialsStr, 0, 2) : 'KT';
+                            $quote = !empty($t['message']) ? $t['message'] : (!empty($t['content']) ? $t['content'] : (!empty($t['testimonial']) ? $t['testimonial'] : 'KendatTech delivered our project on time and exceeded our expectations. Highly recommended!'));
+                        ?>
+                            <article class="kt-testimonial-card-mini">
+                                <div class="kt-stars">★★★★★</div>
+                                <p class="kt-quote-text">"<?php echo htmlspecialchars($quote); ?>"</p>
+                                <div class="kt-client-row">
+                                    <div class="kt-client-avatar">
+                                        <?php echo htmlspecialchars(substr($initials, 0, 2)); ?>
+                                    </div>
+                                    <div class="kt-client-info">
+                                        <h4><?php echo htmlspecialchars($t['client_name'] ?? 'Client'); ?></h4>
+                                        <small><?php echo htmlspecialchars($t['position_company'] ?? 'Verified Client'); ?></small>
+                                    </div>
                                 </div>
-                                <div class="kt-client-info">
-                                    <h4><?php echo htmlspecialchars($t['client_name']); ?></h4>
-                                    <small><?php echo htmlspecialchars($t['position_company'] ?? 'Executive'); ?></small>
-                                    <div class="kt-stars">★★★★★</div>
+                            </article>
+                        <?php endforeach; ?>
+
+                        <?php 
+                        // Set 2: Duplicate Set for Continuous Seamless Marquee on Mobile
+                        foreach ($testimonials as $t): 
+                            $nameParts = explode(' ', (string)($t['client_name'] ?? 'Client'));
+                            $initialsStr = '';
+                            foreach ($nameParts as $nP) {
+                                if (!empty($nP)) {
+                                    $initialsStr .= strtoupper($nP[0]);
+                                }
+                            }
+                            $initials = !empty($initialsStr) ? substr($initialsStr, 0, 2) : 'KT';
+                            $quote = !empty($t['message']) ? $t['message'] : (!empty($t['content']) ? $t['content'] : (!empty($t['testimonial']) ? $t['testimonial'] : 'KendatTech delivered our project on time and exceeded our expectations. Highly recommended!'));
+                        ?>
+                            <article class="kt-testimonial-card-mini marquee-dup">
+                                <div class="kt-stars">★★★★★</div>
+                                <p class="kt-quote-text">"<?php echo htmlspecialchars($quote); ?>"</p>
+                                <div class="kt-client-row">
+                                    <div class="kt-client-avatar">
+                                        <?php echo htmlspecialchars(substr($initials, 0, 2)); ?>
+                                    </div>
+                                    <div class="kt-client-info">
+                                        <h4><?php echo htmlspecialchars($t['client_name'] ?? 'Client'); ?></h4>
+                                        <small><?php echo htmlspecialchars($t['position_company'] ?? 'Verified Client'); ?></small>
+                                    </div>
                                 </div>
-                            </div>
-                        </article>
-                    <?php endforeach; ?>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
         </div>

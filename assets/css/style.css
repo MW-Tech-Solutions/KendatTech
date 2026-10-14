@@ -10767,6 +10767,7 @@ body.cursor-active .custom-cursor-ring {
   padding: 90px 0;
   background: #FFFFFF;
   border-bottom: 1px solid #E2E8F0;
+  overflow: hidden;
 }
 
 .kt-testimonials-split-grid {
@@ -10793,65 +10794,96 @@ body.cursor-active .custom-cursor-ring {
   margin: 0;
 }
 
+.kt-testimonials-marquee-wrapper {
+  width: 100%;
+  position: relative;
+}
+
 .kt-testimonials-right-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+  width: 100%;
+}
+
+.kt-testimonial-card-mini.marquee-dup {
+  display: none;
 }
 
 .kt-testimonial-card-mini {
-  background: #FFFFFF;
-  border: 1px solid #E2E8F0;
-  border-radius: 16px;
-  padding: 24px 20px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  background: #FFFFFF !important;
+  border: 1.5px solid #E2E8F0 !important;
+  border-radius: 18px !important;
+  padding: 26px 22px !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  transition: all 0.3s ease !important;
 }
 
-.kt-testimonial-card-mini .kt-quote-text {
-  font-size: 13.5px;
-  line-height: 1.55;
-  color: #334155;
-  margin: 0 0 20px 0;
-  font-style: normal;
-}
-
-.kt-testimonial-card-mini .kt-client-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #0B5D3B;
-  color: #FFFFFF;
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.kt-testimonial-card-mini .kt-client-info h4 {
-  font-family: var(--font-heading);
-  font-size: 14px;
-  font-weight: 700;
-  color: #0F172A;
-  margin: 0 0 2px 0;
-}
-
-.kt-testimonial-card-mini .kt-client-info small {
-  display: block;
-  font-size: 11.5px;
-  color: #64748B;
-  margin-bottom: 4px;
+.kt-testimonial-card-mini:hover {
+  border-color: #A7F3D0 !important;
+  box-shadow: 0 10px 28px rgba(11, 93, 59, 0.1) !important;
+  transform: translateY(-2px);
 }
 
 .kt-stars {
-  color: #F59E0B;
-  font-size: 13px;
-  letter-spacing: 2px;
+  color: #F59E0B !important;
+  font-size: 14px !important;
+  letter-spacing: 2px !important;
+  margin-bottom: 10px !important;
+  display: block !important;
+}
+
+.kt-testimonial-card-mini .kt-quote-text {
+  font-size: 14.5px !important;
+  line-height: 1.65 !important;
+  color: #0F172A !important;
+  margin: 0 0 20px 0 !important;
+  font-style: normal !important;
+  font-weight: 500 !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  text-align: left !important;
+}
+
+.kt-testimonial-card-mini .kt-client-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-top: auto !important;
+}
+
+.kt-testimonial-card-mini .kt-client-avatar {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 50% !important;
+  background: #0B5D3B !important;
+  color: #FFFFFF !important;
+  font-family: var(--font-heading) !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+.kt-testimonial-card-mini .kt-client-info h4 {
+  font-family: var(--font-heading) !important;
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  color: #0F172A !important;
+  margin: 0 0 2px 0 !important;
+}
+
+.kt-testimonial-card-mini .kt-client-info small {
+  display: block !important;
+  font-size: 12px !important;
+  color: #64748B !important;
+  margin-bottom: 0 !important;
 }
 
 /* 8. CTA Banner Section */
@@ -16798,5 +16830,88 @@ button.kt-btn-green:active,
     text-align: justify !important;
     text-justify: inter-word !important;
     text-align-last: left !important;
+  }
+}
+
+/* ==========================================================================
+   MOBILE TESTIMONIALS AUTO-SCROLLING MARQUEE SYSTEM (<= 991px and <= 768px)
+   ========================================================================== */
+@media (max-width: 991px) {
+  .kt-testimonials-split-section {
+    padding: 60px 0 75px !important;
+    overflow: hidden !important;
+  }
+
+  .kt-testimonials-split-grid {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+
+  .kt-testimonials-left {
+    max-width: 100% !important;
+    text-align: left !important;
+  }
+
+  .kt-testimonials-marquee-wrapper {
+    width: 100vw !important;
+    margin-left: calc(-50vw + 50%) !important;
+    margin-right: calc(-50vw + 50%) !important;
+    overflow: hidden !important;
+    position: relative !important;
+    padding: 10px 0 20px 0 !important;
+    mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent) !important;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent) !important;
+  }
+
+  .kt-testimonials-marquee-track {
+    display: flex !important;
+    width: max-content !important;
+    gap: 16px !important;
+    animation: testimonialMarqueeScroll 28s linear infinite !important;
+    will-change: transform;
+  }
+
+  .kt-testimonials-marquee-wrapper:hover .kt-testimonials-marquee-track,
+  .kt-testimonials-marquee-wrapper:active .kt-testimonials-marquee-track {
+    animation-play-state: paused !important;
+  }
+
+  .kt-testimonial-card-mini.marquee-dup {
+    display: flex !important;
+  }
+
+  .kt-testimonial-card-mini {
+    width: 300px !important;
+    min-width: 300px !important;
+    max-width: 300px !important;
+    flex: 0 0 300px !important;
+    background: #FFFFFF !important;
+    border: 1.5px solid #E2E8F0 !important;
+    border-radius: 18px !important;
+    padding: 22px 20px !important;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06) !important;
+    margin: 0 !important;
+  }
+
+  .kt-testimonial-card-mini .kt-quote-text {
+    font-size: 13.5px !important;
+    line-height: 1.6 !important;
+    color: #0F172A !important;
+    margin: 8px 0 16px 0 !important;
+    text-align: left !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+}
+
+@keyframes testimonialMarqueeScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
   }
 }
